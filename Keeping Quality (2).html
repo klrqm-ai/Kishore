@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Milk Quality Test Log – Entry & Report</title>
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { margin-bottom: 10px; }
+    h2 { margin-top: 30px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    th { background: #f0f0f0; }
+    button { padding: 6px 12px; margin: 5px; cursor:pointer; }
+    .controls { margin-bottom: 20px; }
+    .milk-section { border: 2px solid #ddd; padding: 15px; margin-bottom: 30px; }
+    .batch-time { font-weight: bold; margin-top: 10px; }
+    .screen { display:none; }
+    #mainScreen .controls { text-align:center; }
+
+    .report-block {
+        border:2px solid #ccc;
+        padding:10px;
+        margin-bottom:20px;
+        background:#fafafa;
+    }
+    .report-header {
+        font-weight:bold;
+        margin-bottom:5px;
+    }
+
+    @media print {
+        button, .controls { display: none; }
+        body { margin: 0; }
+    }
+</style>
+</head>
+<body>
+
+<h1>Milk Quality Test Log</h1>
+
+<!-- MAIN MENU -->
+<div id="mainScreen" class="screen" style="display:block;">
+    <div class="controls">
+        <button onclick="showEntry()">Entry View</button>
+        <button onclick="showReport()">Report View</button>
+    </div>
+</div>
+
+<!-- ENTRY VIEW -->
+<div id="entryScreen" class="screen">
+    <h2>Entry View</h2>
+
+    <div class="controls">
+        <button onclick="addMilkType()">+ Add Milk Type</button>
+        <button onclick="saveJSON()">Save JSON</button>
+        <button onclick="loadJSON()">Load JSON</button>
+        <button onclick="window.print()">Print / Save as PDF</button>
+        <button onclick="goMain()">Back to Main</button>
+    </div>
+
+    <div id="milkContainer"></div>
+</div>
+
+<!-- REPORT VIEW -->
+<div id="reportScreen" class="screen">
+    <h2>Report View (Multiple Days)</h2>
+
+    <div class="controls">
+        <input id="multiFileInput" type="file" accept="application/json" multiple>
+        <button onclick="loadReportFiles()">Load Selected JSON Files</button>
+        <button onclick="window.print()">Print / Save as PDF</button>
+        <button onclick="goMain()">Back to Main</button>
+    </div>
+
+    <div id="reportContainer"></div>
+</div>
+
+<script>
+/* ----- SCREEN NAVIGATION ----- */
+function showEntry() {
+    document.getElementById('mainScreen').style.display = 'none';
+    document.getElementById('reportScreen').style.display = 'none';
+    document.getElementById('entryScreen').style.display = 'block';
+}
+function showReport() {
+    document.getElementById('mainScreen').style.display = 'none';
+    document.getElementById('entryScreen').style.display = 'none';
+    document.getElementById('reportScreen').style.display = 'block';
+}
+function goMain() {
+    document.getElementById('entryScreen').style.display = 'none';
+    document.getElementById('reportScreen').style.display = 'none';
+    document.getElementById('mainScreen').style.display = 'block';
+}
+
+/* ----- ENTRY VIEW LOGIC ----- */
+let milkIndex = 0;
+
+// Add a new milk type section
+function addMilkType(data = null) {
+    const id = milkIndex++;
+    const container = document.getElementById("milkContainer");
+
+    const section = document.createElement("div");
+    section.className = "milk-section";
+    section.id = `milk-${id}`;
+
+    section.innerHTML = `
+        <h2>Milk Type</h2>
+
+        <label>Type of Milk: 
+            <input type="text" id="type-${id}" value="${data?.type || ""}">
+        </label>
+
+        <label>Packaging SKU: 
+            <input type="text" id="sku-${id}" value="${data?.sku || ""}">
+        </label>
+
+        <label>Route Vehicle: 
+            <input type="text" id="vehicle-${id}" value="${data?.vehicle || ""}">
+        </label>
+
+        <label>Date: 
+            <input type="date" id="date-${id}" value="${data?.date || ""}">
+        </label>
+
+        <table id="table-${id}">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Temp (°C)</th>
+                    <th>COB</th>
+                    <th>Acidity</th>
+                    <th>Tested By</th>
+                    <th>Remarks</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <button onclick="addRow(${id})">+ Add Row</button>
+        <button onclick="removeMilkType(${id})">Remove Milk Type</button>
+        <div class="batch-time" id="batchTime-${id}">Batch Duration: 00:00</div>
+    `;
+
+    container.appendChild(section);
+
+    if (data?.rows) {
+        data.rows.forEach(r => addRow(id, r));
+        calculateBatchTime(id);
+    }
+}
+
+// Add a row inside a milk type
+function addRow(id, rowData = null) {
+    const tbody = document.querySelector(`#table-${id} tbody`);
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+        <td><input type="time" value="${rowData?.time || ""}" required onchange="calculateBatchTime(${id})"></td>
+        <td><input type="number" step="0.1" min="30" max="45" value="${rowData?.temp || ""}" required></td>
+        <td>
+            <select>
+                <option value="Nega" ${rowData?.cob === "Nega" ? "selected" : ""}>Nega</option>
+                <option value="Posi" ${rowData?.cob === "Posi" ? "selected" : ""}>Posi</option>
+            </select>
+        </td>
+        <td><input type="number" step="0.001" min="0.10" max="0.20" value="${rowData?.acidity || ""}" required></td>
+        <td><input type="text" value="${rowData?.testedBy || ""}"></td>
+        <td><input type="text" value="${rowData?.remarks || ""}"></td>
+        <td><button onclick="this.parentNode.parentNode.remove(); calculateBatchTime(${id})">❌</button></td>
+    `;
+
+    tbody.appendChild(row);
+    calculateBatchTime(id);
+}
+
+// Remove entire milk type section
+function removeMilkType(id) {
+    const el = document.getElementById(`milk-${id}`);
+    if (el) el.remove();
+}
+
+// ✅ HH:MM Batch Duration Calculation
+function calculateBatchTime(id) {
+    const times = Array.from(document.querySelectorAll(`#table-${id} tbody tr td:first-child input`))
+        .map(input => input.value)
+        .filter(v => v);
+
+    const label = document.getElementById(`batchTime-${id}`);
+    if (!label) return;
+
+    if (times.length >= 2) {
+        const start = times[0];
+        const end = times[times.length - 1];
+
+        const startDate = new Date(`1970-01-01T${start}:00`);
+        const endDate = new Date(`1970-01-01T${end}:00`);
+
+        let diffMinutes = (endDate - startDate) / (1000 * 60);
+        if (diffMinutes < 0) diffMinutes += 24 * 60;
+
+        const hh = String(Math.floor(diffMinutes / 60)).padStart(2, '0');
+        const mm = String(Math.floor(diffMinutes % 60)).padStart(2, '0');
+
+        label.innerText = `Batch Duration: ${hh}:${mm}`;
+    } else {
+        label.innerText = `Batch Duration: 00:00`;
+    }
+}
+
+// Save all data to JSON file
+function saveJSON() {
+    const milkSections = document.querySelectorAll(".milk-section");
+    const data = [];
+
+    milkSections.forEach(section => {
+        const id = section.id.split("-")[1];
+        const rows = [];
+
+        section.querySelectorAll("tbody tr").forEach(tr => {
+            const cells = tr.querySelectorAll("input, select");
+            rows.push({
+                time: cells[0].value,
+                temp: cells[1].value,
+                cob: cells[2].value,
+                acidity: cells[3].value,
+                testedBy: cells[4].value,
+                remarks: cells[5].value
+            });
+        });
+
+        data.push({
+            type: document.getElementById(`type-${id}`).value,
+            sku: document.getElementById(`sku-${id}`).value,
+            vehicle: document.getElementById(`vehicle-${id}`).value,
+            date: document.getElementById(`date-${id}`).value,
+            rows
+        });
+    });
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "milk_test_log.json";
+    a.click();
+}
+
+// Load JSON file back into form
+function loadJSON() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json";
+
+    input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+
+        reader.onload = event => {
+            const data = JSON.parse(event.target.result);
+            document.getElementById("milkContainer").innerHTML = "";
+            milkIndex = 0;
+
+            data.forEach(m => addMilkType(m));
+        };
+
+        reader.readAsText(file);
+    };
+
+    input.click();
+}
+
+/* ----- REPORT VIEW: MULTI-DAY REPORT ----- */
+
+// ✅ HH:MM Batch Duration for Report View
+function calculateReportBatchDuration(rows = []) {
+    const times = rows
+        .map(r => r.time)
+        .filter(t => t && t.length >= 4)
+        .sort();
+
+    if (times.length < 2) return "00:00";
+
+    const start = times[0];
+    const end = times[times.length - 1];
+
+    const startDate = new Date(`1970-01-01T${start}:00`);
+    const endDate = new Date(`1970-01-01T${end}:00`);
+
+    let diffMinutes = (endDate - startDate) / (1000 * 60);
+    if (diffMinutes < 0) diffMinutes += 24 * 60;
+
+    const hh = String(Math.floor(diffMinutes / 60)).padStart(2, '0');
+    const mm = String(Math.floor(diffMinutes % 60)).padStart(2, '0');
+
+    return `${hh}:${mm}`;
+}
+
+// Load multiple JSON files for report
+function loadReportFiles() {
+    const input = document.getElementById("multiFileInput");
+    const files = Array.from(input.files || []);
+    if (files.length === 0) {
+        alert("Please select one or more JSON files first.");
+        return;
+    }
+
+    const allData = [];
+    let loaded = 0;
+
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (Array.isArray(data)) {
+                    allData.push(...data);
+                }
+            } catch {
+                console.warn("Invalid JSON skipped:", file.name);
+            }
+            loaded++;
+            if (loaded === files.length) {
+                renderReport(allData);
+            }
+        };
+        reader.readAsText(file);
+    });
+}
+
+// Render combined report
+function renderReport(records) {
+    const container = document.getElementById("reportContainer");
+    container.innerHTML = "";
+
+    if (!records || records.length === 0) {
+        container.innerHTML = "<p>No data found in selected files.</p>";
+        return;
+    }
+
+    records.sort((a, b) => {
+        const da = (a.date || "");
+        const db = (b.date || "");
+        if (da === db) {
+            return (a.type || "").localeCompare(b.type || "");
+        }
+        return da.localeCompare(db);
+    });
+
+    records.forEach(rec => {
+        const block = document.createElement("div");
+        block.className = "report-block";
+
+        const header = document.createElement("div");
+        header.className = "report-header";
+        header.innerHTML = `
+            Date: ${rec.date || "-"} |
+            Type of Milk: ${rec.type || "-"} |
+            SKU: ${rec.sku || "-"} |
+            Vehicle: ${rec.vehicle || "-"}<br>
+            <strong>Batch Duration: ${calculateReportBatchDuration(rec.rows)}</strong>
+        `;
+        block.appendChild(header);
+
+        const table = document.createElement("table");
+        table.innerHTML = `
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Temp (°C)</th>
+                    <th>COB</th>
+                    <th>Acidity</th>
+                    <th>Tested By</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        `;
+
+        const tbody = table.querySelector("tbody");
+
+        (rec.rows || []).forEach(r => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${r.time || ""}</td>
+                <td>${r.temp || ""}</td>
+                <td>${r.cob || ""}</td>
+                <td>${r.acidity || ""}</td>
+                <td>${r.testedBy || ""}</td>
+                <td>${r.remarks || ""}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        block.appendChild(table);
+        container.appendChild(block);
+    });
+}
+</script>
+
+</body>
+</html>
+<script>
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+</script>
