@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Incoming Tanker Invoice Acknowledgement </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --brand: #1f4f8b;
+      --brand-light: #e5f0ff;
+      --brand-dark: #15355e;
+      --border: #d6deec;
+      --bg: #f3f6fb;
+      --text: #1f2933;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top left, #ffffff 0, #f3f6fb 40%, #e6edf9 100%);
+      color: var(--text);
+    }
+
+    .app-shell {
+      max-width: 1500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      overflow: hidden;
+    }
+
+    .app-header {
+      padding: 14px 18px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .app-header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .app-header small {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    .app-header-right {
+      text-align: right;
+      font-size: 11px;
+      opacity: 0.95;
+    }
+
+    .tab-header {
+      display: flex;
+      gap: 0;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab-header::-webkit-scrollbar {
+      height: 6px;
+    }
+    .tab-header::-webkit-scrollbar-thumb {
+      background: #cbd5f5;
+      border-radius: 999px;
+    }
+
+    .tab-link {
+      flex: 1 0 0;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4b5563;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .tab-link span.badge {
+      background: #e5edff;
+      color: var(--brand-dark);
+      border-radius: 999px;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .tab-link:last-child {
+      border-right: none;
+    }
+
+    .tab-link:hover {
+      background: #edf2ff;
+    }
+
+    .tab-link.active {
+      background: #ffffff;
+      color: var(--brand-dark);
+      box-shadow: inset 0 -2px 0 var(--brand);
+    }
+
+    .tab-content {
+      padding: 14px;
+      background: #f5f7fb;
+    }
+
+    .tab-pane {
+      display: none;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Avoid double page margins inside embedded forms */
+    .tab-pane body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    .tab-pane .page,
+    .tab-pane .wrap {
+      box-shadow: none;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 8px; }
+      .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .app-header-right { text-align: left; }
+      .tab-link {
+        padding: 9px 10px;
+        font-size: 12px;
+        flex: 0 0 auto;
+      }
+      .tab-content { padding: 10px; }
+      .tab-pane { padding: 10px; }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .app-shell {
+        box-shadow: none;
+        border-radius: 0;
+        border: none;
+      }
+      .app-header,
+      .tab-header {
+        display: none !important;
+      }
+      .tab-pane {
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="app-header">
+    <div>
+      <h1>HERITAGE FOODS – Tanker Milk Quality Analysis Report - Day Book</h1>
+      <small>QUALITY ASSURANCE - acknowledgement </small>
+    </div>
+    <div class="app-header-right">
+      <div>Ref: HFL/QA/PS/R-02</div>
+      <div>Rev No: 02 • Rev Date: 01.07.2017</div>
+    </div>
+  </div>
+
+  <div class="tab-header">
+    <button type="button" class="tab-link active" data-target="sheet1">
+      Sheet&nbsp;1 – Tanker Milk Quality Analysis Report - Day Book <span class="badge">Analysis</span>
+    </button>
+    <button type="button" class="tab-link" data-target="sheet2">
+      Sheet&nbsp;2 – Tanker Milk Quality Acknowledgement <span class="badge">Report</span>
+    </button>
+    </div>
+
+  <div class="tab-content">
+    <!-- SHEET 1: Tanker Milk Quality Analysis Report - Day Book -->
+    <div id="sheet1" class="tab-pane active">
+      <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tanker Milk Quality Analysis Report - Day Book</title>
+
+<style>
+    :root {
+        --bg-main: #f5f7fb;
+        --bg-card: #ffffff;
+        --border-soft: #d0d6e2;
+        --text-main: #1f2933;
+        --text-muted: #5f6c80;
+        --accent: #1565c0;
+        --danger: #c62828;
+        --shadow-soft: 0 2px 8px rgba(15, 23, 42, 0.08);
+        --radius-card: 8px;
+        --radius-pill: 999px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        margin: 0;
+        padding: 24px;
+        background: var(--bg-main);
+        color: var(--text-main);
+    }
+
+    .page {
+        max-width: 1300px;
+        margin: 0 auto 40px auto;
+        background: #f9fafc;
+        padding: 24px 28px 32px 28px;
+        border-radius: 12px;
+        box-shadow: var(--shadow-soft);
+        border: 1px solid #e0e4f0;
+    }
+
+    h2 {
+        text-align: center;
+        margin: 10px 0 18px 0;
+        letter-spacing: 0.04em;
+        color: #1b325f;
+        font-size: 18px;
+        text-transform: uppercase;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 12px;
+    }
+
+    th, td {
+        border: 1px solid var(--border-soft);
+        padding: 6px 8px;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    th {
+        background: #e3f2fd;
+        color: #253858;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    td.label-cell {
+        width: 22%;
+        background: #f4f6fb;
+        font-weight: 500;
+        color: var(--text-muted);
+    }
+
+    input, textarea {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 13px;
+        background: transparent;
+        padding: 2px 3px;
+        color: var(--text-main);
+        font-family: inherit;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 40px;
+    }
+
+    button {
+        padding: 7px 16px;
+        margin: 4px;
+        font-size: 13px;
+        cursor: pointer;
+        border-radius: var(--radius-pill);
+        border: 1px solid transparent;
+        font-weight: 500;
+        background: var(--accent);
+        color: #fff;
+    }
+
+    button:hover { opacity: 0.95; }
+
+    .secondary-btn {
+        background: #f5f7fb;
+        color: #1b325f;
+        border-color: #c3cce3;
+    }
+
+    .secondary-btn:hover { background: #e6ebf7; }
+
+    .delete-btn {
+        background: #fff;
+        color: var(--danger);
+        border-color: #ffcdd2;
+        padding: 3px 12px;
+        font-size: 12px;
+    }
+
+    .delete-btn:hover { background: #fff5f5; }
+
+    .tanker-block {
+        border-radius: var(--radius-card);
+        padding: 14px 16px 16px 16px;
+        margin-bottom: 18px;
+        background: var(--bg-card);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid #dde3f3;
+        position: relative;
+    }
+
+    .tanker-block::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 10px;
+        bottom: 10px;
+        width: 3px;
+        border-radius: 3px;
+        background: linear-gradient(to bottom, #1e88e5, #42a5f5);
+    }
+
+    .tanker-header-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e0e4f0;
+    }
+
+    .active-cell {
+        outline: 2px solid #1e88e5;
+        background: #e9f3ff;
+        border-radius: 4px;
+    }
+
+    .param-table-wrapper {
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #dde3f3;
+        margin-bottom: 10px;
+    }
+
+    .extra-table td:first-child {
+        width: 40%;
+        background: #f7f8fd;
+        font-weight: 500;
+        color: var(--text-muted);
+    }
+
+    .extra-table td { border-color: #e0e4f0; }
+
+    .btn-bar {
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+</head>
+
+<body>
+<div class="page">
+
+    <h2>DAY BOOK – TANKER MILK QUALITY</h2>
+
+    <table>
+        <tr>
+            <td class="label-cell">Date</td>
+            <td><input id="reportDate" type="date" class="cell"></td>
+        </tr>
+    </table>
+
+    <div id="tankerContainer"></div>
+
+    <div class="btn-bar">
+        <button type="button" onclick="addTanker()">+ Add Tanker</button>
+        <button type="button" class="secondary-btn" onclick="saveData()">Save</button>
+        <button type="button" class="secondary-btn" onclick="loadData()">Load</button>
+    </div>
+
+</div>
+
+<script>
+let tankerCount = 0;
+
+// Parameter definitions (A1-Standard structure)
+const PARAMS = [
+    { id: "compartment",     label: "COMPARTMENT" },
+    { id: "typeOfMilk",      label: "Type of milk" },
+    { id: "ot",              label: "O.T." },
+    { id: "foreignMatter",   label: "FOREIGN MATTER" },
+    { id: "temperature",     label: "TEMPERATURE" },
+    { id: "fat",             label: "FAT (%)" },
+    { id: "clr",             label: "CLR" },
+    { id: "snf",             label: "SNF (%)" },
+    { id: "acidity",         label: "ACIDITY (%)" },
+    { id: "mbrt",            label: "MBRT" },
+    { id: "phosphatase",     label: "Phosphatase" },
+    { id: "hsNegative",      label: "H.S. NEGATIVE" },
+    { id: "alcohol",         label: "ALCOHOL (%)" },
+    { id: "he",              label: "H.E" }
+];
+
+const PARAM_COLS = ["c1Inv", "c1Ack", "c2Inv", "c2Ack", "c3Inv", "c3Ack"];
+
+// ---------- Create one tanker block ----------
+function createTankerBlock() {
+    tankerCount++;
+    const div = document.createElement("div");
+    div.className = "tanker-block";
+
+    div.innerHTML = `
+        <div class="tanker-header-line">
+            <h3>Tanker ${tankerCount}</h3>
+            <button class="delete-btn" type="button" onclick="deleteTanker(this)">Delete</button>
+        </div>
+
+        <table>
+            <tr>
+                <td class="label-cell">Received From</td>
+                <td><input class="cell" data-field="receivedFrom"></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td class="label-cell">Tanker No.</td>
+                <td><input class="cell" data-field="tankerNo"></td>
+            </tr>
+        </table>
+
+        <!-- NEW: Dispatch/Arrival table ABOVE parameter table -->
+        <table>
+            <tr>
+                <th colspan="7">DESPATCHED / ARRIVAL DATE & TIME</th>
+            </tr>
+                <td class="label-cell">INVOICE</td>
+                <td><input type="datetime-local" class="cell param-input" data-param="dispatchArrival" data-col="c3Inv"></td>
+                <td class="label-cell">ACKNOWLEDGEMENT</td>
+                <td><input type="datetime-local" class="cell param-input" data-param="dispatchArrival" data-col="c3Ack"></td>
+                <td colspan="3"></td>
+            </tr>
+        </table>
+
+        <div class="param-table-wrapper">
+            <table>
+                <tr>
+                    <th>PARAMETER</th>
+                    <th>C1 INV</th><th>C1 ACK</th>
+                    <th>C2 INV</th><th>C2 ACK</th>
+                    <th>C3 INV</th><th>C3 ACK</th>
+                </tr>
+
+                ${PARAMS.map(p => `
+                    <tr>
+                        <td>${p.label}</td>
+                        <td><input class="cell param-input" data-param="${p.id}" data-col="c1Inv"></td>
+                        <td><input class="cell param-input" data-param="${p.id}" data-col="c1Ack"></td>
+                        <td><input class="cell param-input" data-param="${p.id}" data-col="c2Inv"></td>
+                        <td><input class="cell param-input" data-param="${p.id}" data-col="c2Ack"></td>
+                        <td><input class="cell param-input" data-param="${p.id}" data-col="c3Inv"></td>
+                        <td><input class="cell param-input" data-param="${p.id}" data-col="c3Ack"></td>
+                    </tr>
+                `).join("")}
+            </table>
+        </div>
+
+        <table class="extra-table">
+            <tr><td>ADULTRANTS</td><td><input class="cell" data-extra="adulterants"></td></tr>
+            <tr><td>NEUTRALIZERS</td><td><input class="cell" data-extra="neutralizers"></td></tr>
+            <tr><td>PRESERVATIVES</td><td><input class="cell" data-extra="preservatives"></td></tr>
+            <tr><td>AGE OF MILK</td><td><input class="cell" data-extra="ageOfMilk"></td></tr>
+            <tr><td>CLOSING STOCK (QTY.)</td><td><input class="cell" data-extra="closingStock"></td></tr>
+            <tr><td>SAMPLE TAKEN BY</td><td><input class="cell" data-extra="sampleTakenBy"></td></tr>
+            <tr><td>TESTED BY</td><td><input class="cell" data-extra="testedBy"></td></tr>
+            <tr><td>REMARKS</td><td><textarea class="cell" data-extra="remarks"></textarea></td></tr>
+        </table>
+    `;
+
+    return div;
+}
+
+// ---------- Add tanker ----------
+function addTanker() {
+    document.getElementById("tankerContainer").appendChild(createTankerBlock());
+}
+
+// ---------- Delete tanker ----------
+function deleteTanker(btn) {
+    const block = btn.closest(".tanker-block");
+    if (block) block.remove();
+}
+
+// ---------- Save JSON (A1-Standard structure) ----------
+function saveData() {
+    // Ask user to confirm or enter date
+    let currentDate = document.getElementById("reportDate").value;
+    let enteredDate = prompt("Enter the date for saving the record:", currentDate);
+
+    if (!enteredDate) {
+        alert("Save cancelled. Date is required.");
+        return;
+    }
+
+    // Validate date format (YYYY-MM-DD)
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(enteredDate)) {
+        alert("Invalid date format. Please use YYYY-MM-DD.");
+        return;
+    }
+
+    // Update the date field with confirmed date
+    document.getElementById("reportDate").value = enteredDate;
+
+    const tankerBlocks = document.querySelectorAll(".tanker-block");
+    const tankers = [];
+
+    tankerBlocks.forEach(block => {
+        const tanker = {
+            receivedFrom: "",
+            tankerNo: "",
+            parameters: {},
+            extra: {}
+        };
+
+        tanker.receivedFrom = block.querySelector('[data-field="receivedFrom"]').value;
+        tanker.tankerNo = block.querySelector('[data-field="tankerNo"]').value;
+
+        tanker.parameters["dispatchArrival"] = {
+            c1Inv: "", c1Ack: "", c2Inv: "", c2Ack: "", c3Inv: "", c3Ack: ""
+        };
+
+        PARAMS.forEach(p => {
+            tanker.parameters[p.id] = {
+                c1Inv: "", c1Ack: "", c2Inv: "", c2Ack: "", c3Inv: "", c3Ack: ""
+            };
+        });
+
+        block.querySelectorAll(".param-input").forEach(inp => {
+            const pid = inp.dataset.param;
+            const col = inp.dataset.col;
+            tanker.parameters[pid][col] = inp.value;
+        });
+
+        block.querySelectorAll("[data-extra]").forEach(inp => {
+            tanker.extra[inp.dataset.extra] = inp.value;
+        });
+
+        tankers.push(tanker);
+    });
+
+    const finalData = {
+        date: enteredDate,
+        tankers: tankers
+    };
+
+    const blob = new Blob([JSON.stringify(finalData, null, 2)], {type: "application/json"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+
+    // File name with date
+    a.download = `tanker_daybook_${enteredDate}.json`;
+    a.click();
+}
+// ---------- Load JSON ----------
+function loadData() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const data = JSON.parse(reader.result);
+
+            document.getElementById("reportDate").value = data.date || "";
+
+            document.getElementById("tankerContainer").innerHTML = "";
+            tankerCount = 0;
+
+            data.tankers.forEach(tankerObj => {
+                const block = createTankerBlock();
+
+                block.querySelector('[data-field="receivedFrom"]').value = tankerObj.receivedFrom;
+                block.querySelector('[data-field="tankerNo"]').value = tankerObj.tankerNo;
+
+                Object.keys(tankerObj.parameters).forEach(pid => {
+                    PARAM_COLS.forEach(col => {
+                        const selector = `.param-input[data-param="${pid}"][data-col="${col}"]`;
+                        const inp = block.querySelector(selector);
+                        if (inp) inp.value = tankerObj.parameters[pid][col];
+                    });
+                });
+
+                block.querySelectorAll("[data-extra]").forEach(inp => {
+                    inp.value = tankerObj.extra[inp.dataset.extra] || "";
+                });
+
+                document.getElementById("tankerContainer").appendChild(block);
+            });
+        };
+
+        reader.readAsText(file);
+    };
+
+    input.click();
+}
+
+// ---------- Initialize with one tanker ----------
+addTanker();
+// Enable up/down arrow navigation across rows
+document.addEventListener("keydown", function (e) {
+    if (!e.target.classList.contains("cell")) return;
+
+    const currentInput = e.target;
+    const td = currentInput.closest("td");
+    const tr = td.closest("tr");
+    const table = tr.closest("table");
+
+    // Find column index of this cell
+    const colIndex = Array.from(tr.children).indexOf(td);
+
+    // Collect all rows in this table
+    const rows = Array.from(table.querySelectorAll("tr"));
+    const rowIndex = rows.indexOf(tr);
+
+    if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (rowIndex + 1 < rows.length) {
+            const nextRow = rows[rowIndex + 1];
+            const nextCell = nextRow.children[colIndex];
+            if (nextCell) {
+                const nextInput = nextCell.querySelector("input, textarea");
+                if (nextInput) nextInput.focus();
+            }
+        }
+    }
+
+    if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (rowIndex - 1 >= 0) {
+            const prevRow = rows[rowIndex - 1];
+            const prevCell = prevRow.children[colIndex];
+            if (prevCell) {
+                const prevInput = prevCell.querySelector("input, textarea");
+                if (prevInput) prevInput.focus();
+            }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
+    </div>
+
+    <!-- SHEET 2: Tanker Acknowledgement Report -->
+    <div id="sheet2" class="tab-pane">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tanker Acknowledgement Report</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #0d47a1;
+        margin-bottom: 20px;
+    }
+
+    .tanker-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #1b325f;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    th {
+        background: #e3f2fd;
+        text-align: left;
+    }
+
+    .section-title {
+        margin-top: 25px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #0d47a1;
+    }
+
+    .page-break {
+        page-break-after: always;
+    }
+
+    @media print {
+        button, input {
+            display: none;
+        }
+        body {
+            background: white;
+        }
+        .container {
+            box-shadow: none;
+            border: none;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<h2>Tanker Acknowledgement Report Viewer</h2>
+
+<div class="container">
+
+    <div style="text-align:center; margin-bottom:20px;">
+        <input type="file" id="fileInput" accept=".json">
+        <button onclick="loadJSON()">Load Report</button>
+        <button onclick="window.print()">Print</button>
+    </div>
+
+    <div id="reportBox"></div>
+
+</div>
+
+<script>
+let data = null;
+
+// Format datetime into DD-MM-YYYY HH:MM
+function formatDT(dt) {
+    if (!dt) return "";
+    const d = new Date(dt);
+    if (isNaN(d)) return dt;
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+    const hh = String(d.getHours()).padStart(2, "0");
+    const min = String(d.getMinutes()).padStart(2, "0");
+    return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
+}
+
+// Pick first non-empty among c1/c2/c3
+function pickTime(dispatchArrival, baseKey) {
+    if (!dispatchArrival) return "";
+    const c1 = dispatchArrival["c1" + baseKey] || "";
+    const c2 = dispatchArrival["c2" + baseKey] || "";
+    const c3 = dispatchArrival["c3" + baseKey] || "";
+    const raw = c1 || c2 || c3 || "";
+    return formatDT(raw);
+}
+
+// Load JSON file
+function loadJSON() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) {
+        alert("Please choose a JSON file.");
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+        data = JSON.parse(e.target.result);
+        showReports();
+    };
+    reader.readAsText(file);
+}
+
+// Build summary table
+function buildSummaryTable(tankers) {
+    let html = `
+        <h3 style="text-align:center; margin-top:20px;">Summary</h3>
+        <table>
+            <tr>
+                <th>S.No.</th>
+                <th>Received From</th>
+                <th>Despatched Date & Time</th>
+                <th>ACK Date & Time</th>
+            </tr>
+    `;
+    tankers.forEach((t, i) => {
+        const da = t.parameters.dispatchArrival || {};
+        const dispatch = pickTime(da, "Inv");
+        const ack = pickTime(da, "Ack");
+        html += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${t.receivedFrom || ""}</td>
+                <td>${dispatch}</td>
+                <td>${ack}</td>
+            </tr>
+        `;
+    });
+    html += `</table><hr style="margin:30px 0;">`;
+    return html;
+}
+
+// Add extra row only if value exists
+function addExtraRow(name, value, showC2, showC3) {
+    if (value && value.trim() !== "") {
+        return `
+        <tr>
+            <td>${name}</td>
+            <td>${value}</td>
+            ${showC2 ? `<td>${value}</td>` : ""}
+            ${showC3 ? `<td>${value}</td>` : ""}
+        </tr>`;
+    }
+    return "";
+}
+
+// Show ACK reports
+function showReports() {
+    if (!data || !data.tankers) {
+        alert("Invalid JSON format.");
+        return;
+    }
+
+    let html = buildSummaryTable(data.tankers);
+
+    data.tankers.forEach((t, index) => {
+        const da = t.parameters.dispatchArrival || {};
+        const dispatchTime = pickTime(da, "Inv");
+        const ackTime = pickTime(da, "Ack");
+
+        // Per-tanker C2 and C3 checks (ignore dispatchArrival)
+        const showC2 = Object.keys(t.parameters).some(key => {
+            if (key === "dispatchArrival") return false;
+            const p = t.parameters[key];
+            return p.c2Ack && p.c2Ack.trim() !== "";
+        });
+
+        const showC3 = Object.keys(t.parameters).some(key => {
+            if (key === "dispatchArrival") return false;
+            const p = t.parameters[key];
+            return p.c3Ack && p.c3Ack.trim() !== "";
+        });
+
+        html += `
+            <div class="tanker-title">Tanker ${index + 1} – ACK Report</div>
+            <table>
+                <tr><th>Date</th><td>${data.date || ""}</td></tr>
+                <tr><th>Received From</th><td>${t.receivedFrom || ""}</td></tr>
+                <tr><th>Tanker No</th><td>${t.tankerNo || ""}</td></tr>
+                <tr><th>Despatched Date & Time</th><td>${dispatchTime}</td></tr>
+                <tr><th>ACK Date & Time</th><td>${ackTime}</td></tr>
+            </table>
+
+            <div class="section-title">Quality Parameters – ACK</div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>C1 ACK</th>
+                    ${showC2 ? "<th>C2 ACK</th>" : ""}
+                    ${showC3 ? "<th>C3 ACK</th>" : ""}
+                </tr>
+        `;
+
+        // Loop through parameters
+        Object.keys(t.parameters).forEach(key => {
+            if (key === "dispatchArrival") return;
+            const p = t.parameters[key];
+            const label = key.replace(/([A-Z])/g, " $1").replace(/^./, c => c.toUpperCase());
+            html += `
+                <tr>
+                    <td>${label}</td>
+                    <td>${p.c1Ack || ""}</td>
+                    ${showC2 ? `<td>${p.c2Ack || ""}</td>` : ""}
+                    ${showC3 ? `<td>${p.c3Ack || ""}</td>` : ""}
+                </tr>
+            `;
+        });
+
+        // Extra rows only if values exist
+        html += addExtraRow("Adulterants", t.extra.adulterants, showC2, showC3);
+        html += addExtraRow("Neutralizers", t.extra.neutralizers, showC2, showC3);
+        html += addExtraRow("Preservatives", t.extra.preservatives, showC2, showC3);
+        html += addExtraRow("Sample Taken By", t.extra.sampleTakenBy, showC2, showC3);
+        html += addExtraRow("Tested By", t.extra.testedBy, showC2, showC3);
+        html += addExtraRow("Remarks", t.extra.remarks, showC2, showC3);
+
+        html += `</table><div class="page-break"></div>`;
+    });
+
+    document.getElementById("reportBox").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
+
+    <!-- SHEET 3: Curd CCP & OPRP -->
+    <div id="sheet3" class="tab-pane">
+      <!-- === PASTE FULL CURD-CCP-OPRP.html content BELOW === -->
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.tab-link').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = this.getAttribute('data-target');
+
+      document.querySelectorAll('.tab-link').forEach(function (b) {
+        b.classList.remove('active');
+      });
+      this.classList.add('active');
+
+      document.querySelectorAll('.tab-pane').forEach(function (pane) {
+        pane.classList.remove('active');
+      });
+      var pane = document.getElementById(targetId);
+      if (pane) { pane.classList.add('active'); }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Adulterants, Neutralizers & Preservatives Test Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: Segoe UI, Arial, sans-serif; margin: 24px; background: #fafafa; }
+    header { margin-bottom: 16px; border-bottom: 2px solid #222; padding-bottom: 8px; }
+    header h1 { margin: 0 0 6px; font-size: 20px; color: #004b8d; text-transform: uppercase; }
+    header .meta { display: grid; grid-template-columns: repeat(4, minmax(140px, 1fr)); gap: 8px; font-size: 12px; color: #555; }
+
+    .controls { margin: 14px 0; display: flex; gap: 10px; flex-wrap: wrap; }
+    .controls button { padding: 8px 12px; border: 1px solid #222; background: #fff; cursor: pointer; }
+    .controls button:hover { background: #f0f0f0; }
+
+    form#addForm {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 10px; margin: 14px 0 18px; background: white; padding: 12px; border: 1px solid #222;
+    }
+    form#addForm label { font-size: 12px; color: #555; display: block; margin-bottom: 4px; }
+    form#addForm textarea { min-height: 60px; resize: vertical; }
+    .full { grid-column: 1 / -1; }
+    .actions { display: flex; gap: 10px; }
+    .error { color: #b00020; font-size: 12px; grid-column: 1 / -1; }
+
+    table { width: 100%; border-collapse: collapse; background: white; table-layout: fixed; }
+    th, td { border: 1px solid #222; padding: 6px 8px; font-size: 13px; vertical-align: top; word-wrap: break-word; white-space: pre-wrap; }
+    th { background: #f6f6f6; text-align: left; }
+
+    @media print {
+      .controls, form#addForm { display: none !important; }
+      body { background: #fff; margin: 0; }
+      header { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HERITAGE FOODS LIMITED — QUALITY ASSURANCE</h1>
+    <div class="meta">
+      <div><strong>Report:</strong> Adulterants, Neutralizers & Preservatives Test Report</div>
+      <div><strong>Rev. No.:</strong> 03</div>
+      <div><strong>Rev. Date:</strong> 14/09/2020</div>
+      <div><strong>Ref. No.:</strong> HFL/QA/PS/F-04</div>
+    </div>
+  </header>
+
+  <div class="controls">
+    <button id="saveBtn" type="button">Save JSON</button>
+    <button id="loadBtn" type="button">Load JSON</button>
+    <button id="printBtn" type="button">Print</button>
+    <input id="fileInput" type="file" accept="application/json" style="display:none;" />
+  </div>
+
+  <!-- Data entry form -->
+  <form id="addForm" autocomplete="off" novalidate>
+    <div><label for="date"><strong>Date</strong></label><input id="date" name="date" type="date" required /></div>
+    <div><label for="milkSource"><strong>Milk source</strong></label><input id="milkSource" name="milkSource" required /></div>
+    <div><label for="preparedBy"><strong>Prepared by</strong></label><input id="preparedBy" name="preparedBy" /></div>
+
+    <div><label for="urea"><strong>Urea</strong></label>
+      <select id="urea" name="urea" required>
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="starch"><strong>Starch</strong></label>
+      <select id="starch" name="starch">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="cellulose"><strong>Cellulose</strong></label>
+      <select id="cellulose" name="cellulose">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="maltodextrin"><strong>Maltodextrin</strong></label>
+      <select id="maltodextrin" name="maltodextrin">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="glucose"><strong>Glucose</strong></label>
+      <select id="glucose" name="glucose">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="sucroseSalt"><strong>Sucrose/Salt</strong></label>
+      <select id="sucroseSalt" name="sucroseSalt">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="detergents"><strong>Detergents</strong></label>
+      <select id="detergents" name="detergents">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="nitrates"><strong>Nitrates</strong></label>
+      <select id="nitrates" name="nitrates">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="vegOilFat"><strong>Vegetable oil/fat</strong></label>
+      <select id="vegOilFat" name="vegOilFat">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="formaline"><strong>Formaline</strong></label>
+      <select id="formaline" name="formaline">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="h2o2"><strong>H₂O₂</strong></label>
+      <select id="h2o2" name="h2o2">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="boricAcid"><strong>Boric acid</strong></label>
+      <select id="boricAcid" name="boricAcid">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+    <div><label for="carbonates"><strong>Carbonates</strong></label>
+      <select id="carbonates" name="carbonates">
+        <option value="">Select</option><option>Negative</option><option>Positive</option><option>Not tested</option>
+      </select>
+    </div>
+
+    <div class="full"><label for="remarks"><strong>Remarks</strong></label><textarea id="remarks" name="remarks"></textarea></div>
+    <div id="formError" class="error" aria-live="polite"></div>
+
+    <div class="full actions">
+      <button id="addRowBtn" type="submit">Add row</button>
+    </div>
+  </form>
+
+  <!-- Results table -->
+  <table id="recordsTable" aria-label="Adulterants test records">
+    <thead>
+      <tr>
+        <th>S.No</th><th>Date</th><th>Milk source</th><th>Urea</th><th>Starch</th><th>Cellulose</th><th>Maltodextrin</th>
+        <th>Glucose</th><th>Sucrose/Salt</th><th>Detergents</th><th>Nitrates</th><th>Vegetable oil/fat</th>
+        <th>Formaline</th><th>H₂O₂</th><th>Boric acid</th><th>Carbonates</th><th>Prepared by</th><th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const addForm = document.getElementById('addForm');
+      const formError = document.getElementById('formError');
+      const tableBody = document.querySelector('#recordsTable tbody');
+      const saveBtn = document.getElementById('saveBtn');
+      const loadBtn = document.getElementById('loadBtn');
+      const printBtn = document.getElementById('printBtn');
+      const fileInput = document.getElementById('fileInput');
+
+      function clearError() { formError.textContent = ''; }
+      function showError(msg) { formError.textContent = msg; }
+
+      function addRowFromForm() {
+        clearError();
+        const data = Object.fromEntries(new FormData(addForm).entries());
+
+        // Validate critical fields
+        if (!data.date) { showError('Date is required.'); return false; }
+        if (!data.milkSource.trim()) { showError('Milk source is required.'); return false; }
+        if (!data.urea) { showError('Urea result is required.'); return false; }
+
+        const sNo = tableBody.children.length + 1;
+        const cells = [
+          sNo, data.date, data.milkSource.trim(), data.urea, data.starch || '', data.cellulose || '', data.maltodextrin || '',
+          data.glucose || '', data.sucroseSalt || '', data.detergents || '', data.nitrates || '', data.vegOilFat || '',
+          data.formaline || '', data.h2o2 || '', data.boricAcid || '', data.carbonates || '', (data.preparedBy || '').trim(), data.remarks || ''
+        ];
+
+        const row = document.createElement('tr');
+        cells.forEach(function(val) {
+          const td = document.createElement('td');
+          td.textContent = val;
+          td.setAttribute('contenteditable', 'false');
+          row.appendChild(td);
+        });
+        tableBody.appendChild(row);
+        addForm.reset();
+        return true;
+      }
+
+      // Add Row via form submit
+      addForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        addRowFromForm();
+      });
+
+      // Print
+      printBtn.addEventListener('click', function() {
+        window.print();
+      });
+
+      // Save JSON
+      saveBtn.addEventListener('click', function() {
+        const rows = Array.from(tableBody.querySelectorAll('tr')).map(function(tr) {
+          return Array.from(tr.children).map(function(td) { return td.textContent; });
+        });
+
+        const payload = {
+          meta: {
+            report: 'Adulterants, Neutralizers & Preservatives Test Report',
+            revNo: '03',
+            revDate: '14/09/2020',
+            refNo: 'HFL/QA/PS/F-04'
+          },
+          table: {
+            columns: [
+              'S.No','Date','Milk source','Urea','Starch','Cellulose','Maltodextrin',
+              'Glucose','Sucrose/Salt','Detergents','Nitrates','Vegetable oil/fat',
+              'Formaline','H₂O₂','Boric acid','Carbonates','Prepared by','Remarks'
+            ],
+            rows: rows
+          },
+          savedAt: new Date().toLocaleString()
+        };
+
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'adulterants_report_' + Date.now() + '.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+      });
+
+      // Load JSON
+      loadBtn.addEventListener('click', function() {
+        fileInput.click();
+      });
+
+      fileInput.addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const data = JSON.parse(text);
+          const rows = (data && data.table && Array.isArray(data.table.rows)) ? data.table.rows : [];
+          const start = tableBody.children.length;
+
+          rows.forEach(function(r, idx) {
+            const row = document.createElement('tr');
+            const normalized = [start + idx + 1].concat(r.slice(1)); // resequence S.No
+            normalized.forEach(function(val) {
+              const td = document.createElement('td');
+              td.textContent = val == null ? '' : val;
+              td.setAttribute('contenteditable', 'false');
+              row.appendChild(td);
+            });
+            tableBody.appendChild(row);
+          });
+
+          fileInput.value = '';
+        } catch (err) {
+          alert('Invalid JSON file.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

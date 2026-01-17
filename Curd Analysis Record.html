@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Curd Analysis Register</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f5f7fa; margin: 20px; }
+    .page { background: #fff; padding: 20px; border: 1px solid #ccc; max-width: 1200px; margin: auto; }
+    h1, h2 { text-align: center; margin: 3px 0; }
+    h3 { background: #e8eef7; padding: 6px; border-left: 4px solid #004b8d; margin-top: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+    td, th { border: 1px solid #ccc; padding: 5px; }
+    td.label { width: 30%; background: #fafafa; font-weight: bold; }
+    input[type="text"], input[type="date"], input[type="time"] { width: 100%; padding: 4px; border: 1px solid #aaa; border-radius: 3px; }
+    .buttons { margin: 15px 0; text-align: center; }
+    button { padding: 8px 12px; margin: 5px; cursor: pointer; border: none; background: #004b8d; color: white; border-radius: 4px; }
+    button:hover { background: #003766; }
+    .record { border: 2px dashed #aaa; padding: 15px; margin: 20px 0; background: #fdfdfd; }
+    .record-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .status { font-size: 12px; color: #333; }
+    .locked { background: #eee; }
+    .record-controls button.lock { background: #8a2a2a; }
+    .record-controls button.approve { background: #2f7a2f; }
+    .record-controls button.remove { background: #6b7280; }
+    .report-table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 30px; }
+    .section-title { background: #f0f4ff; font-weight: bold; text-align: left; }
+</style>
+</head>
+<body>
+
+<div class="page">
+    <h1>HERITAGE FOODS LIMITED</h1>
+    <h2>QUALITY ASSURANCE MANUAL</h2>
+    <h2>CURD ANALYSIS REGISTER</h2>
+
+    <!-- Header metadata -->
+    <table>
+        <tr><td class="label">Rev. No</td><td><input name="rev_no" value="02"></td></tr>
+        <tr><td class="label">Rev. Date</td><td><input name="rev_date" value="01.07.2017"></td></tr>
+        <tr><td class="label">Ref. No</td><td><input name="ref_no" value="HFL/QA/PS/R-03"></td></tr>
+        <tr><td class="label">Record Date (default for records)</td><td><input type="date" name="record_date"></td></tr>
+        <tr><td class="label">Entry Person Name</td><td><input name="entry_person"></td></tr>
+        <tr><td class="label">Verified By (QA In‑Charge)</td><td><input name="verified_by"></td></tr>
+    </table>
+
+    <!-- Global controls -->
+    <div class="buttons">
+        <button type="button" onclick="addRecord()">+ Add Record</button>
+        <button type="button" onclick="saveToFile()">Save All Records</button>
+        <button type="button" onclick="document.getElementById('loadFile').click()">Load Records</button>
+        <button type="button" onclick="showReport()">Report View</button>
+        <button type="button" onclick="editMode()">Edit Mode</button>
+        <input type="file" id="loadFile" accept="application/json" style="display:none;" onchange="loadFromFile(event)" multiple>
+    </div>
+
+    <!-- Records container -->
+    <div id="recordsContainer">
+        <div class="record" data-locked="false" data-approved="false">
+            <div class="record-header">
+                <div class="status">Lock: <span class="lock-state">Unlocked</span> | Approval: <span class="approve-state">Pending</span></div>
+                <div class="record-controls">
+                    <button type="button" class="lock" onclick="toggleLock(this)">Lock/Unlock</button>
+                    <button type="button" class="approve" onclick="toggleApprove(this)">Approve/Unapprove</button>
+                    <button type="button" class="remove" onclick="removeRecord(this)">Remove</button>
+                </div>
+            </div>
+
+            <form class="curdForm">
+                <h3>Record metadata</h3>
+                <table>
+                    <tr><td class="label">Record Date</td><td><input type="date" name="record_date"></td></tr>
+                </table>
+
+                <h3>1) Standardised Milk Quality Details</h3>
+                <table>
+                    <tr><td class="label">LOT No</td><td><input name="sm_lot"></td></tr>
+                    <tr><td class="label">Sample Description</td><td><input name="sm_sample"></td></tr>
+                    <tr><td class="label">Location</td><td><input name="sm_location"></td></tr>
+                    <tr><td class="label">Temperature (°C)</td><td><input name="sm_temp"></td></tr>
+                    <tr><td class="label">O.T.</td><td><input name="sm_ot"></td></tr>
+                    <tr><td class="label">Fat (%)</td><td><input name="sm_fat"></td></tr>
+                    <tr><td class="label">CLR</td><td><input name="sm_clr"></td></tr>
+                    <tr><td class="label">SNF (%)</td><td><input name="sm_snf"></td></tr>
+                    <tr><td class="label">Acidity (%)</td><td><input name="sm_acidity"></td></tr>
+                    <tr><td class="label">H.E. (%)</td><td><input name="sm_he"></td></tr>
+                    <tr><td class="label">MBRT (hrs)</td><td><input name="sm_mbrt"></td></tr>
+                    <tr><td class="label">Phosphatase</td><td><input name="sm_phosphatase"></td></tr>
+                    <tr><td class="label">Antibiotic</td><td><input name="sm_antibiotic"></td></tr>
+                    <tr><td class="label">Remarks</td><td><input name="sm_remarks"></td></tr>
+                </table>
+
+                <h3>2) In-Process & Incubation Quality Details</h3>
+                <table>
+                    <tr><td class="label">LOT No</td><td><input name="ip_lot"></td></tr>
+                    <tr><td class="label">Type of Culture Used</td><td><input name="ip_culture"></td></tr>
+                    <tr><td class="label">Culture Inoculation Time</td><td><input type="time" name="ip_inoc_time"></td></tr>
+                    <tr><td class="label">Culture Inoculation Temp</td><td><input name="ip_inoc_temp"></td></tr>
+                    <tr><td class="label">1st Bucket Temp</td><td><input name="ip_b1_temp"></td></tr>
+                    <tr><td class="label">1st Bucket Acidity</td><td><input name="ip_b1_acidity"></td></tr>
+                    <tr><td class="label">1st Bucket MBRT</td><td><input name="ip_b1_mbrt"></td></tr>
+                    <tr><td class="label">1st Bucket Fat</td><td><input name="ip_b1_fat"></td></tr>
+                    <tr><td class="label">Last Sachet/Cup Temp</td><td><input name="ip_last_temp"></td></tr>
+                    <tr><td class="label">Last Bucket Acidity</td><td><input name="ip_last_acidity"></td></tr>
+                    <tr><td class="label">Last Bucket MBRT</td><td><input name="ip_last_mbrt"></td></tr>
+                    <tr><td class="label">Setting Time</td><td><input type="time" name="ip_set_time"></td></tr>
+                    <tr><td class="label">Setting Acidity</td><td><input name="ip_set_acidity"></td></tr>
+                    <tr><td class="label">Curd Setting Hours</td><td><input name="ip_set_hours"></td></tr>
+                    <tr><td class="label">Remarks</td><td><input name="ip_remarks"></td></tr>
+                </table>
+
+                <h3>3) Finished Product Quality Details</h3>
+                <table>
+                    <tr><td class="label">Sample Description</td><td><input name="fp_sample"></td></tr>
+                    <tr><td class="label">SKU</td><td><input name="fp_sku"></td></tr>
+                    <tr><td class="label">Batch Code</td><td><input name="fp_batch"></td></tr>
+                    <tr><td class="label">O.T.</td><td><input name="fp_ot"></td></tr>
+                    <tr><td class="label">Body & Texture</td><td><input name="fp_body"></td></tr>
+                    <tr><td class="label">Temperature (°C)</td><td><input name="fp_temp"></td></tr>
+                    <tr><td class="label">Whey Separation (%)</td><td><input name="fp_whey"></td></tr>
+                    <tr><td class="label">Fat (%)</td><td><input name="fp_fat"></td></tr>
+                    <tr><td class="label">SNF (%)</td><td><input name="fp_snf"></td></tr>
+                    <tr><td class="label">Acidity (% as L.A)</td><td><input name="fp_acidity"></td></tr>
+                </table>
+
+                <h3>4) Keeping Quality Details</h3>
+                <table>
+                    <tr><td class="label">Acidity - 24hr at RT</td><td><input name="kq_24_acidity"></td></tr>
+                    <tr><td class="label">Acidity - 48hr at RT</td><td><input name="kq_48_acidity"></td></tr>
+                    <tr><td class="label">pH - 24hr at RT</td><td><input name="kq_24_ph"></td></tr>
+                    <tr><td class="label">pH - 48hr at RT</td><td><input name="kq_48_ph"></td></tr>
+                    <tr><td class="label">Bulging - 24hr</td><td><input name="kq_24_bulging"></td></tr>
+                    <tr><td class="label">Bulging - 48hr</td><td><input name="kq_48_bulging"></td></tr>
+                    <tr><td class="label">Visual Moulds - 5 Days</td><td><input name="kq_5_moulds"></td></tr>
+                    <tr><td class="label">Acidity - 5 Days at CS</td><td><input name="kq_5_acidity"></td></tr>
+                    <tr><td class="label">pH - 5 Days at CS</td><td><input name="kq_5_ph"></td></tr>
+                </table>
+
+                <h3>5) Despatch Details</h3>
+                <table>
+                    <tr><td class="label">Date</td><td><input type="date" name="des_date"></td></tr>
+                    <tr><td class="label">Temperature (°C)</td><td><input name="des_temp"></td></tr>
+                    <tr><td class="label">O.T.</td><td><input name="des_ot"></td></tr>
+                    <tr><td class="label">Acidity (% as L.A)</td><td><input name="des_acidity"></td></tr>
+                    <tr><td class="label">Remarks</td><td><input name="des_remarks"></td></tr>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <!-- Report container -->
+    <div id="reportContainer"></div>
+</div>
+
+<script>
+/* Add a new record */
+function addRecord() {
+    const container = document.getElementById("recordsContainer");
+    const firstRecord = container.querySelector(".record");
+    const newRecord = firstRecord.cloneNode(true);
+
+    // Reset states
+    newRecord.dataset.locked = "false";
+    newRecord.dataset.approved = "false";
+    newRecord.classList.remove("locked");
+    newRecord.querySelector(".lock-state").textContent = "Unlocked";
+    newRecord.querySelector(".approve-state").textContent = "Pending";
+
+    // Clear inputs & enable
+    newRecord.querySelectorAll("input").forEach(input => { input.value = ""; input.disabled = false; });
+
+    // Carry forward header record_date into record if header has value
+    const headerDateEl = document.querySelector('table input[name="record_date"]');
+    const headerDate = headerDateEl ? headerDateEl.value : "";
+    if (headerDate) {
+        const recDateEl = newRecord.querySelector('input[name="record_date"]');
+        if (recDateEl) recDateEl.value = headerDate;
+    }
+
+    container.appendChild(newRecord);
+}
+
+/* Remove a record */
+function removeRecord(btn) {
+    const record = btn.closest(".record");
+    const container = document.getElementById("recordsContainer");
+    if (container.children.length > 1) {
+        container.removeChild(record);
+    } else {
+        alert("At least one record must remain.");
+    }
+}
+
+/* Toggle lock/unlock for a record */
+function toggleLock(btn) {
+    const record = btn.closest(".record");
+    const locked = record.dataset.locked === "true";
+    record.dataset.locked = locked ? "false" : "true";
+    record.querySelectorAll("input").forEach(input => input.disabled = !locked);
+    record.classList.toggle("locked", !locked);
+    record.querySelector(".lock-state").textContent = locked ? "Unlocked" : "Locked";
+}
+
+/* Toggle approve/unapprove for a record */
+function toggleApprove(btn) {
+    const record = btn.closest(".record");
+    const approved = record.dataset.approved === "true";
+    record.dataset.approved = approved ? "false" : "true";
+    record.querySelector(".approve-state").textContent = approved ? "Pending" : "Approved";
+}
+
+/* Collect record data including lock/approval states */
+function collectRecords() {
+    const records = [];
+    document.querySelectorAll(".record").forEach(record => {
+        const data = { _locked: record.dataset.locked === "true", _approved: record.dataset.approved === "true" };
+        record.querySelectorAll("input").forEach(input => {
+            if (input.name) data[input.name] = input.value;
+        });
+        records.push(data);
+    });
+    return records;
+}
+
+/* Save all records to JSON with date in filename */
+function saveToFile() {
+    const headerData = {};
+    document.querySelectorAll("table input[name]").forEach(el => { headerData[el.name] = el.value; });
+
+    const payload = {
+        header: headerData,
+        records: collectRecords()
+    };
+
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    const filename = `curd_register_entries_${dateStr}.json`;
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+/* Load JSON file(s) and append records (preserve existing) */
+function loadFromFile(event) {
+    const files = event.target.files;
+    if (!files || !files.length) return;
+
+    const container = document.getElementById("recordsContainer");
+    const template = container.querySelector(".record");
+    if (!template) {
+        alert("No record template found.");
+        return;
+    }
+    const templateHTML = template.outerHTML;
+
+    Array.from(files).forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            let payload;
+            try {
+                payload = JSON.parse(e.target.result);
+            } catch (err) {
+                alert(`Invalid JSON in file: ${file.name}`);
+                return;
+            }
+
+            // Load header from the first file
+            if (idx === 0 && payload.header) {
+                Object.keys(payload.header).forEach(k => {
+                    const el = document.querySelector(`table input[name="${k}"]`);
+                    if (el) el.value = payload.header[k];
+                });
+            }
+
+            // Append records
+            const recs = Array.isArray(payload.records) ? payload.records : [];
+            recs.forEach(data => {
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = templateHTML;
+                const newRecord = tempDiv.firstElementChild;
+
+                // Set inputs
+                newRecord.querySelectorAll("input").forEach(input => {
+                    if (input.name && data[input.name] !== undefined) {
+                        input.value = data[input.name];
+                    } else {
+                        input.value = "";
+                    }
+                });
+
+                // If record_date missing inside record, fallback to header record_date from payload.header
+                if (!data.record_date && payload.header && payload.header.record_date) {
+                    const recDateEl = newRecord.querySelector('input[name="record_date"]');
+                    if (recDateEl) recDateEl.value = payload.header.record_date;
+                }
+
+                // Apply states
+                const isLocked = !!data._locked;
+                const isApproved = !!data._approved;
+                newRecord.dataset.locked = isLocked ? "true" : "false";
+                newRecord.dataset.approved = isApproved ? "true" : "false";
+                newRecord.querySelector(".lock-state").textContent = isLocked ? "Locked" : "Unlocked";
+                newRecord.querySelector(".approve-state").textContent = isApproved ? "Approved" : "Pending";
+                newRecord.classList.toggle("locked", isLocked);
+                newRecord.querySelectorAll("input").forEach(input => input.disabled = isLocked);
+
+                container.appendChild(newRecord);
+            });
+        };
+        reader.readAsText(file);
+    });
+
+    // Reset file input to allow re-selecting same files
+    event.target.value = "";
+}
+
+/* Side-by-side report view grouped by record_date */
+function showReport() {
+    const reportDiv = document.getElementById("reportContainer");
+    const records = collectRecords();
+
+    // Hide the entry records when showing report
+    document.getElementById("recordsContainer").style.display = "none";
+
+    // Group records by record_date
+    const grouped = {};
+    records.forEach(rec => {
+        const date = rec.record_date || "No Date";
+        if (!grouped[date]) grouped[date] = [];
+        grouped[date].push(rec);
+    });
+
+    let html = "";
+    const sections = [
+        { title: "Standardised Milk Quality Details", fields: ["sm_lot","sm_sample","sm_location","sm_temp","sm_ot","sm_fat","sm_clr","sm_snf","sm_acidity","sm_he","sm_mbrt","sm_phosphatase","sm_antibiotic","sm_remarks"] },
+        { title: "In-Process & Incubation Quality Details", fields: ["ip_lot","ip_culture","ip_inoc_time","ip_inoc_temp","ip_b1_temp","ip_b1_acidity","ip_b1_mbrt","ip_b1_fat","ip_last_temp","ip_last_acidity","ip_last_mbrt","ip_set_time","ip_set_acidity","ip_set_hours","ip_remarks"] },
+        { title: "Finished Product Quality Details", fields: ["fp_sample","fp_sku","fp_batch","fp_ot","fp_body","fp_temp","fp_whey","fp_fat","fp_snf","fp_acidity"] },
+        { title: "Keeping Quality Details", fields: ["kq_24_acidity","kq_48_acidity","kq_24_ph","kq_48_ph","kq_24_bulging","kq_48_bulging","kq_5_moulds","kq_5_acidity","kq_5_ph"] },
+        { title: "Despatch Details", fields: ["des_date","des_temp","des_ot","des_acidity","des_remarks"] }
+    ];
+
+    Object.keys(grouped).forEach(date => {
+        const dayRecords = grouped[date];
+        html += `<h2>Report for ${date}</h2>`;
+        html += "<table class='report-table'><tr><th>Field</th>";
+        dayRecords.forEach((_, idx) => { html += `<th>Record ${idx+1}</th>`; });
+        html += "</tr>";
+
+        sections.forEach(sec => {
+            html += `<tr><td class='section-title' colspan='${dayRecords.length + 1}'>${sec.title}</td></tr>`;
+            sec.fields.forEach(field => {
+                html += `<tr><td style='font-weight:bold; text-align:left;'>${field}</td>`;
+                dayRecords.forEach(rec => { html += `<td>${rec[field] || ""}</td>`; });
+                html += "</tr>";
+            });
+        });
+
+        html += "</table><br>";
+    });
+
+    reportDiv.innerHTML = html;
+}
+
+/* Reload to restore editable mode */
+function editMode() {
+    location.reload();
+}
+// Enable arrow keys to navigate inputs like Tab
+document.addEventListener("keydown", function(e) {
+    const inputs = Array.from(document.querySelectorAll("input"));
+    const currentIndex = inputs.indexOf(document.activeElement);
+
+    if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (currentIndex >= 0 && currentIndex < inputs.length - 1) {
+            inputs[currentIndex + 1].focus();
+        }
+    }
+
+    if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (currentIndex > 0) {
+            inputs[currentIndex - 1].focus();
+        }
+    }
+});
+document.addEventListener("paste", function(e) {
+    const active = document.activeElement;
+    if (active.tagName.toLowerCase() === "input") {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData("text");
+        const rows = text.split(/\r?\n/).map(r => r.split(/\t/));
+
+        const inputs = Array.from(document.querySelectorAll("input"));
+        let startIndex = inputs.indexOf(active);
+
+        rows.forEach(row => {
+            row.forEach((cell, j) => {
+                const idx = startIndex + j;
+                if (inputs[idx]) inputs[idx].value = cell;
+            });
+            startIndex += inputs.length; // if you want row‑wise paste
+        });
+    }
+});
+document.addEventListener("paste", function(e) {
+    const active = document.activeElement;
+    if (active.tagName.toLowerCase() === "input") {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData("text");
+        const rows = text.split(/\r?\n/).map(r => r.split(/\t/));
+
+        // Limit scope: find the nearest table containing the active input
+        const sectionTable = active.closest("table");
+        if (!sectionTable) return;
+
+        const inputs = Array.from(sectionTable.querySelectorAll("input"));
+        let startIndex = inputs.indexOf(active);
+
+        rows.forEach(row => {
+            row.forEach((cell, j) => {
+                const idx = startIndex + j;
+                if (inputs[idx]) inputs[idx].value = cell;
+            });
+            // If you want row-wise paste downwards, move startIndex forward by row length
+            startIndex += row.length;
+        });
+    }
+});
+function loadFromFile(event) {
+    const files = event.target.files;
+    if (!files || !files.length) return;
+
+    const container = document.getElementById("recordsContainer");
+    const template = container.querySelector(".record");
+    if (!template) {
+        alert("No record template found.");
+        return;
+    }
+    const templateHTML = template.outerHTML;
+
+    // 🔧 Clear existing records first
+    container.innerHTML = "";
+
+    Array.from(files).forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            let payload;
+            try {
+                payload = JSON.parse(e.target.result);
+            } catch (err) {
+                alert(`Invalid JSON in file: ${file.name}`);
+                return;
+            }
+
+            // Load header
+            if (idx === 0 && payload.header) {
+                Object.keys(payload.header).forEach(k => {
+                    const el = document.querySelector(`table input[name="${k}"]`);
+                    if (el) el.value = payload.header[k];
+                });
+            }
+
+            // Append records
+            const recs = Array.isArray(payload.records) ? payload.records : [];
+            recs.forEach(data => {
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = templateHTML;
+                const newRecord = tempDiv.firstElementChild;
+
+                // Populate inputs
+                newRecord.querySelectorAll("input").forEach(input => {
+                    if (input.name && data[input.name] !== undefined) {
+                        input.value = data[input.name];
+                    } else {
+                        input.value = "";
+                    }
+                });
+
+                // Apply states
+                const isLocked = !!data._locked;
+                const isApproved = !!data._approved;
+                newRecord.dataset.locked = isLocked ? "true" : "false";
+                newRecord.dataset.approved = isApproved ? "true" : "false";
+                newRecord.querySelector(".lock-state").textContent = isLocked ? "Locked" : "Unlocked";
+                newRecord.querySelector(".approve-state").textContent = isApproved ? "Approved" : "Pending";
+                newRecord.classList.toggle("locked", isLocked);
+                newRecord.querySelectorAll("input").forEach(input => input.disabled = isLocked);
+
+                container.appendChild(newRecord);
+            });
+        };
+        reader.readAsText(file);
+    });
+
+    event.target.value = "";
+}
+</script>
+</body>
+</html>

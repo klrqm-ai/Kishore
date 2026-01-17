@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Processed & Raw Milk QA Reports</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      padding: 10px;
+    }
+
+    .controls {
+      background: #fff;
+      padding: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+      border-radius: 4px;
+    }
+
+    .report-page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 20mm;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      box-sizing: border-box;
+      page-break-after: always;
+    }
+
+    /* HEADER: left = logo+text, right = REV table */
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+      gap: 20px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-left {
+      width: 90px;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .header-text {
+      text-align: left;
+    }
+
+    .company-name {
+      font-weight: bold;
+      font-size: 20px;
+      text-transform: uppercase;
+    }
+
+    .manual-title {
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .report-title {
+      font-weight: bold;
+      margin-top: 8px;
+      text-decoration: underline;
+    }
+
+    .rev-table,
+    .data-table {
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .rev-table td,
+    .data-table td {
+      border: 1px solid #000;
+      padding: 4px 6px;
+      vertical-align: top;
+    }
+
+    .rev-table {
+      width: auto;
+      min-width: 170px;
+    }
+
+    .data-table {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .signatures {
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .signature-block span {
+      display: inline-block;
+      border-top: 1px solid #000;
+      padding-top: 2px;
+      min-width: 140px;
+      text-align: center;
+    }
+
+    @media print {
+      .controls {
+        display: none;
+      }
+      .report-page {
+        box-shadow: none;
+        margin: 0;
+        width: auto;
+        min-height: auto;
+        padding: 15mm;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="controls">
+  <label>Load JSON file:</label>
+  <input type="file" id="fileInput" accept=".json">
+
+  <label style="margin-left:20px;">Select Sample:</label>
+  <select id="sampleSelector">
+    <option value="">-- All Samples (Processed + Raw) --</option>
+  </select>
+
+  <button id="showBtn">Show Report</button>
+  <button id="showAllBtn">Show All</button>
+  <button onclick="window.print()">Print / Save as PDF</button>
+</div>
+
+<div id="reports"></div>
+
+<script>
+  /* CHANGE THIS TO MATCH YOUR LOGO FILE NAME */
+  const LOGO_SRC = "E:\Digital Records\heritage_logo.png";
+
+  let globalData = null;
+  let processedRows = [];
+  let rawRows = [];
+
+  document.getElementById("fileInput").addEventListener("change", function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        globalData = JSON.parse(e.target.result);
+        processedRows = globalData.tables?.processed || [];
+        rawRows = globalData.tables?.raw || [];
+
+        populateSampleSelector();
+
+        const reportsDiv = document.getElementById("reports");
+        reportsDiv.innerHTML = "";
+        generateProcessedReports(processedRows, true);
+        generateRawReports(rawRows, true);
+
+      } catch (err) {
+        alert("Invalid JSON file");
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  function populateSampleSelector() {
+    const selector = document.getElementById("sampleSelector");
+    selector.innerHTML = `<option value="">-- All Samples (Processed + Raw) --</option>`;
+
+    processedRows.forEach((row, index) => {
+      selector.innerHTML += `<option value="p-${index}">P: ${row[2]} (${row[0]})</option>`;
+    });
+
+    rawRows.forEach((row, index) => {
+      selector.innerHTML += `<option value="r-${index}">R: ${row[2]} (${row[0]})</option>`;
+    });
+  }
+
+  document.getElementById("showBtn").addEventListener("click", () => {
+    const value = document.getElementById("sampleSelector").value;
+    const reportsDiv = document.getElementById("reports");
+    reportsDiv.innerHTML = "";
+
+    if (value === "") {
+      generateProcessedReports(processedRows, true);
+      generateRawReports(rawRows, true);
+      return;
+    }
+
+    const [type, idx] = value.split("-");
+    const index = parseInt(idx, 10);
+
+    if (type === "p") generateProcessedReports([processedRows[index]], true);
+    if (type === "r") generateRawReports([rawRows[index]], true);
+  });
+
+  document.getElementById("showAllBtn").addEventListener("click", () => {
+    const reportsDiv = document.getElementById("reports");
+    reportsDiv.innerHTML = "";
+    generateProcessedReports(processedRows, true);
+    generateRawReports(rawRows, true);
+  });
+
+  /* -------------------------
+     PROCESSED MILK REPORT
+     ------------------------- */
+  function generateProcessedReports(rows, append) {
+    const reportsDiv = document.getElementById("reports");
+    if (!append) reportsDiv.innerHTML = "";
+
+    const meta = globalData?.meta || {};
+
+    rows.forEach(row => {
+      const page = document.createElement("div");
+      page.className = "report-page";
+
+      page.innerHTML = `
+        <div class="header-row">
+          <div class="header-left">
+            <img src="${LOGO_SRC}" class="logo-left" alt="">
+            <div class="header-text">
+              <div class="company-name">HERITAGE FOODS LIMITED</div>
+              <div class="manual-title">QUALITY ASSURANCE MANUAL</div>
+              <div class="report-title">TEST REPORT ON MILK</div>
+            </div>
+          </div>
+
+          <table class="rev-table">
+            <tr><td>REV.NO.</td><td>02</td></tr>
+            <tr><td>REV.DATE</td><td>01.07.2017</td></tr>
+            <tr><td>REF.NO.</td><td>HFL/QA/PS/F-01</td></tr>
+          </table>
+        </div>
+
+        <table class="data-table">
+          <tr><td>Date</td><td>${meta.date || ""}</td></tr>
+          <tr><td>Time</td><td>${row[0]}</td></tr>
+          <tr><td>Location</td><td>${row[1]}</td></tr>
+          <tr><td>Sample Description</td><td>${row[2]}</td></tr>
+          <tr><td>Organoleptic test</td><td>${row[3]}</td></tr>
+          <tr><td>Temperature (°C)</td><td>${row[4]}</td></tr>
+          <tr><td>Fat (%)</td><td>${row[5]}</td></tr>
+          <tr><td>CLR</td><td>${row[6]}</td></tr>
+          <tr><td>SNF (%)</td><td>${row[7]}</td></tr>
+          <tr><td>Titratable acidity (% LA)</td><td>${row[8]}</td></tr>
+          <tr><td>Alcohol no</td><td>${row[9]}</td></tr>
+          <tr><td>H.S</td><td>${row[10]}</td></tr>
+          <tr><td>MBRT (hrs)</td><td>${row[11]}</td></tr>
+          <tr><td>Phosphatase</td><td>${row[12]}</td></tr>
+          <tr><td>H.E (%)</td><td>${row[14]}</td></tr>
+          <tr><td>Extraneous matter</td><td>${row[15]}</td></tr>
+          <tr><td>Remarks</td><td>${row[16]}</td></tr>
+        </table>
+
+        <div class="signatures">
+          <div class="signature-block"><span>Shift I/C OPN</span></div>
+          <div class="signature-block"><span>Shift I/C QA</span></div>
+        </div>
+      `;
+
+      reportsDiv.appendChild(page);
+    });
+  }
+
+  /* -------------------------
+     RAW MILK QUALITY REPORT
+     ------------------------- */
+  function generateRawReports(rows, append) {
+    const reportsDiv = document.getElementById("reports");
+    if (!append) reportsDiv.innerHTML = "";
+
+    const meta = globalData?.meta || {};
+
+    rows.forEach(row => {
+      const page = document.createElement("div");
+      page.className = "report-page";
+
+      page.innerHTML = `
+        <div class="header-row">
+          <div class="header-left">
+            <img src="${LOGO_SRC}" class="logo-left" alt="">
+            <div class="header-text">
+              <div class="company-name">HERITAGE FOODS LIMITED</div>
+              <div class="manual-title">QUALITY ASSURANCE MANUAL</div>
+              <div class="report-title">RAW MILK QUALITY REPORT</div>
+            </div>
+          </div>
+
+          <table class="rev-table">
+            <tr><td>REV.NO.</td><td>02</td></tr>
+            <tr><td>REV.DATE</td><td>01.07.2017</td></tr>
+            <tr><td>REF.NO.</td><td>HFL/QA/PS/F-02</td></tr>
+          </table>
+        </div>
+
+        <table class="data-table">
+          <tr><td>Date</td><td>${meta.date || ""}</td></tr>
+          <tr><td>Time</td><td>${row[0]}</td></tr>
+          <tr><td>Location</td><td>${row[1]}</td></tr>
+          <tr><td>Item</td><td>${row[2]}</td></tr>
+          <tr><td>Organoleptic Test</td><td>${row[3]}</td></tr>
+          <tr><td>Temperature (°C)</td><td>${row[4]}</td></tr>
+          <tr><td>Fat (%)</td><td>${row[5]}</td></tr>
+          <tr><td>CLR</td><td>${row[6]}</td></tr>
+          <tr><td>SNF (%)</td><td>${row[7]}</td></tr>
+          <tr><td>Acidity (% LA)</td><td>${row[8]}</td></tr>
+          <tr><td>MBRT (hrs)</td><td>${row[9]}</td></tr>
+          <tr><td>Alcohol no</td><td>${row[10]}</td></tr>
+	  <tr><td>Adultrations</td><td>${row[11]}</td></tr>
+          <tr><td>Remarks</td><td>${row[12]}</td></tr>
+        </table>
+
+        <div class="signatures">
+          <div class="signature-block"><span>Shift I/C OPN</span></div>
+          <div class="signature-block"><span>Shift I/C QA</span></div>
+        </div>
+      `;
+
+      reportsDiv.appendChild(page);
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>HFL QA — Adulterants Record & Report Viewer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style>
+  :root {
+    --brand: #145da0;
+    --accent: #0b3c73;
+    --border: #d0d7de;
+    --bg: #f6f8fa;
+    --lock: #b23b3b;
+  }
+  body {
+    font-family: Segoe UI, Arial, sans-serif;
+    margin: 16px;
+    background: var(--bg);
+  }
+  h1 {
+    color: var(--brand);
+    margin-bottom: 12px;
+  }
+  .hidden { display: none; }
+
+  /* HOME SCREEN */
+  #homeScreen {
+    text-align: center;
+    margin-top: 80px;
+  }
+  #homeScreen button {
+    background: var(--accent);
+    color: #fff;
+    padding: 16px 28px;
+    font-size: 18px;
+    border-radius: 8px;
+    margin: 12px;
+    cursor: pointer;
+    border: none;
+    font-weight: 700;
+  }
+
+  /* COMMON BUTTONS */
+  button, label {
+    background: var(--accent);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    border: none;
+  }
+  button.secondary { background: #475569; }
+  button.lock { background: var(--lock); }
+  input[type="file"] { display: none; }
+
+  /* RECORD ENTRY SECTION */
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: start;
+    margin-bottom: 12px;
+  }
+  .title { font-size: 18px; font-weight: 700; color: var(--brand); }
+  .subtitle { font-weight: 700; margin-top: 4px; }
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(6, max-content);
+    gap: 8px 16px;
+    align-items: center;
+  }
+  .meta label { font-weight: 600; }
+  input[type="text"], input[type="date"] {
+    border: 1px solid var(--border);
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: #fff;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border: 1px solid var(--border);
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px;
+    font-size: 13px;
+  }
+  th { background: #eef3f8; font-weight: 700; }
+  .input-cell input, .input-cell select {
+    width: 100%;
+    border: none;
+    padding: 6px;
+  }
+
+  /* REPORT VIEWER */
+  .record-block {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+  .meta-view {
+    font-size: 14px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #0b3c73;
+  }
+
+  @media print {
+    #homeScreen, #entryControls, #viewerControls { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ✅ HOME SCREEN -->
+<div id="homeScreen">
+  <h1>HFL QA — Adulterants System</h1>
+  <button onclick="showEntry()">Enter Adulterants Record</button>
+  <button onclick="showViewer()">View Multi‑Day Reports</button>
+</div>
+
+<!-- ✅ RECORD ENTRY MODULE -->
+<div id="entrySection" class="hidden">
+  <button onclick="goHome()">← Back</button>
+
+  <header>
+    <div>
+      <div class="title">HERITAGE FOODS LIMITED — QUALITY ASSURANCE</div>
+      <div class="subtitle">ADULTERANTS, NEUTRALIZERS & PRESERVATIVES TEST REPORT</div>
+    </div>
+
+    <div class="meta">
+      <label>Rev. No.</label><input id="revNo" value="03">
+      <label>Rev. Date</label><input id="revDate" value="14/09/2020">
+      <label>Ref. No.</label><input id="refNo" value="HFL/QA/PS/F-04">
+      <label>Record ID</label><input id="recordId">
+      <label>Date</label><input id="recordDate" type="date">
+    </div>
+  </header>
+
+  <div id="entryControls">
+    <button id="addRow">Add row</button>
+    <button id="saveLocal">Save to browser</button>
+    <button id="downloadJson" class="secondary">Download JSON</button>
+    <button id="loadLocal">Load from browser</button>
+    <label for="fileInput" class="secondary">Upload JSON</label>
+    <input id="fileInput" type="file" accept="application/json">
+    <button id="lockBtn" class="lock">Lock record</button>
+    <button onclick="window.print()">Print</button>
+  </div>
+
+  <table id="qaTable">
+    <tr>
+      <th>S.No</th><th>Milk source</th>
+      <th>Urea</th><th>Starch</th><th>Cellulose</th><th>Maltodextrin</th>
+      <th>Glucose</th><th>Sucrose</th><th>Salt</th><th>Detergents</th>
+      <th>Nitrates</th><th>Veg oil/fat</th><th>Formalin</th>
+      <th>H₂O₂</th><th>Boric acid</th><th>Carbonates</th><th>Sign</th>
+    </tr>
+
+    <!-- ✅ Corrected initial row (NO template literals) -->
+    <tr>
+      <td class="input-cell"><input value="1"></td>
+      <td class="input-cell"><input></td>
+
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
+
+      <td class="input-cell"><input placeholder="Signature"></td>
+    </tr>
+  </table>
+</div>
+
+<!-- ✅ REPORT VIEWER MODULE -->
+<div id="viewerSection" class="hidden">
+  <button onclick="goHome()">← Back</button>
+
+  <h1>HFL QA — Multi‑Day Adulterants Report Viewer</h1>
+
+  <div id="viewerControls">
+    <label for="viewerFiles">Upload JSON files</label>
+    <input id="viewerFiles" type="file" accept="application/json" multiple>
+    <button onclick="window.print()">Print</button>
+  </div>
+
+  <div id="reportContainer"></div>
+</div>
+
+<script>
+/* ✅ HOME SCREEN NAVIGATION */
+function goHome() {
+  entrySection.classList.add("hidden");
+  viewerSection.classList.add("hidden");
+  homeScreen.classList.remove("hidden");
+}
+function showEntry() {
+  homeScreen.classList.add("hidden");
+  viewerSection.classList.add("hidden");
+  entrySection.classList.remove("hidden");
+}
+function showViewer() {
+  homeScreen.classList.add("hidden");
+  entrySection.classList.add("hidden");
+  viewerSection.classList.remove("hidden");
+}
+
+/* ✅ RECORD ENTRY LOGIC */
+function createDropdown(v='Negative'){
+  const s=document.createElement('select');
+  ['Negative','Positive'].forEach(x=>{
+    const o=document.createElement('option');o.textContent=x;s.appendChild(o);
+  });
+  s.value=v; return s;
+}
+function renumber(){
+  [...qaTable.rows].slice(1).forEach((r,i)=>{
+    r.cells[0].querySelector('input').value=i+1;
+  });
+}
+addRow.onclick=()=>{
+  if(document.body.dataset.locked==='true'){alert("Unlock first");return;}
+  const r=qaTable.insertRow(-1);
+  r.insertCell().innerHTML=`<input>`;
+  r.insertCell().innerHTML=`<input>`;
+  for(let i=0;i<14;i++){
+    const c=r.insertCell();c.appendChild(createDropdown());
+  }
+  r.insertCell().innerHTML=`<input placeholder="Signature">`;
+  renumber();
+};
+function getTable(){
+  return [...qaTable.rows].slice(1).map(r=>{
+    const vals=[...r.querySelectorAll("input,select")].map(e=>e.value);
+    while(vals.length<17) vals.push("");
+    return vals;
+  });
+}
+function setTable(data){
+  while(qaTable.rows.length>1) qaTable.deleteRow(1);
+  data.forEach((row,i)=>{
+    const r=qaTable.insertRow(-1);
+    r.insertCell().innerHTML=`<input value="${i+1}">`;
+    r.insertCell().innerHTML=`<input value="${row[1]||""}">`;
+    for(let j=0;j<14;j++){
+      const c=r.insertCell();c.appendChild(createDropdown(row[2+j]||"Negative"));
+    }
+    r.insertCell().innerHTML=`<input value="${row[16]||""}">`;
+  });
+}
+function buildRecord(){
+  const meta={
+    revNo:revNo.value,revDate:revDate.value,refNo:refNo.value,
+    recordId:recordId.value.trim(),recordDate:recordDate.value
+  };
+  if(!meta.recordId||!meta.recordDate){alert("Record ID & Date required");return null;}
+  return {meta,table:getTable(),audit:{locked:document.body.dataset.locked==='true',lastAction:new Date().toISOString()}};
+}
+saveLocal.onclick=()=>{
+  const r=buildRecord(); if(!r) return;
+  localStorage.setItem(`HFL_QA_${r.meta.recordId}_${r.meta.recordDate}`,JSON.stringify(r));
+  alert("Saved");
+};
+downloadJson.onclick=()=>{
+  const r=buildRecord(); if(!r) return;
+  const b=new Blob([JSON.stringify(r,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);
+  a.download=`HFL_QA_${r.meta.recordId}_${r.meta.recordDate}.json`;
+  a.click();
+};
+loadLocal.onclick=()=>{
+  const key=`HFL_QA_${recordId.value}_${recordDate.value}`;
+  const raw=localStorage.getItem(key);
+  if(!raw){alert("Not found");return;}
+  const r=JSON.parse(raw);
+  revNo.value=r.meta.revNo;revDate.value=r.meta.revDate;refNo.value=r.meta.refNo;
+  setTable(r.table);
+};
+fileInput.onchange=async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=JSON.parse(await f.text());
+  revNo.value=r.meta.revNo;revDate.value=r.meta.revDate;refNo.value=r.meta.refNo;
+  recordId.value=r.meta.recordId;recordDate.value=r.meta.recordDate;
+  setTable(r.table);
+};
+lockBtn.onclick=()=>{
+  const locked=document.body.dataset.locked==='true';
+  if(locked){document.body.dataset.locked='false';alert("Unlocked");}
+  else{document.body.dataset.locked='true';alert("Locked");}
+};
+
+/* ✅ REPORT VIEWER LOGIC */
+viewerFiles.onchange=async e=>{
+  reportContainer.innerHTML="";
+  const files=[...e.target.files];
+  const records=[];
+  for(const f of files){
+    try{records.push(JSON.parse(await f.text()));}
+    catch{alert("Invalid: "+f.name);}
+  }
+  records.sort((a,b)=>new Date(a.meta.recordDate)-new Date(b.meta.recordDate));
+  records.forEach(r=>{
+    const d=document.createElement("div");
+    d.className="record-block";
+    d.innerHTML=`
+      <div class="meta-view">
+        Record ID: ${r.meta.recordId} | Date: ${r.meta.recordDate} | Rev: ${r.meta.revNo}
+      </div>
+      <table>
+        <tr>
+          <th>S.No</th><th>Milk source</th><th>Urea</th><th>Starch</th><th>Cellulose</th>
+          <th>Maltodextrin</th><th>Glucose</th><th>Sucrose</th><th>Salt</th><th>Detergents</th>
+          <th>Nitrates</th><th>Veg oil/fat</th><th>Formalin</th><th>H₂O₂</th>
+          <th>Boric acid</th><th>Carbonates</th><th>Sign</th>
+        </tr>
+        ${r.table.map(row=>`<tr>${row.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}
+      </table>`;
+    reportContainer.appendChild(d);
+  });
+};
+</script>
+
+</body>
+</html>

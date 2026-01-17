@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HERITAGE FOODS LIMITED - QA PS Calibration Register</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    header { border-bottom: 2px solid #333; margin-bottom: 16px; padding-bottom: 8px; }
+    h1 { margin: 0 0 8px; font-size: 20px; }
+    .meta { display: grid; grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 8px; margin-top: 8px; }
+    .meta div { display: flex; gap: 6px; }
+    .meta span { font-weight: bold; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .controls button, .controls input[type="file"] { padding: 8px 12px; border: 1px solid #333; background: #fff; cursor: pointer; }
+    .machine-card { border: 1px solid #333; margin-bottom: 16px; border-radius: 6px; overflow: hidden; }
+    .machine-header { background: #f7f7f9; padding: 10px; display: grid; grid-template-columns: repeat(3, minmax(160px, 1fr)) auto; gap: 8px; align-items: center; }
+    .machine-header input { width: 70%; padding: 6px; box-sizing: border-box; }
+    .machine-actions { display: flex; gap: 8px; }
+    .approval-block { background:#f4f9f4; border-top:1px dashed #9ac89a; padding:8px; display:grid; grid-template-columns: repeat(3, minmax(140px, 1fr)) auto; gap:8px; align-items:center; }
+    .approval-stamp { padding:6px; background:#dff0d8; margin-top:6px; font-size:13px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #333; padding: 6px; vertical-align: top; }
+    th { background: #eee; }
+    td input { width: 100%; padding: 6px; box-sizing: border-box; }
+    .footer { margin-top: 16px; font-size: 12px; color: #666; }
+    .delete-row-btn { background:#fdd; border:1px solid #c00; cursor:pointer; padding:4px 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HERITAGE FOODS LIMITED - QA PS CALIBRATION REGISTER</h1>
+    <div class="meta">
+      <div><span>Revision No:</span><div>02</div></div>
+      <div><span>Revision Date:</span><div>01.07.2017</div></div>
+      <div><span>Reference No:</span><div>HFL/QA/PS/R-13</div></div>
+    </div>
+  </header>
+
+  <div style="margin-bottom:16px;">
+    <label><strong>Calibration Date:</strong> <input id="calibrationDate" type="date" /></label>
+  </div>
+
+  <div class="controls">
+    <button id="addMachineBtn">Add machine</button>
+    <button id="saveBtn">Save JSON</button>
+    <label>Load JSON: <input id="loadInput" type="file" accept="application/json" /></label>
+  </div>
+
+  <div id="machines"></div>
+
+  
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const machinesContainer = document.getElementById("machines");
+      const addMachineBtn = document.getElementById("addMachineBtn");
+      const saveBtn = document.getElementById("saveBtn");
+      const loadInput = document.getElementById("loadInput");
+
+      function uid(prefix="m"){ return prefix+"_"+Math.random().toString(36).slice(2,9); }
+
+      function createRow(r={}) {
+        const tr=document.createElement("tr");
+
+        const std=document.createElement("input"); std.type="text"; std.placeholder="Std Wt"; std.value=r.stdWt||"";
+        const disp=document.createElement("input"); disp.type="text"; disp.placeholder="Display Wt"; disp.value=r.displayWt||"";
+        const err=document.createElement("input"); err.type="text"; err.placeholder="Error"; err.readOnly=true; err.value=r.error||"";
+        const maint=document.createElement("input"); maint.type="text"; maint.placeholder="Maint I/C"; maint.value=r.maintIC||"";
+        const remarks=document.createElement("input"); remarks.type="text"; remarks.placeholder="Remarks"; remarks.value=r.remarks||"";
+
+        const delBtn=document.createElement("button");
+        delBtn.textContent="Delete";
+        delBtn.className="delete-row-btn";
+        delBtn.addEventListener("click",()=>tr.remove());
+
+        function calc(){
+          const s=parseFloat(std.value), d=parseFloat(disp.value);
+          err.value=(!isNaN(s)&&!isNaN(d))?(s-d).toFixed(3):"";
+        }
+        std.addEventListener("input",calc);
+        disp.addEventListener("input",calc);
+        calc();
+
+        [std,disp,err,maint,remarks].forEach(inp=>{
+          const td=document.createElement("td");
+          td.appendChild(inp);
+          tr.appendChild(td);
+        });
+
+        const tdDel=document.createElement("td");
+        tdDel.appendChild(delBtn);
+        tr.appendChild(tdDel);
+
+        return tr;
+      }
+
+      function createMachine(data={}) {
+        const card=document.createElement("div");
+        card.className="machine-card";
+        card.dataset.id=data.id||uid("machine");
+
+        const name=document.createElement("input"); name.type="text"; name.placeholder="Equipment name"; name.value=data.name||"";
+        const cap=document.createElement("input"); cap.type="text"; cap.placeholder="Capacity"; cap.value=data.capacity||"";
+        const sec=document.createElement("input"); sec.type="text"; sec.placeholder="Section"; sec.value=data.section||"";
+
+        const addRow=document.createElement("button"); addRow.textContent="Add row";
+        const remove=document.createElement("button"); remove.textContent="Remove machine";
+        const lockBtn=document.createElement("button"); lockBtn.textContent=data.locked?"Unlock":"Lock";
+
+        const header=document.createElement("div");
+        header.className="machine-header";
+
+        const actions=document.createElement("div");
+        actions.className="machine-actions";
+        actions.append(addRow,remove,lockBtn);
+
+        header.append(name,cap,sec,actions);
+
+        const table=document.createElement("table");
+        const thead=document.createElement("thead");
+        const hr=document.createElement("tr");
+
+        ["STD Wt","DISPLY Wt","ERROR","MAINT I/C","Remarks","Delete"].forEach(h=>{
+          const th=document.createElement("th");
+          th.textContent=h;
+          hr.appendChild(th);
+        });
+
+        thead.appendChild(hr);
+        const tbody=document.createElement("tbody");
+        table.append(thead,tbody);
+
+        // Approval block
+        const approval=document.createElement("div");
+        approval.className="approval-block";
+        const apprBy=document.createElement("input"); apprBy.type="text"; apprBy.placeholder="Approved by"; apprBy.value=data.approvedBy||"";
+        const apprDate=document.createElement("input"); apprDate.type="date"; apprDate.placeholder="Approval date"; apprDate.value=data.approvalDate||"";
+        const apprRemarks=document.createElement("input"); apprRemarks.type="text"; apprRemarks.placeholder="Remarks"; apprRemarks.value=data.approvalRemarks||"";
+        const approveBtn=document.createElement("button"); approveBtn.textContent="Approve";
+
+        approval.append(apprBy,apprDate,apprRemarks,approveBtn);
+
+        card.append(header,table,approval);
+
+        (data.rows||[{}]).forEach(r=>tbody.appendChild(createRow(r)));
+
+        addRow.addEventListener("click",()=>tbody.appendChild(createRow({})));
+        remove.addEventListener("click",()=>card.remove());
+
+        // Lock/Unlock behavior
+        function setLocked(state){
+          card.dataset.locked = state ? "true" : "false";
+          lockBtn.textContent = state ? "Unlock" : "Lock";
+          // Disable machine header inputs, table inputs, add/remove row
+          card.querySelectorAll("table input, .machine-header input").forEach(inp=>inp.disabled=state);
+          addRow.disabled = state;
+          remove.disabled = state;
+          // Allow approve while locked? Choose policy:
+          // If locking should still permit approval, leave approveBtn enabled.
+          // If not, disable it:
+          // approveBtn.disabled = state;
+        }
+
+        lockBtn.addEventListener("click",()=>{
+          const locked = card.dataset.locked === "true";
+          setLocked(!locked);
+        });
+
+        if(data.locked) setLocked(true);
+
+        // Approval behavior
+        function setApproved(state){
+          card.dataset.approved = state ? "true" : "false";
+          // Freeze everything when approved
+          const freeze = state;
+          card.querySelectorAll("input,button").forEach(el=>el.disabled = freeze);
+          // But keep the Unlock button disabled to preserve approval finality
+          // and show approval stamp
+          let stamp = card.querySelector(".approval-stamp");
+          if(!stamp){
+            stamp=document.createElement("div");
+            stamp.className="approval-stamp";
+            card.appendChild(stamp);
+          }
+          if(state){
+            const by = (apprBy.value || "").trim();
+            const dt = apprDate.value || new Date().toISOString().slice(0,10);
+            stamp.textContent = `Approved by ${by || "—"} on ${dt}`;
+          } else {
+            stamp.remove();
+          }
+        }
+
+        approveBtn.addEventListener("click",()=>{
+          const by = (apprBy.value || "").trim();
+          if(!by){ alert("Please enter 'Approved by' name before approving."); return; }
+          if(!apprDate.value){ apprDate.value = new Date().toISOString().slice(0,10); }
+          setApproved(true);
+        });
+
+        if(data.approved){
+          // restore approval block values and freeze
+          setApproved(true);
+          // ensure stamp shows persisted values
+          const stamp = card.querySelector(".approval-stamp");
+          const by = data.approvedBy || "—";
+          const dt = data.approvalDate || new Date().toISOString().slice(0,10);
+          if(stamp) stamp.textContent = `Approved by ${by} on ${dt}`;
+        }
+
+        return card;
+      }
+
+      function collectData(){
+        const machines=Array.from(document.querySelectorAll(".machine-card")).map(card=>{
+          const headerInputs = Array.from(card.querySelectorAll(".machine-header input"));
+          const [name,cap,sec] = headerInputs.map(i=>i.value.trim());
+
+          const rows=Array.from(card.querySelectorAll("tbody tr")).map(tr=>{
+            const inputs=tr.querySelectorAll("input");
+            return {
+              stdWt:inputs[0].value.trim(),
+              displayWt:inputs[1].value.trim(),
+              error:inputs[2].value.trim(),
+              maintIC:inputs[3].value.trim(),
+              remarks:inputs[4].value.trim()
+            };
+          });
+
+          const apprBy = card.querySelector(".approval-block input[placeholder='Approved by']")?.value.trim() || "";
+          const apprDate = card.querySelector(".approval-block input[type='date']")?.value || "";
+          const apprRemarks = card.querySelector(".approval-block input[placeholder='Remarks']")?.value.trim() || "";
+
+          return {
+            id:card.dataset.id,
+            name,
+            capacity:cap,
+            section:sec,
+            locked:card.dataset.locked==="true",
+            approved:card.dataset.approved==="true",
+            approvedBy:apprBy,
+            approvalDate:apprDate,
+            approvalRemarks:apprRemarks,
+            rows
+          };
+        });
+
+        return {
+          meta:{revNo:"02",revDate:"01.07.2017",refNo:"HFL/QA/PS/R-13"},
+          calibrationDate:document.getElementById("calibrationDate").value,
+          machines
+        };
+      }
+
+      function populateFromData(data){
+        document.getElementById("calibrationDate").value=data?.calibrationDate||"";
+        machinesContainer.innerHTML="";
+        (data?.machines||[]).forEach(m=>{
+          const card = createMachine(m);
+          machinesContainer.appendChild(card);
+          // Restore lock explicitly
+          if(m.locked){
+            const lockBtn = card.querySelector(".machine-actions button:nth-child(3)");
+            // setLocked(true) is internal; simulate by toggling if needed
+            card.dataset.locked="true";
+            // Disable as per setLocked
+            card.querySelectorAll("table input, .machine-header input").forEach(inp=>inp.disabled=true);
+            card.querySelector(".machine-actions button:nth-child(1)").disabled=true; // addRow
+            card.querySelector(".machine-actions button:nth-child(2)").disabled=true; // remove
+          }
+          // Approval is handled inside createMachine via data.approved
+        });
+
+        if(!data?.machines?.length){
+          machinesContainer.appendChild(createMachine({
+            name:"ESSAE-TERAOKA",
+            capacity:"600 Kg",
+            section:"RMRD"
+          }));
+        }
+      }
+
+      function saveJSON(){
+        const data=collectData();
+        const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement("a");
+        a.href=url;
+        a.download="calibration_register.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      async function loadJSONFile(file){
+        const text=await file.text();
+        const data=JSON.parse(text);
+        populateFromData(data);
+      }
+
+      addMachineBtn.addEventListener("click",()=>machinesContainer.appendChild(createMachine({})));
+      saveBtn.addEventListener("click",saveJSON);
+      loadInput.addEventListener("change",e=>{
+        const file=e.target.files?.[0];
+        if(file) loadJSONFile(file);
+      });
+
+      populateFromData({});
+    });
+  </script>
+</body>
+</html>

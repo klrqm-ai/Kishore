@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>HERITAGE FOODS LIMITED – CCP & OPRP Verification Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<style>
+:root {
+  --brand:#004aad;
+  --border:#333;
+  --muted:#666;
+  --bg:#f5f7fb;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background:#fff;
+  color:#111;
+}
+
+header {
+  border-bottom: 3px solid var(--brand);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+}
+header h1 {
+  margin:0;
+  font-size:22px;
+  color:var(--brand);
+}
+header h2 {
+  margin:4px 0 0;
+  font-size:16px;
+  color:#333;
+}
+
+.top-grid {
+  display:grid;
+  grid-template-columns: repeat(4, minmax(180px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.tag {
+  border:1px solid var(--border);
+  background:var(--bg);
+  padding:8px;
+}
+.label {
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:4px;
+}
+.value {
+  font-size:14px;
+}
+
+.meta {
+  margin:12px 0;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+}
+
+label {
+  display:block;
+  font-size:14px;
+  margin-bottom:6px;
+}
+input, select, textarea {
+  width:100%;
+  padding:6px;
+  font-size:14px;
+  box-sizing:border-box;
+}
+textarea { min-height:110px; resize:vertical; }
+
+.btns {
+  margin:16px 0;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+button {
+  padding:8px 14px;
+  font-size:14px;
+  cursor:pointer;
+  border:1px solid #ccc;
+  background:#f8f8f8;
+}
+button:hover {
+  background:#ececec;
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+  table-layout:fixed;
+}
+th, td {
+  border:1px solid var(--border);
+  padding:6px;
+  vertical-align:top;
+  word-wrap:break-word;
+}
+th {
+  background:#eef2f8;
+}
+
+.stamp {
+  margin-top:10px;
+  border:1px solid var(--border);
+  background:#fffef6;
+  padding:8px;
+}
+.stamp strong { color:#222; }
+.note { font-size:12px; color:var(--muted); margin-top:4px; }
+
+.screen {
+  display:none;
+}
+
+/* MAIN SCREEN – clean, centered buttons */
+#mainScreen .btns {
+  justify-content:center;
+}
+
+/* Record summaries in report screen */
+.record-summary {
+  border:1px solid #ccc;
+  padding:10px;
+  margin-bottom:10px;
+  background:#fafafa;
+}
+
+/* Hide controls when printing */
+@media print {
+  .btns,
+  #loadFile,
+  #multiLoad,
+  #viewBtn,
+  #mainNavButtons { display:none !important; }
+  body { margin: 8mm; }
+  header { border-bottom: 2px solid var(--brand); }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>HERITAGE FOODS LIMITED</h1>
+  <h2>CCP & OPRP Verification Report</h2>
+
+  <div class="top-grid">
+    <div class="tag">
+      <div class="label">Rev No.</div>
+      <div class="value" id="revNo">01</div>
+    </div>
+    <div class="tag">
+      <div class="label">Rev Date</div>
+      <div class="value" id="revDate">01/08/2022</div>
+    </div>
+    <div class="tag">
+      <div class="label">Ref No.</div>
+      <div class="value" id="refNo">HFL/PR/COM/R - 17</div>
+    </div>
+    <div class="tag">
+      <div class="label">Page No.</div>
+      <div class="value" id="pageNo">2 of 16</div>
+    </div>
+  </div>
+
+  <div class="stamp" id="headerStamp">
+    <div class="label">Header stamp</div>
+    <div class="value">
+      <strong>Record ID:</strong> <span id="stampRecordId">—</span> |
+      <strong>Created At:</strong> <span id="stampCreatedAt">—</span>
+    </div>
+    <div class="note">Stamp updates automatically when you save or load a JSON record.</div>
+  </div>
+</header>
+
+<!-- MAIN SCREEN -->
+<section id="mainScreen" class="screen" style="display:block;">
+  <h2 style="text-align:center; margin-top:10px;">CCP & OPRP – Main Menu</h2>
+  <div class="btns" id="mainNavButtons">
+    <button onclick="showEntry()">Entry View</button>
+    <button onclick="showReport()">Report View</button>
+  </div>
+</section>
+
+<!-- ENTRY SCREEN -->
+<section id="entryScreen" class="screen">
+
+  <h2 style="margin-top:10px;">Entry View</h2>
+
+  <section class="meta">
+    <div><label>Date</label><input id="date" type="date"></div>
+    <div><label>Type of Milk</label><input id="typeOfMilk" type="text"></div>
+    <div><label>Location</label><input id="location" type="text"></div>
+    <div><label>Operator</label><input id="operator" type="text"></div>
+  </section>
+
+  <div class="btns">
+    <button id="saveBtn">Save JSON</button>
+    <input id="loadFile" type="file" accept="application/json">
+    <button id="printBtn">Print</button>
+    <button onclick="goMain()">Back to Main</button>
+  </div>
+
+  <table aria-label="CCP & OPRP entries">
+    <thead>
+      <tr>
+        <th>S No</th><th>Product</th><th>CCP & OPRP</th><th>Requirement</th>
+        <th>Time</th><th>Parameter</th><th>Time</th><th>Parameter</th>
+        <th>Time</th><th>Parameter</th><th>Time</th><th>Parameter</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td><td rowspan="3">Raw Milk</td><td>OPRP 01</td>
+        <td>Checking the Integrity of Online Strainer near dump tank</td>
+        <td><input type="time" id="r1_t1"></td>
+        <td>
+          <select id="r1_p1">
+            <option></option><option>OK</option><option>Not OK</option>
+            <option>Clean</option><option>Damaged</option><option>Missing</option>
+          </select>
+        </td>
+        <td><input type="time" id="r1_t2"></td>
+        <td>
+          <select id="r1_p2">
+            <option></option><option>OK</option><option>Not OK</option>
+            <option>Clean</option><option>Damaged</option><option>Missing</option>
+          </select>
+        </td>
+        <td><input type="time" id="r1_t3"></td>
+        <td>
+          <select id="r1_p3">
+            <option></option><option>OK</option><option>Not OK</option>
+            <option>Clean</option><option>Damaged</option><option>Missing</option>
+          </select>
+        </td>
+        <td><input type="time" id="r1_t4"></td>
+        <td>
+          <select id="r1_p4">
+            <option></option><option>OK</option><option>Not OK</option>
+            <option>Clean</option><option>Damaged</option><option>Missing</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>2</td><td>OPRP 02</td>
+        <td>Checking the Integrity of disc filter at milk tanker unloading point</td>
+        <td><input type="time" id="r2_t1"></td>
+        <td>
+          <select id="r2_p1">
+            <option></option><option>OK</option><option>Not OK</option>
+            <option>Clean</option><option>Damaged</option><option>Missing</option>
+          </select>
+        </td>
+        <td><input type="time" id="r2_t2"></td>
+        <td>
+          <select id="r2_p2">
+            <option></option><option>OK</option><option>Not OK</option>
+            <option>Clean</option><option>Damaged</option><option>Missing</option>
+          </select>
+        </td>
+        <td><input type="time" id="r2_t3"></td>
+        <td>
+          <select id="r2_p3">
+            <option></option><option>OK</option><option>Not OK</option>
+            <option>Clean</option><option>Damaged</option><option>Missing</option>
+          </select>
+        </td>
+        <td><input type="time" id="r2_t4"></td>
+        <td>
+          <select id="r2_p4">
+            <option></option><option>OK</option><option>Not OK</option>
+            <option>Clean</option><option>Damaged</option><option>Missing</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>3</td><td>OPRP 03</td>
+        <td>Storage of Raw Chilled Milk in Silo ≤ 4℃</td>
+        <td><input type="time" id="r3_t1"></td><td><input type="text" id="r3_p1"></td>
+        <td><input type="time" id="r3_t2"></td><td><input type="text" id="r3_p2"></td>
+        <td><input type="time" id="r3_t3"></td><td><input type="text" id="r3_p3"></td>
+        <td><input type="time" id="r3_t4"></td><td><input type="text" id="r3_p4"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <section style="margin-top:10px;">
+    <label>Remarks</label>
+    <textarea id="remarks"></textarea>
+  </section>
+</section>
+
+<!-- REPORT SCREEN -->
+<section id="reportScreen" class="screen">
+
+  <h2 style="margin-top:10px;">Report View</h2>
+
+  <div class="btns">
+    <input id="multiLoad" type="file" accept="application/json" multiple>
+    <button id="viewBtn">View Report</button>
+    <button onclick="goMain()">Back to Main</button>
+  </div>
+
+  <div id="recordsContainer"></div>
+</section>
+
+<script>
+let loadedRecords = [];
+let last10 = [];
+
+/* SCREEN NAVIGATION */
+function showEntry() {
+  document.getElementById("mainScreen").style.display = "none";
+  document.getElementById("reportScreen").style.display = "none";
+  document.getElementById("entryScreen").style.display = "block";
+}
+
+function showReport() {
+  document.getElementById("mainScreen").style.display = "none";
+  document.getElementById("entryScreen").style.display = "none";
+  document.getElementById("reportScreen").style.display = "block";
+}
+
+function goMain() {
+  document.getElementById("entryScreen").style.display = "none";
+  document.getElementById("reportScreen").style.display = "none";
+  document.getElementById("mainScreen").style.display = "block";
+}
+
+/* SAFE VALUE */
+function safe(val, fallback="—") {
+  return (val === undefined || val === null || val === "") ? fallback : val;
+}
+
+/* Generate Record ID */
+function generateRecordId(){
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const stamp = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+  const rand = Math.random().toString(36).slice(2,8).toUpperCase();
+  return `RM-${stamp}-${rand}`;
+}
+
+/* Update Header Stamp */
+function setHeaderStamp(recordId, createdAtISO){
+  document.getElementById("stampRecordId").textContent = safe(recordId);
+  document.getElementById("stampCreatedAt").textContent = safe(createdAtISO);
+}
+
+/* Collect Data */
+function collectData(){
+  return {
+    header: {
+      company: "HERITAGE FOODS LIMITED",
+      formTitle: "CCP & OPRP Verification Report",
+      revNo: document.getElementById("revNo").textContent,
+      revDate: document.getElementById("revDate").textContent,
+      refNo: document.getElementById("refNo").textContent,
+      pageNo: document.getElementById("pageNo").textContent
+    },
+    meta: {
+      date: document.getElementById("date").value,
+      typeOfMilk: document.getElementById("typeOfMilk").value,
+      location: document.getElementById("location").value,
+      operator: document.getElementById("operator").value
+    },
+    table: [
+      { sNo:1, times:[
+          document.getElementById("r1_t1").value,
+          document.getElementById("r1_t2").value,
+          document.getElementById("r1_t3").value,
+          document.getElementById("r1_t4").value
+        ],
+        params:[
+          document.getElementById("r1_p1").value,
+          document.getElementById("r1_p2").value,
+          document.getElementById("r1_p3").value,
+          document.getElementById("r1_p4").value
+        ]
+      },
+      { sNo:2, times:[
+          document.getElementById("r2_t1").value,
+          document.getElementById("r2_t2").value,
+          document.getElementById("r2_t3").value,
+          document.getElementById("r2_t4").value
+        ],
+        params:[
+          document.getElementById("r2_p1").value,
+          document.getElementById("r2_p2").value,
+          document.getElementById("r2_p3").value,
+          document.getElementById("r2_p4").value
+        ]
+      },
+      { sNo:3, times:[
+          document.getElementById("r3_t1").value,
+          document.getElementById("r3_t2").value,
+          document.getElementById("r3_t3").value,
+          document.getElementById("r3_t4").value
+        ],
+        params:[
+          document.getElementById("r3_p1").value,
+          document.getElementById("r3_p2").value,
+          document.getElementById("r3_p3").value,
+          document.getElementById("r3_p4").value
+        ]
+      }
+    ],
+    remarks: document.getElementById("remarks").value,
+    audit: {
+      recordId: generateRecordId(),
+      createdAtISO: new Date().toISOString()
+    }
+  };
+}
+
+/* Save JSON */
+document.getElementById("saveBtn").onclick = function(){
+  const data = collectData();
+  setHeaderStamp(data.audit.recordId, data.audit.createdAtISO);
+
+  const blob = new Blob([JSON.stringify(data,null,2)], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `CCP_OPRP_${data.meta.date}_${data.audit.recordId}.json`;
+  a.click();
+};
+
+/* Load JSON (Entry screen) */
+document.getElementById("loadFile").onchange = function(e){
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    try {
+      const data = JSON.parse(ev.target.result);
+
+      if (!data.audit) data.audit = {};
+      if (!data.audit.recordId) data.audit.recordId = generateRecordId();
+      if (!data.audit.createdAtISO) data.audit.createdAtISO = new Date().toISOString();
+
+      setHeaderStamp(data.audit.recordId, data.audit.createdAtISO);
+
+      if (!data.meta) data.meta = {};
+      document.getElementById("date").value = safe(data.meta.date,"");
+      document.getElementById("typeOfMilk").value = safe(data.meta.typeOfMilk,"");
+      document.getElementById("location").value = safe(data.meta.location,"");
+      document.getElementById("operator").value = safe(data.meta.operator,"");
+
+      if (!Array.isArray(data.table)) data.table = [];
+      while (data.table.length < 3) {
+        data.table.push({ sNo:data.table.length+1, times:["","","",""], params:["","","",""] });
+      }
+      data.table.forEach(row => {
+        if (!Array.isArray(row.times)) row.times = ["","","",""];
+        if (!Array.isArray(row.params)) row.params = ["","","",""];
+      });
+
+      data.table.forEach(row => {
+        row.times.forEach((t,i)=>{
+          const el = document.getElementById(`r${row.sNo}_t${i+1}`);
+          if (el) el.value = safe(t,"");
+        });
+        row.params.forEach((p,i)=>{
+          const el = document.getElementById(`r${row.sNo}_p${i+1}`);
+          if (el) el.value = safe(p,"");
+        });
+      });
+
+      document.getElementById("remarks").value = safe(data.remarks,"");
+
+      alert("Record loaded successfully.");
+
+    } catch {
+      alert("Invalid JSON file");
+    }
+  };
+  reader.readAsText(file);
+};
+
+/* Print */
+document.getElementById("printBtn").onclick = () => window.print();
+
+/* Multi Load for Report Screen */
+document.getElementById("multiLoad").onchange = async function(e){
+  loadedRecords = [];
+  const files = Array.from(e.target.files);
+
+  for (const file of files){
+    const text = await file.text();
+    try {
+      const json = JSON.parse(text);
+
+      if (!json.audit) json.audit = {};
+      if (!json.audit.recordId) json.audit.recordId = generateRecordId();
+      if (!json.audit.createdAtISO) json.audit.createdAtISO = new Date().toISOString();
+
+      if (!json.meta) json.meta = { date:"", typeOfMilk:"", location:"", operator:"" };
+
+      if (!Array.isArray(json.table)) json.table = [];
+      while (json.table.length < 3) {
+        json.table.push({ sNo:json.table.length+1, times:["","","",""], params:["","","",""] });
+      }
+      json.table.forEach(row => {
+        if (!Array.isArray(row.times)) row.times = ["","","",""];
+        if (!Array.isArray(row.params)) row.params = ["","","",""];
+      });
+
+      loadedRecords.push(json);
+
+    } catch {
+      console.warn("Invalid JSON skipped:", file.name);
+    }
+  }
+
+  alert(`${loadedRecords.length} records loaded.`);
+};
+
+/* Filter Last 10 Days */
+function filterLast10Days(records){
+  const today = new Date();
+  const cutoff = new Date();
+  cutoff.setDate(today.getDate() - 10);
+
+  return records.filter(r => {
+    const d = new Date(r.meta?.date || "2000-01-01");
+    return d >= cutoff && d <= today;
+  });
+}
+
+/* Generate Full CCP Table for one record */
+function generateFullTable(r){
+  let html = `
+    <table>
+      <thead>
+        <tr>
+          <th>S No</th><th>Product</th><th>CCP & OPRP</th><th>Requirement</th>
+          <th>Time</th><th>Parameter</th><th>Time</th><th>Parameter</th>
+          <th>Time</th><th>Parameter</th><th>Time</th><th>Parameter</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  r.table.forEach((row,i)=>{
+    html += `
+      <tr>
+        <td>${row.sNo}</td>
+        <td>${i===0 ? "Raw Milk" : ""}</td>
+        <td>OPRP 0${row.sNo}</td>
+        <td>${
+          row.sNo===1 ? "Checking the Integrity of Online Strainer near dump tank" :
+          row.sNo===2 ? "Checking the Integrity of disc filter at milk tanker unloading point" :
+          "Storage of Raw Chilled Milk in Silo ≤ 4℃"
+        }</td>
+
+        <td>${safe(row.times[0])}</td><td>${safe(row.params[0])}</td>
+        <td>${safe(row.times[1])}</td><td>${safe(row.params[1])}</td>
+        <td>${safe(row.times[2])}</td><td>${safe(row.params[2])}</td>
+        <td>${safe(row.times[3])}</td><td>${safe(row.params[3])}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </tbody>
+    </table>
+  `;
+  return html;
+}
+
+/* View Report with toggle details */
+document.getElementById("viewBtn").onclick = function(){
+  last10 = filterLast10Days(loadedRecords);
+
+  const recordsContainer = document.getElementById("recordsContainer");
+
+  if (last10.length === 0){
+    recordsContainer.innerHTML = "<p>No records found</p>";
+    return;
+  }
+
+  let html = "";
+
+  last10.forEach((r,i)=>{
+    html += `
+      <div class="record-summary">
+        <strong>Record Date:</strong> ${safe(r.meta.date)} |
+        <strong>Operator:</strong> ${safe(r.meta.operator)} |
+        <strong>Record ID:</strong> ${safe(r.audit.recordId)}
+        <br>
+        <span id="toggleBtn_${i}"
+              style="color:#004aad; cursor:pointer; font-weight:bold;"
+              onclick="toggleDetails(${i})">
+          ▼ Show Details
+        </span>
+
+        <div id="details_${i}" style="display:none; margin-top:10px;">
+          ${generateFullTable(r)}
+        </div>
+      </div>
+    `;
+  });
+
+  recordsContainer.innerHTML = html;
+};
+
+/* Toggle show/hide details */
+function toggleDetails(i){
+  const box = document.getElementById("details_" + i);
+  const btn = document.getElementById("toggleBtn_" + i);
+
+  if (box.style.display === "none"){
+    box.style.display = "block";
+    btn.textContent = "▲ Hide Details";
+  } else {
+    box.style.display = "none";
+    btn.textContent = "▼ Show Details";
+  }
+}
+window.toggleDetails = toggleDetails;
+</script>
+
+</body>
+</html>

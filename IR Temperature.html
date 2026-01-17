@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Incubation Room Temperature Log</title>
+
+<style>
+    body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f5f7fa;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    .main-header {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+
+    .main-header td {
+        text-align: center;
+        font-weight: bold;
+        font-size: 20px;
+        padding: 6px;
+        color: #333;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .header-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 15px;
+    }
+
+    .header-table td {
+        border: 1px solid #ccc;
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .header-title {
+        font-weight: bold;
+        background: #eef2f7;
+        width: 150px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th {
+        background: #0078d7;
+        color: white;
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+
+    td {
+        border: 1px solid #ccc;
+        padding: 4px;
+        background: #fff;
+    }
+
+    input {
+        width: 100%;
+        border: none;
+        padding: 6px;
+        box-sizing: border-box;
+        background: transparent;
+        text-align: center;
+    }
+
+    input:focus {
+        outline: 2px solid #0078d7;
+        background: #eef6ff;
+    }
+
+    .controls {
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    button {
+        background: #0078d7;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background: #005fa3;
+    }
+
+    .screen {
+        display: none;
+    }
+
+    #mainScreen button {
+        width: 250px;
+        font-size: 18px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <!-- MAIN HEADER -->
+    <table class="main-header">
+        <tr><td>HERITAGE FOODS LIMITED</td></tr>
+        <tr><td>QUALITY ASSURANCE MANUAL</td></tr>
+    </table>
+
+    <!-- ✅ MAIN SCREEN -->
+    <div id="mainScreen" class="screen" style="display:block;">
+        <h2>INCUBATION ROOM TEMPERATURE LOG</h2>
+
+        <div class="controls">
+            <button onclick="showEntry()">Entry View</button>
+            <button onclick="showReport()">Report View</button>
+        </div>
+    </div>
+
+    <!-- ✅ ENTRY VIEW -->
+    <div id="entryView" class="screen">
+
+        <h2>ENTRY VIEW</h2>
+
+        <!-- HEADER TABLE -->
+        <table class="header-table">
+            <tr>
+                <td class="header-title">ISSUE No.</td><td>04</td>
+                <td class="header-title">DATE</td><td>10.09.2013</td>
+            </tr>
+            <tr>
+                <td class="header-title">REV. No.</td><td>02</td>
+                <td class="header-title">REV. DATE</td><td>01.07.2017</td>
+            </tr>
+            <tr>
+                <td class="header-title">REF. NO.</td><td colspan="3">HFL/QA/PS/R-24</td>
+            </tr>
+        </table>
+
+        <div class="controls">
+            <button onclick="addRow()">Add Row</button>
+            <button onclick="deleteRow()">Delete Last Row</button>
+            <button onclick="saveJSON()">Save JSON</button>
+            <button onclick="document.getElementById('fileInput').click()">Load JSON</button>
+            <button onclick="goHome()">Back to Main</button>
+            <input type="file" id="fileInput" style="display:none" onchange="loadJSON(event)">
+        </div>
+
+        <table id="logTable">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Inc Room‑1</th>
+                <th>Inc Room‑2</th>
+                <th>Lab Asst. Signature</th>
+                <th>Operator Signature</th>
+                <th>Remarks</th>
+            </tr>
+            </thead>
+            <tbody id="logBody"></tbody>
+        </table>
+    </div>
+
+    <!-- ✅ REPORT VIEW -->
+    <div id="reportView" class="screen">
+
+        <h2>REPORT VIEW</h2>
+
+        <div class="controls">
+            <button onclick="document.getElementById('reportFileInput').click()">Load Multiple JSON Files</button>
+            <button onclick="goHome()">Back to Main</button>
+            <input type="file" id="reportFileInput" style="display:none" multiple onchange="renderReport(event)">
+        </div>
+
+        <table id="reportTable">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Inc Room‑1</th>
+                <th>Inc Room‑2</th>
+                <th>Lab Asst. Signature</th>
+                <th>Operator Signature</th>
+                <th>Remarks</th>
+            </tr>
+            </thead>
+            <tbody id="reportBody"></tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+// ✅ SCREEN NAVIGATION
+function goHome() {
+    hideAll();
+    document.getElementById("mainScreen").style.display = "block";
+}
+
+function showEntry() {
+    hideAll();
+    document.getElementById("entryView").style.display = "block";
+}
+
+function showReport() {
+    hideAll();
+    document.getElementById("reportView").style.display = "block";
+}
+
+function hideAll() {
+    document.querySelectorAll(".screen").forEach(s => s.style.display = "none");
+}
+
+// ✅ ENTRY VIEW LOGIC
+function addRow() {
+    const tbody = document.getElementById("logBody");
+    const tr = document.createElement("tr");
+
+    const fields = ["date", "time", "text", "text", "text", "text", "text"];
+
+    fields.forEach(type => {
+        const td = document.createElement("td");
+        const input = document.createElement("input");
+        input.type = type;
+        td.appendChild(input);
+        tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+}
+
+function deleteRow() {
+    const tbody = document.getElementById("logBody");
+    if (tbody.rows.length > 0) tbody.deleteRow(tbody.rows.length - 1);
+}
+
+function saveJSON() {
+    const tbody = document.getElementById("logBody");
+    const data = [];
+
+    for (let row of tbody.rows) {
+        const cells = row.querySelectorAll("input");
+        data.push({
+            date: cells[0].value,
+            time: cells[1].value,
+            inc1: cells[2].value,
+            inc2: cells[3].value,
+            lab: cells[4].value,
+            operator: cells[5].value,
+            remarks: cells[6].value
+        });
+    }
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "incubation_log.json";
+    a.click();
+}
+
+function loadJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        const data = JSON.parse(e.target.result);
+        const tbody = document.getElementById("logBody");
+        tbody.innerHTML = "";
+
+        data.forEach(row => {
+            addRow();
+            const last = tbody.lastElementChild.querySelectorAll("input");
+            last[0].value = row.date;
+            last[1].value = row.time;
+            last[2].value = row.inc1;
+            last[3].value = row.inc2;
+            last[4].value = row.lab;
+            last[5].value = row.operator;
+            last[6].value = row.remarks;
+        });
+    };
+
+    reader.readAsText(file);
+}
+
+// Add 2 blank rows initially
+addRow(); addRow();
+
+// ✅ REPORT VIEW (MULTIPLE DAYS + REMOVE DUPLICATES BASED ON DATE+TIME)
+function renderReport(event) {
+    const files = event.target.files;
+    let allData = [];
+    let loaded = 0;
+
+    for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = JSON.parse(e.target.result);
+                allData = allData.concat(data);
+            } catch {
+                alert("Invalid JSON: " + file.name);
+            }
+            loaded++;
+            if (loaded === files.length) displayReport(allData);
+        };
+        reader.readAsText(file);
+    }
+}
+
+function displayReport(data) {
+    const tbody = document.getElementById("reportBody");
+    tbody.innerHTML = "";
+
+    // ✅ Sort by date + time
+    data.sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+    // ✅ Remove duplicates based on DATE + TIME
+    const seen = new Set();
+    const uniqueData = [];
+
+    data.forEach(row => {
+        const key = (row.date || "") + "_" + (row.time || "");
+        if (!seen.has(key)) {
+            seen.add(key);
+            uniqueData.push(row);
+        }
+    });
+
+    // ✅ Render unique rows
+    uniqueData.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${row.date}</td>
+            <td>${row.time}</td>
+            <td>${row.inc1}</td>
+            <td>${row.inc2}</td>
+            <td>${row.lab}</td>
+            <td>${row.operator}</td>
+            <td>${row.remarks}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+</script>
+
+</body>
+</html>

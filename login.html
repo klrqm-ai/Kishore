@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  .logo-box {
+      width: 150px;
+      height: 60px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .logo-box img {
+      max-height: 60px;
+      width: auto;
+      align-items: center;
+      display: block;
+    }
+
+  body {
+    background:linear-gradient(135deg, rgba(30, 60, 114, 0.8) 0%, rgba(42, 82, 152, 0.8) 50%, rgba(102, 126, 234, 0.8) 100%);
+    font-family: Inter, sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    color:#e5e7eb;
+    margin:0;
+  }
+  .box {
+    background:#1e293b;
+    padding:30px;
+    border-radius:12px;
+    width:320px;
+    border:1px solid #334155;
+  }
+  h2 {
+    margin-top:0;
+    font-weight:600;
+    text-align:center;
+  }
+  input {
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #334155;
+    background:#0f172a;
+    color:#e5e7eb;
+    font-size:14px;
+  }
+  button {
+    width:100%;
+    padding:12px;
+    background:#3b82f6;
+    border:none;
+    border-radius:8px;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    font-size:15px;
+  }
+  #msg {
+    margin-top:10px;
+    text-align:center;
+    color:#f87171;
+    font-size:14px;
+  }
+</style>
+</head>
+
+<body>
+<!-- ✅ HEADER WITH LOGO -->
+    <div class="header">
+      <div class="logo-box">
+        <img src="E:\Digital Records\heritage_logo.png" alt="Heritage Foods Limited" />
+      </div>
+      <h1>HFL-Kalluru QA Records Portal</h1>
+    </div>
+
+<div class="box">
+  <h2>Digital Records Login</h2>
+
+  <input id="uid" placeholder="User ID">
+  <input id="pwd" type="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+  <p id="msg"></p>
+</div>
+
+<script>
+function login() {
+  const uid = document.getElementById("uid").value.trim();
+  const pwd = document.getElementById("pwd").value.trim();
+
+  // ⚠️ Local-only credentials (you can change these)
+  const USER = "admin";
+  const PASS = "1234";
+
+  if (uid === USER && pwd === PASS) {
+    window.location.href = "Dashboard.html";
+  } else {
+    document.getElementById("msg").textContent = "Invalid User ID or Password";
+  }
+}
+</script>
+</body>
+</html>

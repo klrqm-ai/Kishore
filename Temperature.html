@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Storage Temperature Record</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .meta {
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
+      table-layout: fixed;
+    }
+    th, td {
+      border: 1px solid #555;
+      padding: 4px;
+      text-align: center;
+      font-size: 13px;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    td[contenteditable="true"] {
+      background-color: #fcfcff;
+      cursor: text;
+    }
+    .controls {
+      text-align: center;
+      margin-top: 15px;
+    }
+    button {
+      margin: 0 5px;
+      padding: 6px 12px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    label[for="fileInput"] {
+      margin: 0 5px;
+      padding: 6px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .note {
+      font-size: 12px;
+      color: #555;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Storage Temperature Record</h1>
+
+  <div class="meta">
+    <strong>Date:</strong>
+    <span contenteditable="true" id="recordDate" style="border-bottom:1px dotted #999; padding:2px 4px;"></span>
+    &nbsp;&nbsp;&nbsp;
+    <strong>Shift / Responsible:</strong>
+    <span contenteditable="true" id="recordShift" style="border-bottom:1px dotted #999; padding:2px 4px;"></span>
+  </div>
+
+  <table id="tempTable">
+    <thead>
+      <tr>
+        <th>Storage / Time</th>
+        <th>07:00</th>
+        <th>11:00</th>
+        <th>15:00</th>
+        <th>19:00</th>
+        <th>23:00</th>
+        <th>03:00</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>MS-01</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-02</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-03</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-04</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-05</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-06</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-07</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-08</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-09</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>MS-10</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+
+      <tr><td>PM-01</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>PM-02</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>PM-03</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>PM-04</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+
+      <tr><td>CS-01</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>CS-02</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>CS-03</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+      <tr><td>CS-04</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+
+      <tr><td>IBT</td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>
+    </tbody>
+  </table>
+
+  <div class="controls">
+    <button onclick="clearTable()">Clear all</button>
+    <button onclick="downloadData()">Save data to file</button>
+    <label for="fileInput">Load saved file</label>
+    <input type="file" id="fileInput" accept=".json" onchange="loadDataFromFile(event)">
+  </div>
+
+  <div class="note">
+    This file stores data as a local JSON file on your computer. Load it again to continue modification.
+  </div>
+
+  <script>
+    /* ---------------- SAVE DATA ---------------- */
+    function getTableData() {
+      const table = document.getElementById('tempTable');
+      const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+      const data = {
+        date: document.getElementById('recordDate').innerText.trim(),
+        shift: document.getElementById('recordShift').innerText.trim(),
+        headers: [],
+        records: []
+      };
+
+      const headerCells = table.querySelectorAll('thead th');
+      data.headers = Array.from(headerCells).map(th => th.innerText.trim());
+
+      rows.forEach(row => {
+        const cells = Array.from(row.querySelectorAll('td'));
+        const storage = cells[0].innerText.trim();
+        const temps = cells.slice(1).map(td => td.innerText.trim());
+        data.records.push({ storage, temps });
+      });
+
+      return data;
+    }
+
+    function downloadData() {
+      const data = getTableData();
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+
+      const datePart = data.date ? data.date.replace(/[/\\:. ]+/g, '_') : 'record';
+      const filename = 'temperature_record_' + datePart + '.json';
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /* ---------------- LOAD DATA ---------------- */
+    function setTableData(data) {
+      if (!data) return;
+
+      document.getElementById('recordDate').innerText = data.date || "";
+      document.getElementById('recordShift').innerText = data.shift || "";
+
+      const table = document.getElementById('tempTable');
+      const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+      data.records.forEach((record, index) => {
+        if (rows[index]) {
+          const cells = Array.from(rows[index].querySelectorAll('td'));
+          record.temps.forEach((temp, i) => {
+            if (cells[i + 1]) cells[i + 1].innerText = temp;
+          });
+        }
+      });
+    }
+
+    function loadDataFromFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          setTableData(data);
+          alert('Data loaded successfully.');
+        } catch (err) {
+          alert('Invalid file format.');
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+
+    /* ---------------- CLEAR TABLE ---------------- */
+    function clearTable() {
+      if (!confirm('Clear all entered temperatures?')) return;
+
+      const table = document.getElementById('tempTable');
+      const editableCells = table.querySelectorAll('tbody td[contenteditable="true"]');
+      editableCells.forEach(cell => cell.innerText = '');
+
+      document.getElementById('recordDate').innerText = '';
+      document.getElementById('recordShift').innerText = '';
+    }
+
+    /* ---------------- ARROW KEY NAVIGATION ---------------- */
+    document.addEventListener("keydown", function (e) {
+      const cell = document.activeElement;
+
+      if (cell.tagName === "TD" && cell.isContentEditable) {
+        const row = cell.parentElement;
+        const table = document.getElementById("tempTable");
+        const rows = Array.from(table.querySelectorAll("tbody tr"));
+        const rowIndex = rows.indexOf(row);
+        const cellIndex = Array.from(row.children).indexOf(cell);
+
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          const nextRow = rows[rowIndex + 1];
+          if (nextRow) {
+            const nextCell = nextRow.children[cellIndex];
+            if (nextCell && nextCell.isContentEditable) nextCell.focus();
+          }
+        }
+
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          const prevRow = rows[rowIndex - 1];
+          if (prevRow) {
+            const prevCell = prevRow.children[cellIndex];
+            if (prevCell && prevCell.isContentEditable) prevCell.focus();
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

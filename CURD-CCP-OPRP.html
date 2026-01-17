@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>HERITAGE FOODS — CCP & OPRP Verification Report (Curd)</title>
+<style>
+  body { font-family: Arial, sans-serif; margin:20px; }
+  header { text-align:center; border-bottom:2px solid #0b6fb3; margin-bottom:16px; }
+  header h1 { margin:0; color:#0b6fb3; font-size:20px; }
+  header .meta { margin-top:6px; font-size:14px; color:#555; }
+  .header-line { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:12px 0; }
+  .header-line label { font-size:14px; color:#333; }
+  .header-line input[type="text"], .header-line input[type="date"] {
+    padding:6px 8px; font-size:14px;
+  }
+  .toolbar { margin:10px 0; text-align:center; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; }
+  button { padding:8px 12px; border:1px solid #0b6fb3; background:#0b6fb3; color:#fff; border-radius:6px; cursor:pointer; }
+  button.secondary { background:#fff; color:#0b6fb3; }
+  .status { text-align:center; font-size:13px; margin-top:6px; }
+  .status.ok { color:#197b30; }
+  .status.err { color:#b33a3a; }
+
+  table { border-collapse:collapse; width:100%; table-layout:auto; }
+  th, td { border:1px solid #ccc; padding:8px; vertical-align:top; word-wrap:break-word; }
+  th { background:#f0f0f0; }
+  input[type="time"], input[type="text"] { width:100%; box-sizing:border-box; padding:6px; font-size:14px; }
+  textarea { width:100%; min-height:200px; padding:8px; font-size:14px; box-sizing:border-box; }
+
+  @media print {
+    .toolbar, .status { display:none !important; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>HERITAGE FOODS LIMITED — CCP & OPRP Verification Report</h1>
+  <div class="meta">Rev No: 01 | Rev Date: 01/08/2022 | Ref No: HFL/PR/COM/R - 17 | Page No: 6 of 16</div>
+</header>
+
+<!-- Single-line header inputs -->
+<div class="header-line">
+  <label>Date: <input type="date" id="hdrDate"></label>
+  <label>Variant: <input type="text" id="hdrVariant" size="16" placeholder="e.g., 500g pouch"></label>
+  <label>Location: <input type="text" id="hdrLocation" size="16" placeholder="Plant / Line"></label>
+  <label>Product: <input type="text" id="hdrProduct" value="Curd" size="16"></label>
+</div>
+
+<div class="toolbar">
+  <button type="button" id="btnSave">Save (JSON)</button>
+  <button type="button" class="secondary" id="btnLoad">Load</button>
+  <input type="file" id="fileInput" accept=".json,application/json" style="display:none">
+  <button type="button" class="secondary" id="btnPrint">Print</button>
+  <button type="button" class="secondary" id="btnClear">Clear</button>
+</div>
+<div id="status" class="status" role="status" aria-live="polite"></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>S No</th><th>Product</th><th>CCP & OPRP</th><th>Requirement</th>
+      <th>Time1</th><th>Param1</th>
+      <th>Time2</th><th>Param2</th>
+      <th>Time3</th><th>Param3</th>
+      <th>Time4</th><th>Param4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Row 1 -->
+    <tr>
+      <td>1</td><td>Curd</td><td>CCP 01</td>
+      <td>Pasteurization of Curd Milk @ 92±2 ℃ / 6 or 10 minutes Holding</td>
+      <td><input type="time" id="r1_t1"></td><td><input type="text" id="r1_p1" placeholder="Temp ℃ / Hold min"></td>
+      <td><input type="time" id="r1_t2"></td><td><input type="text" id="r1_p2" placeholder="Temp ℃ / Hold min"></td>
+      <td><input type="time" id="r1_t3"></td><td><input type="text" id="r1_p3" placeholder="Temp ℃ / Hold min"></td>
+      <td><input type="time" id="r1_t4"></td><td><input type="text" id="r1_p4" placeholder="Temp ℃ / Hold min"></td>
+    </tr>
+    <!-- Row 2 -->
+    <tr>
+      <td>2</td><td>Curd</td><td>OPRP 01</td>
+      <td>Cleaning of Pouch Packing Machines and Filling Machines</td>
+      <td><input type="time" id="r2_t1"></td><td><input type="text" id="r2_p1" placeholder="Status/Reference"></td>
+      <td><input type="time" id="r2_t2"></td><td><input type="text" id="r2_p2" placeholder="Status/Reference"></td>
+      <td><input type="time" id="r2_t3"></td><td><input type="text" id="r2_p3" placeholder="Status/Reference"></td>
+      <td><input type="time" id="r2_t4"></td><td><input type="text" id="r2_p4" placeholder="Status/Reference"></td>
+    </tr>
+    <!-- Row 3 -->
+    <tr>
+      <td>3</td><td>Curd</td><td>OPRP 02</td>
+      <td>Checking the Integrity of Filters (Disc/ Nozzle/ Bag) in Packing/ Filling machines</td>
+      <td><input type="time" id="r3_t1"></td><td><input type="text" id="r3_p1" placeholder="OK/Replace/Notes"></td>
+      <td><input type="time" id="r3_t2"></td><td><input type="text" id="r3_p2" placeholder="OK/Replace/Notes"></td>
+      <td><input type="time" id="r3_t3"></td><td><input type="text" id="r3_p3" placeholder="OK/Replace/Notes"></td>
+      <td><input type="time" id="r3_t4"></td><td><input type="text" id="r3_p4" placeholder="OK/Replace/Notes"></td>
+    </tr>
+    <!-- Row 4 -->
+    <tr>
+      <td>4</td><td>Curd</td><td>OPRP 03</td>
+      <td>Shifting of curd to Cold store after attaining required acidity level</td>
+      <td><input type="time" id="r4_t1"></td><td><input type="text" id="r4_p1" placeholder="Acidity % / Status"></td>
+      <td><input type="time" id="r4_t2"></td><td><input type="text" id="r4_p2" placeholder="Acidity % / Status"></td>
+      <td><input type="time" id="r4_t3"></td><td><input type="text" id="r4_p3" placeholder="Acidity % / Status"></td>
+      <td><input type="time" id="r4_t4"></td><td><input type="text" id="r4_p4" placeholder="Acidity % / Status"></td>
+    </tr>
+    <!-- Row 5 -->
+    <tr>
+      <td>5</td><td>Curd</td><td>OPRP 04</td>
+      <td>Curd Cold Room Temperature to be maintained ≤ 5 ℃</td>
+      <td><input type="time" id="r5_t1"></td><td><input type="text" id="r5_p1" placeholder="Temp ℃"></td>
+      <td><input type="time" id="r5_t2"></td><td><input type="text" id="r5_p2" placeholder="Temp ℃"></td>
+      <td><input type="time" id="r5_t3"></td><td><input type="text" id="r5_p3" placeholder="Temp ℃"></td>
+      <td><input type="time" id="r5_t4"></td><td><input type="text" id="r5_p4" placeholder="Temp ℃"></td>
+    </tr>
+  </tbody>
+</table>
+
+<div style="margin-top:12px;">
+  <label>Remarks</label>
+  <textarea id="remarks" placeholder="Observations, deviations, corrective actions"></textarea>
+</div>
+
+<script>
+(function(){
+  const statusEl = document.getElementById('status');
+  const fileInput = document.getElementById('fileInput');
+
+  function showStatus(msg, ok=false){
+    statusEl.textContent = msg;
+    statusEl.className = 'status ' + (ok ? 'ok' : 'err');
+    if(ok){ setTimeout(()=>{ statusEl.textContent=''; statusEl.className='status'; }, 2500); }
+  }
+
+  function todayISO(){
+    const d = new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function collectData(){
+    return {
+      meta:{ revNo:'01', revDate:'01/08/2022', refNo:'HFL/PR/COM/R - 17', pageNo:'6 of 16', savedAt:new Date().toISOString() },
+      header:{
+        date: document.getElementById('hdrDate').value || '',
+        variant: document.getElementById('hdrVariant').value || '',
+        location: document.getElementById('hdrLocation').value || '',
+        product: document.getElementById('hdrProduct').value || ''
+      },
+      rows: [1,2,3,4,5].map(i=>({
+        sNo:i,
+        times:[1,2,3,4].map(j=>document.getElementById(`r${i}_t${j}`)?.value || ''),
+        params:[1,2,3,4].map(j=>document.getElementById(`r${i}_p${j}`)?.value || '')
+      })),
+      remarks: document.getElementById('remarks').value || ''
+    };
+  }
+
+  function validateBasic(){
+    const h = collectData().header;
+    if(!h.date || !h.variant || !h.location){
+      showStatus('Please fill Date, Variant, and Location before saving.');
+      return false;
+    }
+    return true;
+  }
+
+  function saveLocal(){
+    try{
+      if(!validateBasic()) return;
+      const data = collectData();
+      const variantSafe = (data.header.variant || 'variant').replace(/[^a-z0-9]+/gi,'_');
+      const locationSafe = (data.header.location || 'location').replace(/[^a-z0-9]+/gi,'_');
+      const dateSafe = (data.header.date || todayISO());
+      const filename = `Curd_CCP_OPRP_${dateSafe}_${variantSafe}_${locationSafe}.json`;
+
+      const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      showStatus('Saved: ' + filename, true);
+    } catch(e){
+      console.error(e); showStatus('Save failed.');
+    }
+  }
+
+  function loadLocal(file){
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      try{
+        const data = JSON.parse(e.target.result);
+        // Header
+        document.getElementById('hdrDate').value = data.header?.date || '';
+        document.getElementById('hdrVariant').value = data.header?.variant || '';
+        document.getElementById('hdrLocation').value = data.header?.location || '';
+        document.getElementById('hdrProduct').value = data.header?.product || 'Curd';
+        // Rows
+        (data.rows || []).forEach(r=>{
+          for(let j=1;j<=4;j++){
+            const t = r.times?.[j-1] || ''; const p = r.params?.[j-1] || '';
+            const tEl = document.getElementById(`r${r.sNo}_t${j}`); const pEl = document.getElementById(`r${r.sNo}_p${j}`);
+            if(tEl) tEl.value = t; if(pEl) pEl.value = p;
+          }
+        });
+        // Remarks
+        document.getElementById('remarks').value = data.remarks || '';
+        showStatus('Data loaded.', true);
+      } catch(err){
+        console.error(err); showStatus('Invalid JSON file.');
+      }
+    };
+    reader.onerror = ()=> showStatus('Could not read file.');
+    reader.readAsText(file);
+  }
+
+  function clearAll(){
+    if(!confirm('Clear all entries?')) return;
+    document.querySelectorAll('input[type="text"], input[type="time"], input[type="date"], textarea')
+      .forEach(el=>{
+        if(el.id==='hdrProduct'){ el.value='Curd'; return; }
+        if(el.id==='hdrDate'){ el.value=todayISO(); return; }
+        el.value='';
+      });
+    showStatus('Form cleared.', true);
+  }
+
+  // Bind after DOM is ready
+  window.addEventListener('DOMContentLoaded', ()=>{
+    // Default date today
+    if(!document.getElementById('hdrDate').value){ document.getElementById('hdrDate').value = todayISO(); }
+
+    document.getElementById('btnSave').addEventListener('click', saveLocal);
+    document.getElementById('btnLoad').addEventListener('click', ()=> fileInput.click());
+    document.getElementById('btnPrint').addEventListener('click', ()=> window.print());
+    document.getElementById('btnClear').addEventListener('click', clearAll);
+
+    fileInput.addEventListener('change', (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(file) loadLocal(file);
+      e.target.value = ''; // allow re-selecting same file
+    });
+  });
+})();
+</script>
+</body>
+</html>

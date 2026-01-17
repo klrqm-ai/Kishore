@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tanker Acknowledgement Report</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #0d47a1;
+        margin-bottom: 20px;
+    }
+
+    .tanker-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #1b325f;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        border: 1px solid #ccc;
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    th {
+        background: #e3f2fd;
+        text-align: left;
+    }
+
+    .section-title {
+        margin-top: 25px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #0d47a1;
+    }
+
+    .page-break {
+        page-break-after: always;
+    }
+
+    @media print {
+        button, input {
+            display: none;
+        }
+        body {
+            background: white;
+        }
+        .container {
+            box-shadow: none;
+            border: none;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<h2>Tanker Acknowledgement Report Viewer</h2>
+
+<div class="container">
+
+    <div style="text-align:center; margin-bottom:20px;">
+        <input type="file" id="fileInput" accept=".json">
+        <button onclick="loadJSON()">Load Report</button>
+        <button onclick="window.print()">Print</button>
+    </div>
+
+    <div id="reportBox"></div>
+
+</div>
+
+<script>
+let data = null;
+
+// Format datetime into DD-MM-YYYY HH:MM (handles ISO like 2025-12-17T14:50)
+function formatDT(dt) {
+    if (!dt) return "";
+    const d = new Date(dt);
+    if (isNaN(d)) return dt; // if not parseable, show raw
+
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yyyy = d.getFullYear();
+
+    const hh = String(d.getHours()).padStart(2, "0");
+    const min = String(d.getMinutes()).padStart(2, "0");
+
+    return `${dd}-${mm}-${yyyy} ${hh}:${min}`;
+}
+
+// Pick first non-empty among c1 / c2 / c3 for a given base key
+function pickTime(dispatchArrival, baseKey) {
+    if (!dispatchArrival) return "";
+    const c1 = dispatchArrival["c1" + baseKey] || "";
+    const c2 = dispatchArrival["c2" + baseKey] || "";
+    const c3 = dispatchArrival["c3" + baseKey] || "";
+
+    const raw = c1 || c2 || c3 || "";
+    return formatDT(raw);
+}
+
+// Load JSON file
+function loadJSON() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) {
+        alert("Please choose a JSON file.");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        data = JSON.parse(e.target.result);
+        showReports();
+    };
+    reader.readAsText(file);
+}
+
+// Build summary table
+function buildSummaryTable(tankers) {
+    let html = `
+        <h3 style="text-align:center; margin-top:20px;">Summary</h3>
+        <table>
+            <tr>
+                <th>S.No.</th>
+                <th>Received From</th>
+                <th>Despatched Date & Time</th>
+                <th>ACK Date & Time</th>
+            </tr>
+    `;
+
+    tankers.forEach((t, i) => {
+        const da = t.parameters.dispatchArrival || {};
+        const dispatch = pickTime(da, "Inv"); // c1Inv/c2Inv/c3Inv
+        const ack      = pickTime(da, "Ack"); // c1Ack/c2Ack/c3Ack
+
+        html += `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${t.receivedFrom || ""}</td>
+                <td>${dispatch}</td>
+                <td>${ack}</td>
+            </tr>
+        `;
+    });
+
+    html += `</table><hr style="margin:30px 0;">`;
+    return html;
+}
+
+// Show ACK reports
+function showReports() {
+    if (!data || !data.tankers) {
+        alert("Invalid JSON format.");
+        return;
+    }
+
+    let html = buildSummaryTable(data.tankers);
+
+    data.tankers.forEach((t, index) => {
+
+        const da = t.parameters.dispatchArrival || {};
+        const dispatchTime = pickTime(da, "Inv");
+        const ackTime      = pickTime(da, "Ack");
+
+        html += `
+            <div style="text-align:center; margin-bottom:10px;">
+                </div>
+
+            <div class="tanker-title">Tanker ${index + 1} – ACK Report</div>
+
+            <table>
+                <tr><th>Date</th><td>${data.date || ""}</td></tr>
+                <tr><th>Received From</th><td>${t.receivedFrom || ""}</td></tr>
+                <tr><th>Tanker No</th><td>${t.tankerNo || ""}</td></tr>
+                <tr><th>Despatched Date & Time</th><td>${dispatchTime}</td></tr>
+                <tr><th>ACK Date & Time</th><td>${ackTime}</td></tr>
+            </table>
+
+            <div class="section-title">Quality Parameters – ACK</div>
+            <table>
+                <tr>
+                    <th>Parameter</th>
+                    <th>C1 ACK</th>
+                    <th>C2 ACK</th>
+                    <th>C3 ACK</th>
+                </tr>
+        `;
+
+        // Loop through all parameters except dispatchArrival
+        Object.keys(t.parameters).forEach(key => {
+            if (key === "dispatchArrival") return;
+
+            const p = t.parameters[key];
+            const label = key
+                .replace(/([A-Z])/g, " $1")
+                .replace(/^./, c => c.toUpperCase());
+
+            html += `
+                <tr>
+                    <td>${label}</td>
+                    <td>${p.c1Ack || ""}</td>
+                    <td>${p.c2Ack || ""}</td>
+                    <td>${p.c3Ack || ""}</td>
+                </tr>
+            `;
+        });
+
+        // Additional Information (distributed across all cells)
+        html += `
+            <tr><td>Adulterants</td>
+                <td>${t.extra.adulterants || ""}</td>
+                <td>${t.extra.adulterants || ""}</td>
+                <td>${t.extra.adulterants || ""}</td>
+            </tr>
+
+            <tr><td>Neutralizers</td>
+                <td>${t.extra.neutralizers || ""}</td>
+                <td>${t.extra.neutralizers || ""}</td>
+                <td>${t.extra.neutralizers || ""}</td>
+            </tr>
+
+            <tr><td>Preservatives</td>
+                <td>${t.extra.preservatives || ""}</td>
+                <td>${t.extra.preservatives || ""}</td>
+                <td>${t.extra.preservatives || ""}</td>
+            </tr>
+
+            <tr><td>Sample Taken By</td>
+                <td>${t.extra.sampleTakenBy || ""}</td>
+                <td>${t.extra.sampleTakenBy || ""}</td>
+                <td>${t.extra.sampleTakenBy || ""}</td>
+            </tr>
+
+            <tr><td>Tested By</td>
+                <td>${t.extra.testedBy || ""}</td>
+                <td>${t.extra.testedBy || ""}</td>
+                <td>${t.extra.testedBy || ""}</td>
+            </tr>
+
+            <tr><td>Remarks</td>
+                <td>${t.extra.remarks || ""}</td>
+                <td>${t.extra.remarks || ""}</td>
+                <td>${t.extra.remarks || ""}</td>
+            </tr>
+
+            </table>
+
+            <div class="page-break"></div>
+        `;
+    });
+
+    document.getElementById("reportBox").innerHTML = html;
+}
+</script>
+
+</body>
+</html>

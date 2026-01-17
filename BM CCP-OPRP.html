@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CCP & OPRP Verification Report</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+table, th, td {
+    border: 1px solid #000;
+}
+th, td {
+    padding: 6px;
+    font-size: 13px;
+    vertical-align: top;
+}
+input, textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    font-size: 13px;
+    resize: vertical;
+}
+textarea {
+    min-height: 50px;
+}
+.btn-bar {
+    margin-bottom: 15px;
+}
+button {
+    padding: 6px 12px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+</style>
+
+</head>
+<body>
+
+<h2>CCP & OPRP Verification Report</h2>
+
+<div class="btn-bar">
+    <button onclick="saveJSON()">Save JSON</button>
+    <button onclick="document.getElementById('jsonFile').click()">Load JSON</button>
+    <input type="file" id="jsonFile" accept=".json" style="display:none" onchange="loadJSON(event)">
+    <button onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<form id="ccpForm">
+
+<h3>General Information</h3>
+<table>
+<tr>
+    <td>Date</td>
+    <td><input type="date" name="date1"></td>
+    <td>Variant</td>
+    <td><input type="text" name="variant1"></td>
+    <td>Location</td>
+    <td><input type="text" name="location1"></td>
+</tr>
+</table>
+
+<h3>CCP & OPRP Verification</h3>
+
+<table id="recordTable">
+<thead>
+<tr>
+    <th>S No</th>
+    <th>Product</th>
+    <th>CCP/OPRP</th>
+    <th>Requirement</th>
+    <th>Time 1</th>
+    <th>Record 1</th>
+    <th>Time 2</th>
+    <th>Record 2</th>
+    <th>Time 3</th>
+    <th>Record 3</th>
+    <th>Time 4</th>
+    <th>Record 4</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+</table>
+
+<h3>Remarks</h3>
+<textarea name="remarks"></textarea>
+
+</form>
+
+<script>
+// ✅ CCP/OPRP rows
+const rows = [
+    ["Butter Milk","CCP 01","Pasteurization of Water @ 80±3 °C / 15 Seconds Holding"],
+    ["Butter Milk","OPRP 01","Product thermization at 70±1 ℃ & cooled to < 5 ℃"],
+    ["Butter Milk","OPRP 02","Cleaning of Pouch Packing Machines and Filling Machines"],
+    ["Butter Milk","OPRP 03","Checking Integrity of Filters (Disc/Nozzle/Bag)"],
+    ["Butter Milk","OPRP 04","Cold Room Temperature ≤ 5 ℃"],
+    ["Butter Milk","OPRP 05","Heating of cut open & flush out curd to 60–65 ℃"]
+];
+
+// ✅ Build table dynamically
+const tbody = document.getElementById("tableBody");
+rows.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+        <td>${i+1}</td>
+        <td><input name="product_${i}" value="${r[0]}"></td>
+        <td><input name="ccp_${i}" value="${r[1]}"></td>
+        <td><textarea name="req_${i}">${r[2]}</textarea></td>
+
+        <td><input type="time" name="t1_${i}"></td>
+        <td><input name="s1_${i}"></td>
+
+        <td><input type="time" name="t2_${i}"></td>
+        <td><input name="s2_${i}"></td>
+
+        <td><input type="time" name="t3_${i}"></td>
+        <td><input name="s3_${i}"></td>
+
+        <td><input type="time" name="t4_${i}"></td>
+        <td><input name="s4_${i}"></td>
+    `;
+    tbody.appendChild(tr);
+});
+
+// ✅ Navigation: Up/Down (vertical), Left/Right (horizontal), Enter = Down
+document.addEventListener("keydown", function(e) {
+    const fields = Array.from(document.querySelectorAll("input, textarea"));
+    const active = document.activeElement;
+    const index = fields.indexOf(active);
+    if (index === -1) return;
+
+    let nextIndex = null;
+
+    if (e.key === "ArrowDown" || e.key === "Enter") {
+        // Move to next field in sequence (downwards for operator)
+        nextIndex = index + 1;
+    } else if (e.key === "ArrowUp") {
+        // Move to previous field in sequence (upwards)
+        nextIndex = index - 1;
+    } else if (e.key === "ArrowRight") {
+        // Move to next field in same logical sequence (usually right)
+        nextIndex = index + 1;
+    } else if (e.key === "ArrowLeft") {
+        // Move to previous field in same logical sequence (usually left)
+        nextIndex = index - 1;
+    }
+
+    if (nextIndex !== null && fields[nextIndex]) {
+        fields[nextIndex].focus();
+        e.preventDefault();
+    }
+});
+
+// ✅ SAVE JSON
+function saveJSON() {
+    const form = document.getElementById("ccpForm");
+    const data = {};
+
+    [...new FormData(form).entries()].forEach(([key, value]) => {
+        data[key] = value;
+    });
+
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "ccp_oprp_record.json";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ✅ LOAD JSON
+function loadJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const data = JSON.parse(e.target.result);
+
+        Object.keys(data).forEach(key => {
+            const field = document.querySelector(`[name="${key}"]`);
+            if (field) field.value = data[key];
+        });
+
+        alert("JSON loaded successfully");
+    };
+    reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>

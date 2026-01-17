@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CIP Record - Heritage Foods</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f0f8ff; }
+        .header { background: #0078d4; color: #fff; padding: 12px; text-align: center; font-size: 22px; font-weight: bold; position: sticky; top: 0; z-index: 10; }
+        .status-stamp { font-size: 14px; font-weight: bold; margin-top: 6px; }
+        .controls { background: #e6e6e6; padding: 10px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; position: sticky; top: 52px; z-index: 9; border-bottom: 2px solid #b0bec5; }
+        button { padding: 8px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,0.2); transition: all 0.3s; }
+        button:hover { transform: translateY(-1px); }
+        .save-btn { background: #1976d2; color: #fff; }
+        .load-btn { background: #455a64; color: #fff; }
+        .print-btn { background: #2e7d32; color: #fff; }
+        .add-row-btn { background: #fb8c00; color: #fff; }
+        .delete-row-btn { background: #e53935; color: #fff; }
+        .approve-btn { background: #43a047; color: #fff; }
+        .lock-btn { background: #8e24aa; color: #fff; }
+        .unlock-btn { background: #00acc1; color: #fff; }
+        .view-btn { 
+            background: linear-gradient(135deg, #ff9800, #e68900); 
+            color: #fff; 
+            font-weight: 700;
+            box-shadow: 0 4px 8px rgba(255,152,0,0.4);
+        }
+        .table-container { max-height: calc(100vh - 170px); overflow-y: auto; border: 2px solid #90caf9; background: #fff; margin: 10px; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: #1976d2; color: #fff; position: sticky; top: 0; z-index: 2; padding: 8px; border: 1px solid #1565c0; }
+        td { border: 1px solid #cfd8dc; padding: 4px; }
+        input, select { width: 95%; padding: 4px; font-size: 12px; border: 1px solid #b0bec5; border-radius: 4px; }
+        input:disabled, select:disabled { background: #eeeeee; }
+        .row-focus { background-color: #fff3cd !important; }
+        .fileInput { display: none; }
+        
+        /* ========== PERFECT VIEW MODE ========== */
+        body.view-mode { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important; }
+        body.view-mode input, body.view-mode select, body.view-mode th, body.view-mode td { pointer-events: none !important; }
+        body.view-mode .controls * { pointer-events: auto !important; }
+        body.view-mode .header { background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important; box-shadow: 0 4px 12px rgba(40,167,69,0.3); }
+        body.view-mode .status-stamp { background: rgba(255,255,255,0.9); padding: 4px 8px; border-radius: 12px; color: #155724; font-size: 16px; }
+        body.view-mode input, body.view-mode select { background: linear-gradient(145deg, #f8f9fa, #e9ecef) !important; border: 3px solid #28a745 !important; color: #212529 !important; font-weight: 600; }
+        body.view-mode table { border: 4px solid #28a745 !important; box-shadow: 0 8px 24px rgba(40,167,69,0.2); }
+        body.view-mode th { background: linear-gradient(135deg, #28a745, #20c997) !important; color: white !important; font-weight: 700; }
+        
+        @media print { .controls { display: none; } .header { position: static; } th { background: #eee !important; color: #000 !important; } }
+    </style>
+</head>
+<body>
+    <div class="header" id="header">
+        HERITAGE FOODS LIMITED - CIP RECORD
+        <div class="status-stamp" id="statusStamp"></div>
+    </div>
+
+    <div style="padding:10px 20px; font-size:13px; background:#fff; border-bottom:2px solid #90caf9;">
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td><strong>ISSUE No.</strong></td><td>04</td>
+                <td><strong>DATE</strong></td><td>10/09/2013</td>
+                <td><strong>REV. No.</strong></td><td>02</td>
+                <td><strong>REV. DATE</strong></td><td>01/07/2017</td>
+                <td><strong>REF. No.</strong></td><td>HFL/QA/PSF-02/KLR</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="controls">
+        <button class="save-btn" onclick="saveToFile()">💾 Save</button>
+        <button class="load-btn" onclick="document.getElementById('fileInput').click()">📂 Load</button>
+        <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+        <button class="add-row-btn" onclick="addRow()">➕ Add Row</button>
+        <button class="delete-row-btn" onclick="deleteRow()">🗑️ Delete</button>
+        <button class="approve-btn" onclick="approveHeader()">✅ Approve</button>
+        <button class="lock-btn" onclick="lockHeader()">🔒 Lock</button>
+        <button class="unlock-btn" onclick="unlockHeader()">🔓 Unlock</button>
+        <button class="view-btn" id="viewToggleBtn" onclick="toggleViewMode()">👁️ View Mode</button>
+        <input type="file" id="fileInput" accept=".json" onchange="loadFromFile(event)" class="fileInput">
+    </div>
+
+    <div class="table-container">
+        <table id="cipTable">
+            <tr id="headerRow">
+                <th>Date</th><th>Resource</th><th>CIP Start</th><th>CIP End</th><th>Type</th>
+                <th>C1 Strength</th><th>C1 Temp</th><th>C1 Circ</th>
+                <th>N Strength</th><th>N Temp</th><th>N Circ</th>
+                <th>C2 Strength</th><th>C2 Temp</th><th>C2 Circ</th>
+                <th>HW Temp</th><th>HW Circ</th><th>Chem Residue</th><th>Lab Assistant</th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        var currentUser = "QAManager";
+        var auditLog = [];
+        var headerStatus = { date: new Date().toISOString().slice(0,10), approved: false, locked: false, user: null, timestamp: null };
+        var isViewMode = false;
+
+        function getTimestamp() { return new Date().toISOString(); }
+        function logAction(action, extra) { auditLog.push({ action, user: currentUser, timestamp: getTimestamp(), extra: extra || null }); console.log("AUDIT:", action, extra); }
+        
+        function updateStatusStamp(text, color) {
+            document.getElementById('statusStamp').innerText = text;
+            document.getElementById('header').style.backgroundColor = color;
+        }
+
+        function updateFields(row) {
+            var typeControl = row.querySelector('.cip-type');
+            if (!typeControl) return;
+            var type = typeControl.value;
+            var c1 = row.querySelectorAll('.c1'), nitric = row.querySelectorAll('.nitric'), c2 = row.querySelectorAll('.c2'), hw = row.querySelectorAll('.hw'), residue = row.querySelectorAll('.residue');
+            
+            function set(group, enabled) {
+                for (var i = 0; i < group.length; i++) {
+                    group[i].disabled = !enabled;
+                    group[i].style.backgroundColor = enabled ? '#ffffff' : '#eeeeee';
+                }
+            }
+            
+            if (type === 'Manual') { set(c1, false); set(nitric, false); set(c2, false); set(hw, false); set(residue, true); }
+            else if (type === 'Caustic-Hot Water') { set(c1, true); set(hw, true); set(residue, true); set(nitric, false); set(c2, false); }
+            else if (type === 'C-N-C') { set(c1, true); set(nitric, true); set(c2, true); set(hw, true); set(residue, true); }
+            else if (type === 'Hot Water') { set(hw, true); set(residue, true); set(c1, false); set(nitric, false); set(c2, false); }
+            else { set(c1, true); set(nitric, true); set(c2, true); set(hw, true); set(residue, true); }
+        }
+
+        function approveHeader() { if (headerStatus.approved) return alert("Already approved"); headerStatus.approved = true; headerStatus.user = currentUser; headerStatus.timestamp = getTimestamp(); updateStatusStamp("✅ APPROVED by " + currentUser, "#43a047"); logAction("Approved", { date: headerStatus.date }); }
+        function lockHeader() { if (headerStatus.locked) return alert("Already locked"); headerStatus.locked = true; headerStatus.user = currentUser; headerStatus.timestamp = getTimestamp(); disableAllRows(true); updateStatusStamp("🔒 LOCKED by " + currentUser, "#8e24aa"); logAction("Locked", { date: headerStatus.date }); }
+        function unlockHeader() { if (!headerStatus.locked) return alert("Not locked"); headerStatus.locked = false; headerStatus.user = currentUser; headerStatus.timestamp = getTimestamp(); disableAllRows(false); updateStatusStamp("🔓 UNLOCKED by " + currentUser, "#0078d4"); logAction("Unlocked", { date: headerStatus.date }); }
+        
+        function disableAllRows(lock) {
+            var rows = document.querySelectorAll('#cipTable tr');
+            for (var i = 1; i < rows.length; i++) {
+                rows[i].querySelectorAll('input, select').forEach(function(inp) {
+                    inp.disabled = lock;
+                    inp.style.backgroundColor = lock ? '#eeeeee' : '#ffffff';
+                });
+            }
+        }
+
+        function addRow(data) {
+            if (data === undefined) data = {};
+            var table = document.getElementById('cipTable');
+            var row = table.insertRow(-1);
+            row.innerHTML = `
+                <td><input type="date" value="${data.date || ''}"></td>
+                <td><input type="text" value="${data.resource || ''}"></td>
+                <td><input type="time" value="${data.start || ''}"></td>
+                <td><input type="time" value="${data.end || ''}"></td>
+                <td><select class="cip-type" onchange="updateFields(this.closest('tr'))">
+                    <option value="Select">Select</option><option value="Manual">Manual</option>
+                    <option value="Caustic-Hot Water">Caustic-Hot Water</option><option value="C-N-C">C-N-C</option>
+                    <option value="Hot Water">Hot Water</option>
+                </select></td>
+                <td><input type="number" class="c1" value="${data.c1s || ''}"></td>
+                <td><input type="number" class="c1" value="${data.c1t || ''}"></td>
+                <td><input type="text" class="c1" value="${data.c1c || ''}"></td>
+                <td><input type="number" class="nitric" value="${data.ns || ''}"></td>
+                <td><input type="number" class="nitric" value="${data.nt || ''}"></td>
+                <td><input type="text" class="nitric" value="${data.nc || ''}"></td>
+                <td><input type="number" class="c2" value="${data.c2s || ''}"></td>
+                <td><input type="number" class="c2" value="${data.c2t || ''}"></td>
+                <td><input type="text" class="c2" value="${data.c2c || ''}"></td>
+                <td><input type="number" class="hw" value="${data.hwt || ''}"></td>
+                <td><input type="text" class="hw" value="${data.hwc || ''}"></td>
+                <td><select class="residue"><option value="Select">Select</option><option value="Absent">Absent</option><option value="Present">Present</option></select></td>
+                <td><input type="text" value="${data.lab || ''}"></td>`;
+            if (data.type) row.querySelector('.cip-type').value = data.type;
+            if (data.residue) row.querySelector('.residue').value = data.residue;
+            updateFields(row);
+        }
+
+        function deleteRow() {
+            if (headerStatus.locked) return alert("Record is locked");
+            var table = document.getElementById('cipTable');
+            var rowCount = table.rows.length;
+            var active = document.activeElement.closest('tr');
+            if (active && active.rowIndex > 0) { table.deleteRow(active.rowIndex); logAction("Row Deleted", { rowIndex: active.rowIndex }); return; }
+            if (rowCount > 1) { table.deleteRow(rowCount - 1); logAction("Row Deleted", { rowIndex: rowCount - 1 }); }
+        }
+
+        function saveToFile() {
+            var rows = document.querySelectorAll('#cipTable tr');
+            var data = [];
+            for (var i = 1; i < rows.length; i++) {
+                var cells = rows[i].querySelectorAll('td');
+                if (cells.length === 0) continue;
+                data.push({
+                    date: cells[0].querySelector('input').value, resource: cells[1].querySelector('input').value,
+                    start: cells[2].querySelector('input').value, end: cells[3].querySelector('input').value,
+                    type: cells[4].querySelector('select').value, c1s: cells[5].querySelector('input').value,
+                    c1t: cells[6].querySelector('input').value, c1c: cells[7].querySelector('input').value,
+                    ns: cells[8].querySelector('input').value, nt: cells[9].querySelector('input').value,
+                    nc: cells[10].querySelector('input').value, c2s: cells[11].querySelector('input').value,
+                    c2t: cells[12].querySelector('input').value, c2c: cells[13].querySelector('input').value,
+                    hwt: cells[14].querySelector('input').value, hwc: cells[15].querySelector('input').value,
+                    residue: cells[16].querySelector('select').value, lab: cells[17].querySelector('input').value
+                });
+            }
+            var payload = { headerStatus, records: data, auditTrail: auditLog };
+            var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+            a.download = `CIPRecord_${new Date().toISOString().slice(0,10)}.json`; a.click();
+            logAction("Saved", { rows: data.length });
+        }
+
+        function loadFromFile(event) {
+            var file = event.target.files[0]; if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var payload = JSON.parse(e.target.result);
+                    headerStatus = payload.headerStatus || headerStatus;
+                    auditLog = payload.auditTrail || [];
+                    
+                    var table = document.getElementById('cipTable');
+                    table.innerHTML = document.getElementById('headerRow').outerHTML;
+                    
+                    (payload.records || []).forEach(addRow);
+                    
+                    if (headerStatus.locked) disableAllRows(true);
+                    if (headerStatus.approved) updateStatusStamp("✅ APPROVED by " + headerStatus.user, "#43a047");
+                    else if (headerStatus.locked) updateStatusStamp("🔒 LOCKED by " + headerStatus.user, "#8e24aa");
+                    
+                    logAction("Loaded", { file: file.name });
+                } catch(err) { alert("Invalid JSON"); }
+            };
+            reader.readAsText(file);
+        }
+
+        // ========== PERFECT VIEW MODE TOGGLE ==========
+        function toggleViewMode() {
+            isViewMode = !isViewMode;
+            var btn = document.getElementById('viewToggleBtn');
+            var body = document.body;
+            
+            if (isViewMode) {
+                body.classList.add('view-mode');
+                btn.innerHTML = '✏️ Edit Mode';
+                btn.style.background = '#dc3545';
+                updateStatusStamp("📋 VIEW MODE - " + (headerStatus.locked ? "🔒 LOCKED" : "✏️ READY"), "#28a745");
+                logAction("View Mode ON");
+            } else {
+                body.classList.remove('view-mode');
+                btn.innerHTML = '👁️ View Mode';
+                btn.style.background = 'linear-gradient(135deg, #ff9800, #e68900)';
+                if (headerStatus.locked) {
+                    updateStatusStamp("🔒 LOCKED by " + headerStatus.user, "#8e24aa");
+                    disableAllRows(true);
+                } else {
+                    updateStatusStamp("", "#0078d4");
+                }
+                logAction("View Mode OFF");
+            }
+        }
+
+        // Navigation
+        document.getElementById('cipTable').addEventListener('keydown', function(e) {
+            if (['ArrowUp','ArrowDown','Enter'].indexOf(e.key) < 0 || ['INPUT','SELECT'].indexOf(e.target.tagName) < 0) return;
+            var tr = e.target.closest('tr'), td = e.target.closest('td');
+            var nextRow = tr.rowIndex + (e.key === 'ArrowUp' ? -1 : 1);
+            var table = document.getElementById('cipTable');
+            if (nextRow < 1 || nextRow >= table.rows.length) return;
+            var nextInput = table.rows[nextRow].cells[td.cellIndex].querySelector('input, select');
+            if (nextInput && !nextInput.disabled) { nextInput.focus(); nextInput.select(); }
+            e.preventDefault();
+        });
+
+        // Initialize
+        for (var i = 0; i < 5; i++) addRow();
+    </script>
+</body>
+</html>

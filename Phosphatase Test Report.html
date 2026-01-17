@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>HERITAGE FOODS LIMITED QA — Phosphatase Test Report</title>
+
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input[type="text"], input[type="time"], select {
+  width: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+input:focus, select:focus {
+  border-color: #3b82f6;
+  outline: none;
+  background: #f0f9ff;
+}
+tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+th {
+  background: #e8f0fe;
+  color: #1e3a8a;
+  font-weight: 600;
+}
+    header { text-align: center; border-bottom: 2px solid #333; margin-bottom: 16px; color: #fd7e14; }
+    header h1 { margin: 0; font-size: 22px; color: #fd7e14; }
+    header h2 { margin: 4px 0 0; font-size: 16px; color: #fd7e14; }
+
+    .meta {
+      display: flex; justify-content: center; gap: 40px;
+      margin: 12px 0 20px; font-size: 14px;
+    }
+    .meta div { white-space: nowrap; }
+
+    .toolbar { text-align: center; margin: 14px 0 18px; }
+    .toolbar button { margin: 0 6px; padding: 8px 12px; font-size: 14px; }
+
+    /* Scrollable container */
+    .table-container {
+      max-height: 70vh;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+    }
+
+    /* Table layout fixed for stable column widths */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+      word-wrap: break-word;
+    }
+
+    th { background: #eef; }
+
+    /* Sticky header rows */
+    thead tr:nth-child(1) th {
+      position: sticky;
+      top: 0;
+      background: #eef;
+      z-index: 5;
+    }
+
+    thead tr:nth-child(2) th {
+      position: sticky;
+      top: 32px;
+      background: #eef;
+      z-index: 4;
+    }
+
+    thead tr:nth-child(3) th {
+      position: sticky;
+      top: 64px;
+      background: #eef;
+      z-index: 3;
+    }
+
+    /* Column width definitions (medium size) */
+    th:nth-child(1), td:nth-child(1) { width: 100px; } /* Location */
+    th:nth-child(2), td:nth-child(2) { width: 100px; } /* Type of milk */
+    th:nth-child(3), td:nth-child(3) { width: 100px; } /* Start time */
+
+    /* Observation columns (7 columns) */
+    th:nth-child(4), td:nth-child(4),
+    th:nth-child(5), td:nth-child(5),
+    th:nth-child(6), td:nth-child(6),
+    th:nth-child(7), td:nth-child(7),
+    th:nth-child(8), td:nth-child(8),
+    th:nth-child(9), td:nth-child(9),
+    th:nth-child(10), td:nth-child(10) {
+      width: 95px;
+    }
+
+    th:nth-child(11), td:nth-child(11) { width: 100px; } /* End time */
+    th:nth-child(12), td:nth-child(12) { width: 100px; } /* Total hours */
+    th:nth-child(13), td:nth-child(13) { width: 120px; } /* Remark */
+    th:nth-child(14), td:nth-child(14) { width: 80px; }  /* Sign */
+
+    input[type="text"], input[type="time"], select {
+  width: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+    @media print {
+      .toolbar { display: none; }
+      .table-container { max-height: none; overflow: visible; }
+      thead th { position: static; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <h1>HERITAGE FOODS LIMITED — QUALITY ASSURANCE</h1>
+    <h2>Phosphatase Test Report</h2>
+  </header>
+
+  <div class="meta">
+    <div>Rev. No.: <strong>03</strong></div>
+    <div>Rev. Date: <strong>22.05.2021</strong></div>
+    <div>Ref. No.: <strong>HFL/QA/PS/F-03</strong></div>
+    <div>Record Date: <input type="text" id="recordDate" placeholder="DD.MM.YYYY" /></div>
+  </div>
+
+  <div class="toolbar">
+    <button onclick="addRow()">Add row</button>
+    <button onclick="saveData()">Save</button>
+    <button onclick="loadData()">Load</button>
+    <button onclick="window.print()">Print</button>
+  </div>
+
+  <div class="table-container">
+    <table id="ptTable">
+      <thead>
+        <tr><th colspan="14">PHOSPHATASE</th></tr>
+
+        <tr>
+          <th rowspan="2">Location / Source</th>
+          <th rowspan="2">Type of milk</th>
+          <th rowspan="2">Start time</th>
+          <th colspan="7">Observation after (hrs)</th>
+          <th rowspan="2">End time</th>
+          <th rowspan="2">Total hours</th>
+          <th rowspan="2">Remark</th>
+          <th rowspan="2">Sign</th>
+        </tr>
+
+        <tr>
+          <th>00:30</th><th>00:45</th><th>01:00</th>
+          <th>01:15</th><th>01:30</th><th>01:45</th><th>02:00</th>
+        </tr>
+      </thead>
+
+      <tbody id="ptBody"></tbody>
+    </table>
+  </div>
+
+<script>
+function obsCell(selected='') {
+  return `<td>
+    <select>
+      <option value="">Select</option>
+      <option ${selected==='Negative'?'selected':''}>Negative</option>
+      <option ${selected==='Trace'?'selected':''}>Trace</option>
+      <option ${selected==='Positive'?'selected':''}>Positive</option>
+    </select>
+  </td>`;
+}
+
+function addRow(prefill=null) {
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input type="text" value="${prefill?.location||''}" placeholder=""/></td>
+    <td><input type="text" value="${prefill?.milkType||''}" placeholder=""/></td>
+    <td><input type="time" class="start" value="${prefill?.startTime||''}"/></td>
+    ${Array(7).fill(0).map((_,i)=>obsCell(prefill?.obs?.[i]||'')).join('')}
+    <td><input type="time" class="end" value="${prefill?.endTime||''}"/></td>
+    <td><input type="text" class="total" value="${prefill?.totalHours||''}" readonly/></td>
+    <td><input type="text" value="${prefill?.remark||''}" placeholder=""/></td>
+    <td><input type="text" value="${prefill?.sign||''}" placeholder=""/></td>`;
+  document.getElementById('ptBody').appendChild(tr);
+
+  const start=tr.querySelector('.start'),
+        end=tr.querySelector('.end'),
+        total=tr.querySelector('.total');
+
+  [start,end].forEach(el=>el.addEventListener('change',()=>{
+    total.value=calcHours(start.value,end.value);
+  }));
+}
+
+function calcHours(start,end){
+  if(!start||!end) return '';
+  const [sh,sm]=start.split(':').map(Number),
+        [eh,em]=end.split(':').map(Number);
+  let s=sh*60+sm, e=eh*60+em;
+  if(e<s) e+=24*60;
+  const diff=e-s, h=Math.floor(diff/60), m=diff%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+
+function saveData(){
+  const rows=[];
+  document.querySelectorAll('#ptBody tr').forEach(tr=>{
+    const c=tr.querySelectorAll('td');
+    rows.push({
+      location:c[0].querySelector('input').value,
+      milkType:c[1].querySelector('input').value,
+      startTime:c[2].querySelector('input').value,
+      obs:Array.from(c).slice(3,10).map(td=>td.querySelector('select').value),
+      endTime:c[10].querySelector('input').value,
+      totalHours:c[11].querySelector('input').value,
+      remark:c[12].querySelector('input').value,
+      sign:c[13].querySelector('input').value
+    });
+  });
+
+  const meta={
+    revNo:'03', revDate:'22.05.2021', refNo:'HFL/QA/PS/F-03',
+    recordDate:document.getElementById('recordDate').value
+  };
+
+  const blob=new Blob([JSON.stringify({meta,rows},null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='phosphatase_report.json';
+  a.click();
+}
+
+function loadData(){
+  const input=document.createElement('input');
+  input.type='file';
+  input.accept='application/json';
+
+  input.onchange=async()=>{
+    const file=input.files[0];
+    if(!file) return;
+    const text=await file.text();
+    const {meta,rows}=JSON.parse(text);
+
+    document.getElementById('recordDate').value=meta?.recordDate||'';
+
+    const tbody=document.getElementById('ptBody');
+    tbody.innerHTML='';
+    (rows||[]).forEach(r=>addRow(r));
+  };
+
+  input.click();
+}
+
+// start with one row
+addRow();
+</script>
+
+</body>
+</html>

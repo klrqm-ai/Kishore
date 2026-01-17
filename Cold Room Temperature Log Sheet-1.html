@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cold Room Temperature Log Sheet</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin:20px; }
+    h1 { font-size:18px; color:#0b5fa4; }
+    table { border-collapse: collapse; width:100%; margin-top:10px; }
+    th, td { border:1px solid #ccc; padding:6px; text-align:center; }
+    th { background:#f0f0f0; position:sticky; top:0; }
+    input { width:95%; padding:4px; }
+    .controls { margin:10px 0; }
+    button { margin-right:8px; padding:6px 12px; }
+    .invalid { border:1px solid red; background:#ffecec; }
+    @media print {
+      .controls { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>HERITAGE FOODS LIMITED – Cold Room Temperature Log Sheet</h1>
+  <p>REV. No.: 02 | REV. DATE: 01.07.2017 | REF. NO.: HFL/QA/PS/R-23</p>
+
+  <div class="controls">
+    <button id="saveBtn">Save (JSON)</button>
+    <button id="loadBtn">Load (JSON)</button>
+    <input type="file" id="loadFile" accept="application/json" style="display:none" />
+    <button onclick="window.print()">Print</button>
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <label>Date: <input type="date" id="logDate"></label>
+
+  <table id="logTable">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Cold Store-1</th>
+        <th>Cold Store-2</th>
+        <th>Cold Store-3</th>
+        <th>Cold Store-4</th>
+        <th>Cold Store-5</th>
+        <th>Cold Store-6</th>
+        <th>Lab Asst. Signature</th>
+        <th>Operator Signature</th>
+      </tr>
+    </thead>
+    <tbody id="logBody"></tbody>
+  </table>
+
+<script>
+function formatTime(h){
+  const hour12 = ((h + 11) % 12) + 1;
+  const suffix = h < 12 ? "AM" : "PM";
+  return (hour12<10?"0":"")+hour12+":00 "+suffix;
+}
+
+function buildRows(){
+  const body = document.getElementById("logBody");
+  body.innerHTML="";
+  for(let h=6; h<30; h++){   // 6AM → 5AM next day
+    const hour = h%24;
+    const tr=document.createElement("tr");
+    const td=document.createElement("td");
+    td.textContent=formatTime(hour);
+    tr.appendChild(td);
+    for(let s=1;s<=6;s++){
+      const td=document.createElement("td");
+      const inp=document.createElement("input");
+      inp.type="number"; inp.step="0.1"; inp.min="-40"; inp.max="20";
+      inp.placeholder="";
+      inp.oninput=()=>validateTemp(inp);
+      td.appendChild(inp);
+      tr.appendChild(td);
+    }
+    const lab=document.createElement("td");
+    lab.innerHTML='<input type="text" placeholder="Lab Asst.">';
+    const op=document.createElement("td");
+    op.innerHTML='<input type="text" placeholder="Operator">';
+    tr.appendChild(lab); tr.appendChild(op);
+    body.appendChild(tr);
+  }
+}
+
+function validateTemp(inp){
+  if(inp.value==="" ) { inp.classList.remove("invalid"); return; }
+  const v=Number(inp.value);
+  if(v<-40 || v>20) inp.classList.add("invalid");
+  else inp.classList.remove("invalid");
+}
+
+function collectData(){
+  const rows=[];
+  document.querySelectorAll("#logBody tr").forEach(tr=>{
+    const time=tr.cells[0].textContent;
+    const inputs=tr.querySelectorAll("input");
+    rows.push({
+      time,
+      store1:inputs[0].value,
+      store2:inputs[1].value,
+      store3:inputs[2].value,
+      store4:inputs[3].value,
+      store5:inputs[4].value,
+      store6:inputs[5].value,
+      labSign:inputs[6].value,
+      opSign:inputs[7].value
+    });
+  });
+  return {date:document.getElementById("logDate").value, records:rows};
+}
+
+function downloadJSON(data, filename){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function handleSave(){
+  const data=collectData();
+  const date=data.date||new Date().toISOString().slice(0,10);
+  downloadJSON(data,"ColdRoomLog_"+date+".json");
+}
+
+function populateFromData(data){
+  if(!data||!data.records) return;
+  document.getElementById("logDate").value=data.date||"";
+  const trs=document.querySelectorAll("#logBody tr");
+  data.records.forEach((rec,i)=>{
+    const inputs=trs[i].querySelectorAll("input");
+    inputs[0].value=rec.store1||"";
+    inputs[1].value=rec.store2||"";
+    inputs[2].value=rec.store3||"";
+    inputs[3].value=rec.store4||"";
+    inputs[4].value=rec.store5||"";
+    inputs[5].value=rec.store6||"";
+    inputs[6].value=rec.labSign||"";
+    inputs[7].value=rec.opSign||"";
+  });
+}
+
+document.getElementById("saveBtn").addEventListener("click",handleSave);
+document.getElementById("loadBtn").addEventListener("click",()=>document.getElementById("loadFile").click());
+document.getElementById("loadFile").addEventListener("change",async e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const text=await file.text();
+  try{ populateFromData(JSON.parse(text)); }
+  catch{ alert("Invalid JSON file"); }
+});
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  document.querySelectorAll("input").forEach(inp=>{ if(inp.type!=="file") inp.value=""; inp.classList.remove("invalid"); });
+});
+
+buildRows();
+document.getElementById("logDate").value=new Date().toISOString().slice(0,10);
+</script>
+</body>
+</html>

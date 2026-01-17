@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Cold Room Temperature Log – Unified System</title>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #f4f6f9;
+  }
+
+  h1 {
+    color: #0b5fa4;
+    margin-bottom: 5px;
+  }
+
+  p {
+    margin-top: 0;
+    color: #555;
+  }
+
+  /* Navigation Buttons */
+  .nav {
+    margin-bottom: 20px;
+  }
+
+  .nav button {
+    padding: 10px 18px;
+    margin-right: 10px;
+    border: none;
+    background: #0b5fa4;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  .nav button:hover {
+    background: #094b82;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* Section Containers */
+  #entryView, #reportView {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-top: 10px;
+  }
+
+  /* Controls */
+  .controls button {
+    padding: 8px 14px;
+    margin-right: 8px;
+    border: none;
+    background: #4a90e2;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .controls button:hover {
+    background: #3a78c0;
+  }
+
+  /* High‑Contrast Table */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10px;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  th {
+    background: #dce6f5;
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 2px solid #b5c7dd;
+    color: #0b3d6b;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  td {
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #222;
+  }
+
+  tr:nth-child(even) {
+    background: #f7faff;
+  }
+
+  /* Inputs */
+  input {
+    width: 95%;
+    padding: 6px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  input:focus {
+    outline: 2px solid #0b5fa4;
+    background: #eef6ff;
+  }
+
+  /* Report View Header */
+  #reportView h2 {
+    margin-top: 0;
+    color: #0b5fa4;
+    border-bottom: 2px solid #b5c7dd;
+    padding-bottom: 6px;
+  }
+
+  @media print {
+    .nav, .controls, #loadReportBtn {
+      display: none;
+    }
+    body {
+      background: white;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<h1>HERITAGE FOODS LIMITED – Cold Room Temperature Log</h1>
+<p>REV. No.: 02 | REV. DATE: 01.07.2017 | REF. NO.: HFL/QA/PS/R-23</p>
+
+<!-- Navigation -->
+<div class="nav">
+  <button onclick="showEntry()">Entry View</button>
+  <button onclick="showReport()">Report View</button>
+</div>
+
+<!-- ENTRY VIEW -->
+<div id="entryView">
+
+  <div class="controls">
+    <button id="saveBtn">Save (JSON)</button>
+    <button id="loadBtn">Load (JSON)</button>
+    <input type="file" id="loadFile" accept="application/json" style="display:none" />
+    <button onclick="window.print()">Print</button>
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <label><strong>Date:</strong> <input type="date" id="logDate"></label>
+
+  <table id="logTable">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Milk Store‑1</th>
+        <th>Curd Store‑1</th>
+        <th>Curd Store‑2</th>
+        <th>Curd Store‑3</th>
+        <th>Curd Store‑4</th>
+        <th>Curd Store‑5</th>
+        <th>Lab Asst. Signature</th>
+        <th>Operator Signature</th>
+      </tr>
+    </thead>
+    <tbody id="logBody"></tbody>
+  </table>
+</div>
+
+<!-- REPORT VIEW -->
+<div id="reportView" class="hidden">
+  <h2>Multi‑Day Report Viewer</h2>
+
+  <button id="loadReportBtn">Load JSON Files</button>
+  <input type="file" id="reportFiles" accept="application/json" multiple style="display:none" />
+
+  <table>
+    <thead>
+      <tr>
+        <th>Time / Date</th>
+        <th>Store‑1</th>
+        <th>Store‑2</th>
+        <th>Store‑3</th>
+        <th>Store‑4</th>
+        <th>Store‑5</th>
+        <th>Store‑6</th>
+        <th>Lab Sign</th>
+        <th>Operator</th>
+      </tr>
+    </thead>
+    <tbody id="reportBody"></tbody>
+  </table>
+</div>
+
+<script>
+
+/* -------------------------
+   NAVIGATION
+--------------------------*/
+function showEntry(){
+  document.getElementById("entryView").classList.remove("hidden");
+  document.getElementById("reportView").classList.add("hidden");
+}
+
+function showReport(){
+  document.getElementById("entryView").classList.add("hidden");
+  document.getElementById("reportView").classList.remove("hidden");
+}
+
+/* -------------------------
+   ENTRY VIEW FUNCTIONS
+--------------------------*/
+
+// Format time as 12-hour AM/PM
+function formatTime(h){
+  const hour12 = ((h + 11) % 12) + 1;
+  const suffix = h < 12 ? "AM" : "PM";
+  return (hour12<10?"0":"")+hour12+":00 "+suffix;
+}
+
+// Build entry rows (temperature = alphanumeric)
+function buildRows(){
+  const body = document.getElementById("logBody");
+  body.innerHTML="";
+
+  for(let h=6; h<30; h++){
+    const hour = h % 24;
+    const tr=document.createElement("tr");
+
+    tr.innerHTML = `<td>${formatTime(hour)}</td>`;
+
+    // Temperature fields as alphanumeric text
+    for(let s=1;s<=6;s++){
+      tr.innerHTML += `<td><input type="text"></td>`;
+    }
+
+    // Signature fields as text
+    tr.innerHTML += `
+      <td><input type="text"></td>
+      <td><input type="text"></td>
+    `;
+
+    body.appendChild(tr);
+  }
+}
+
+// Collect data for save
+function collectData(){
+  const rows=[];
+  document.querySelectorAll("#logBody tr").forEach(tr=>{
+    const time=tr.cells[0].textContent;
+    const inputs=tr.querySelectorAll("input");
+    rows.push({
+      time,
+      store1:inputs[0].value,
+      store2:inputs[1].value,
+      store3:inputs[2].value,
+      store4:inputs[3].value,
+      store5:inputs[4].value,
+      store6:inputs[5].value,
+      labSign:inputs[6].value,
+      opSign:inputs[7].value
+    });
+  });
+  return {date:document.getElementById("logDate").value, records:rows};
+}
+
+// Download JSON
+function downloadJSON(data, filename){
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Save button handler
+function handleSave(){
+  const data=collectData();
+  const date=data.date||new Date().toISOString().slice(0,10);
+  downloadJSON(data,"ColdRoomLog_"+date+".json");
+}
+
+// Populate entry view from JSON
+function populateFromData(data){
+  if(!data || !data.records) return;
+
+  document.getElementById("logDate").value = data.date || "";
+  const trs = document.querySelectorAll("#logBody tr");
+
+  for (let i = 0; i < trs.length && i < data.records.length; i++) {
+    const rec = data.records[i];
+    const inputs = trs[i].querySelectorAll("input");
+
+    inputs[0].value = rec.store1 ?? "";
+    inputs[1].value = rec.store2 ?? "";
+    inputs[2].value = rec.store3 ?? "";
+    inputs[3].value = rec.store4 ?? "";
+    inputs[4].value = rec.store5 ?? "";
+    inputs[5].value = rec.store6 ?? "";
+    inputs[6].value = rec.labSign ?? "";
+    inputs[7].value = rec.opSign ?? "";
+  }
+}
+
+// Clear entry view
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  document.querySelectorAll("#entryView input").forEach(inp=>{
+    if(inp.type!=="file") inp.value="";
+  });
+});
+
+// Save / Load buttons
+document.getElementById("saveBtn").addEventListener("click",handleSave);
+
+document.getElementById("loadBtn").addEventListener("click",()=>{
+  document.getElementById("loadFile").click();
+});
+
+document.getElementById("loadFile").addEventListener("change",async e=>{
+  const file=e.target.files[0]; 
+  if(!file) return;
+  const text=await file.text();
+  try{ 
+    populateFromData(JSON.parse(text)); 
+  } catch{ 
+    alert("Invalid JSON file"); 
+  }
+});
+
+/* -------------------------
+   EXCEL‑STYLE UP/DOWN NAVIGATION
+--------------------------*/
+
+document.addEventListener("keydown", function (e) {
+  const active = document.activeElement;
+
+  if (active.tagName !== "INPUT") return;
+
+  const td = active.parentElement;
+  const tr = td.parentElement;
+  const cellIndex = td.cellIndex;
+
+  if (e.key === "ArrowDown") {
+    const nextRow = tr.nextElementSibling;
+    if (nextRow) {
+      const nextInput = nextRow.cells[cellIndex].querySelector("input");
+      if (nextInput) nextInput.focus();
+    }
+    e.preventDefault();
+  }
+
+  if (e.key === "ArrowUp") {
+    const prevRow = tr.previousElementSibling;
+    if (prevRow) {
+      const prevInput = prevRow.cells[cellIndex].querySelector("input");
+      if (prevInput) prevInput.focus();
+    }
+    e.preventDefault();
+  }
+});
+
+/* -------------------------
+   REPORT VIEW FUNCTIONS
+--------------------------*/
+
+document.getElementById("loadReportBtn").addEventListener("click",()=>{
+  document.getElementById("reportFiles").click();
+});
+
+document.getElementById("reportFiles").addEventListener("change", async e => {
+  const files = Array.from(e.target.files);
+  if(files.length===0) return;
+
+  const allData = [];
+
+  for(const file of files){
+    try{
+      const json = JSON.parse(await file.text());
+      allData.push(json);
+    }catch{
+      alert("Invalid JSON: " + file.name);
+    }
+  }
+
+  showMultiDayReport(allData);
+});
+
+// Build multi‑day report table
+function showMultiDayReport(days){
+  const body=document.getElementById("reportBody");
+  body.innerHTML="";
+
+  // Sort by date (ascending)
+  days.sort((a,b)=> (a.date > b.date ? 1 : -1));
+
+  days.forEach(day=>{
+    const header=document.createElement("tr");
+    header.innerHTML = `<td colspan="9" style="background:#bcd0f0; font-weight:bold; text-align:left;">
+      Date: ${day.date || "Unknown"}
+    </td>`;
+    body.appendChild(header);
+
+    (day.records || []).forEach(rec=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML = `
+        <td>${rec.time || ""}</td>
+        <td>${rec.store1 || ""}</td>
+        <td>${rec.store2 || ""}</td>
+        <td>${rec.store3 || ""}</td>
+        <td>${rec.store4 || ""}</td>
+        <td>${rec.store5 || ""}</td>
+        <td>${rec.store6 || ""}</td>
+        <td>${rec.labSign || ""}</td>
+        <td>${rec.opSign || ""}</td>
+      `;
+      body.appendChild(tr);
+    });
+  });
+}
+
+/* -------------------------
+   INITIALIZE
+--------------------------*/
+buildRows();
+document.getElementById("logDate").value=new Date().toISOString().slice(0,10);
+
+</script>
+
+</body>
+</html>

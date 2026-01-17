@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HERITAGE – Shelf Life Monitoring Record (Market Milk)</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 10px;
+    }
+
+    h1, h2, h3 {
+        margin: 5px 0;
+        text-align: center;
+    }
+
+    .header-table, .data-table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 8px 0;
+        font-size: 13px;
+    }
+
+    .header-table td {
+        border: 1px solid #000;
+        padding: 4px 6px;
+    }
+
+    .data-table th, .data-table td {
+        border: 1px solid #000;
+        padding: 3px 4px;
+        text-align: center;
+    }
+
+    .data-table th {
+        background-color: #027eb5;
+    }
+
+    .controls {
+        margin: 10px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: flex-start;
+    }
+
+    .controls button, .controls input[type="file"] {
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    .small {
+        font-size: 11px;
+    }
+
+    input[type="text"], input[type="number"], input[type="date"] {
+        width: 95%;
+        border: none;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    input:focus {
+        outline: 1px solid #1e90ff;
+    }
+
+    .view-toggle {
+        margin-bottom: 10px;
+        text-align: right;
+    }
+
+    .view-toggle button {
+        font-size: 12px;
+        padding: 4px 8px;
+        margin-left: 4px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .report-view td {
+        padding: 4px 6px;
+    }
+
+    @media print {
+        .controls, .view-toggle, #loadFile {
+            display: none !important;
+        }
+        body {
+            margin: 5mm;
+        }
+    }
+</style>
+</head>
+<body>
+
+<h2>HERITAGE FOODS LIMITED</h2>
+<h3>QUALITY ASSURANCE MANUAL</h3>
+<h3>SHELF LIFE MONITORING RECORD – MARKET MILK</h3>
+
+<table class="header-table">
+    <tr>
+        <td><strong>Issue No &amp; Date</strong></td>
+        <td>04 &amp; 10.09.2013</td>
+        <td><strong>Rev No</strong></td>
+        <td>3</td>
+        <td><strong>Rev Date</strong></td>
+        <td>01.08.2019</td>
+    </tr>
+    <tr>
+        <td><strong>Product</strong></td>
+        <td colspan="5">Market Milk &nbsp;&nbsp;&nbsp; Ref No. HFL/QA/PS/R - 21</td>
+    </tr>
+</table>
+
+<div class="view-toggle">
+    <button type="button" onclick="showEntryView()">Entry view</button>
+    <button type="button" onclick="showReportView()">Report view</button>
+    <button type="button" onclick="window.print()">Print</button>
+</div>
+
+<div class="controls">
+    <button type="button" onclick="addSampleBlock()">Add Sample (3 rows)</button>
+    <button type="button" onclick="deleteLastRow()">Delete last row</button>
+    <button type="button" onclick="saveData()">Save JSON</button>
+    <label class="small">
+        Load JSON:
+        <input type="file" id="loadFile" accept=".json" onchange="loadData(event)">
+    </label>
+</div>
+
+<!-- ENTRY VIEW TABLE -->
+<table class="data-table" id="entryTable">
+    <thead>
+        <tr>
+            <th rowspan="2">Date on which sample kept</th>
+            <th rowspan="2">Batch No. &amp; DOM</th>
+            <th rowspan="2">Type of product whose sample kept</th>
+            <th rowspan="2">SKU</th>
+            <th rowspan="2">Declared<br>Shelf Life</th>
+            <th rowspan="2">Periodicity of testing / Date of Testing</th>
+            <th>&lt;5.0℃</th>
+            <th>OT</th>
+            <th>COB</th>
+            <th>Titratable Acidity (%)</th>
+            <th rowspan="2">Sign. Of Lab Asst.</th>
+            <th rowspan="2">Sign. Of PS QAI/C</th>
+            <th rowspan="2">Remarks</th>
+        </tr>
+        <tr>
+            <th>Temperature</th>
+            <th>Normal</th>
+            <th>Negative</th>
+            <th>Max. 0.145</th>
+        </tr>
+    </thead>
+    <tbody id="entryBody"></tbody>
+</table>
+
+<!-- REPORT VIEW TABLE -->
+<table class="data-table hidden report-view" id="reportTable">
+    <thead>
+        <tr>
+            <th rowspan="2">Date on which sample kept</th>
+            <th rowspan="2">Batch No. &amp; DOM</th>
+            <th rowspan="2">Type of product whose sample kept</th>
+            <th rowspan="2">SKU</th>
+            <th rowspan="2">Declared<br>Shelf Life</th>
+            <th rowspan="2">Periodicity of testing / Date of Testing</th>
+            <th>&lt;5.0℃</th>
+            <th>OT</th>
+            <th>COB</th>
+            <th>Titratable Acidity (%)</th>
+            <th rowspan="2">Sign. Of Lab Asst.</th>
+            <th rowspan="2">Sign. Of PS QAI/C</th>
+            <th rowspan="2">Remarks</th>
+        </tr>
+        <tr>
+            <th>Temperature</th>
+            <th>Normal</th>
+            <th>Negative</th>
+            <th>Max. 0.145</th>
+        </tr>
+    </thead>
+    <tbody id="reportBody"></tbody>
+</table>
+
+<script>
+const COLS = 13;
+
+// -------------------------
+// ADD SAMPLE BLOCK (3 ROWS)
+// -------------------------
+function addSampleBlock() {
+    const tbody = document.getElementById('entryBody');
+
+    let sampleDate = prompt("Enter 'Date on which sample kept' (DD-MM-YYYY):");
+    if (!sampleDate) return;
+
+    const [dd, mm, yyyy] = sampleDate.split("-");
+    const baseDate = new Date(`${yyyy}-${mm}-${dd}`);
+
+    function format(d) {
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}-${month}-${year}`;
+    }
+
+    for (let i = 1; i <= 3; i++) {
+        const tr = document.createElement('tr');
+
+        const testDate = new Date(baseDate);
+        testDate.setDate(testDate.getDate() + i);
+
+        const rowValues = [
+            i === 1 ? sampleDate : "",
+            "",
+            "",
+            "",
+            "",
+            format(testDate),
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ];
+
+        rowValues.forEach(val => {
+            const td = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = "text";
+            input.value = val;
+            td.appendChild(input);
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    }
+}
+
+// -------------------------
+// DELETE LAST ROW
+// -------------------------
+function deleteLastRow() {
+    const tbody = document.getElementById('entryBody');
+    if (tbody.rows.length > 0) {
+        tbody.deleteRow(tbody.rows.length - 1);
+    }
+}
+
+// -------------------------
+// SAVE / LOAD JSON
+// -------------------------
+function getTableData() {
+    const tbody = document.getElementById('entryBody');
+    const data = [];
+    for (let r = 0; r < tbody.rows.length; r++) {
+        const row = [];
+        const cells = tbody.rows[r].cells;
+        for (let c = 0; c < cells.length; c++) {
+            const input = cells[c].querySelector('input');
+            row.push(input ? input.value : '');
+        }
+        data.push(row);
+    }
+    return data;
+}
+
+function setTableData(data) {
+    const tbody = document.getElementById('entryBody');
+    tbody.innerHTML = '';
+    data.forEach(rowData => {
+        const tr = document.createElement('tr');
+        for (let i = 0; i < COLS; i++) {
+            const td = document.createElement('td');
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = rowData[i] !== undefined ? rowData[i] : '';
+            td.appendChild(input);
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    });
+}
+
+function saveData() {
+    const payload = {
+        meta: {
+            formName: 'Shelf Life Monitoring Record – Market Milk',
+            savedAt: new Date().toISOString()
+        },
+        rows: getTableData()
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const dateTag = new Date().toISOString().slice(0,10);
+    a.download = `ShelfLife_MarketMilk_${dateTag}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function loadData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const obj = JSON.parse(e.target.result);
+            if (obj && Array.isArray(obj.rows)) {
+                setTableData(obj.rows);
+            } else {
+                alert('Invalid file structure.');
+            }
+        } catch (err) {
+            alert('Error reading JSON file.');
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// -------------------------
+// REPORT VIEW
+// -------------------------
+function buildReportView() {
+    const reportBody = document.getElementById('reportBody');
+    reportBody.innerHTML = '';
+    const data = getTableData();
+
+    data.forEach(row => {
+        const hasValue = row.some(v => v && v.trim() !== '');
+        if (!hasValue) return;
+
+        const tr = document.createElement('tr');
+        row.forEach(cellVal => {
+            const td = document.createElement('td');
+            td.textContent = cellVal || '';
+            tr.appendChild(td);
+        });
+        reportBody.appendChild(tr);
+    });
+}
+
+function showEntryView() {
+    document.getElementById('entryTable').classList.remove('hidden');
+    document.getElementById('reportTable').classList.add('hidden');
+}
+
+function showReportView() {
+    buildReportView();
+    document.getElementById('entryTable').classList.add('hidden');
+    document.getElementById('reportTable').classList.remove('hidden');
+}
+// -------------------------
+// EXCEL-STYLE ARROW NAVIGATION
+// -------------------------
+document.addEventListener("keydown", function (e) {
+    const active = document.activeElement;
+    if (!active || active.tagName !== "INPUT") return;
+
+    const td = active.parentElement;
+    const tr = td.parentElement;
+    const rowIndex = tr.rowIndex - 2; // adjust for header rows
+    const colIndex = td.cellIndex;
+
+    const tbody = document.getElementById("entryBody");
+    const rows = tbody.rows;
+
+    function focusCell(r, c) {
+        if (rows[r] && rows[r].cells[c]) {
+            const input = rows[r].cells[c].querySelector("input");
+            if (input) input.focus();
+        }
+    }
+
+    switch (e.key) {
+        case "ArrowUp":
+            e.preventDefault();
+            focusCell(rowIndex - 1, colIndex);
+            break;
+
+        case "ArrowDown":
+            e.preventDefault();
+            focusCell(rowIndex + 1, colIndex);
+            break;
+
+        case "ArrowLeft":
+            e.preventDefault();
+            focusCell(rowIndex, colIndex - 1);
+            break;
+
+        case "ArrowRight":
+            e.preventDefault();
+            focusCell(rowIndex, colIndex + 1);
+            break;
+
+        case "Enter":
+            e.preventDefault();
+            if (e.shiftKey) {
+                focusCell(rowIndex - 1, colIndex); // Shift+Enter = move up
+            } else {
+                focusCell(rowIndex + 1, colIndex); // Enter = move down
+            }
+            break;
+    }
+});
+// -------------------------
+// MULTI-CELL PASTE SUPPORT
+// -------------------------
+document.addEventListener("paste", function (e) {
+    const active = document.activeElement;
+    if (!active || active.tagName !== "INPUT") return;
+
+    const td = active.parentElement;
+    const tr = td.parentElement;
+
+    const startRow = tr.rowIndex - 2; // adjust for header rows
+    const startCol = td.cellIndex;
+
+    const tbody = document.getElementById("entryBody");
+    const rows = tbody.rows;
+
+    // Read clipboard text
+    const text = (e.clipboardData || window.clipboardData).getData("text");
+
+    // Split into rows and columns (Excel uses tab + newline)
+    const lines = text.split(/\r?\n/).filter(l => l.trim() !== "");
+    const grid = lines.map(line => line.split("\t"));
+
+    e.preventDefault(); // stop default single-cell paste
+
+    // Fill table
+    for (let r = 0; r < grid.length; r++) {
+        const rowIndex = startRow + r;
+
+        // Add rows if needed
+        if (!rows[rowIndex]) {
+            addSampleRow(); // or your addRow() function
+        }
+
+        const cells = rows[rowIndex].cells;
+
+        for (let c = 0; c < grid[r].length; c++) {
+            const colIndex = startCol + c;
+            if (cells[colIndex]) {
+                const input = cells[colIndex].querySelector("input");
+                if (input) input.value = grid[r][c];
+            }
+        }
+    }
+});
+
+// Helper to add a single empty row (used when paste exceeds table size)
+function addSampleRow() {
+    const tbody = document.getElementById("entryBody");
+    const tr = document.createElement("tr");
+
+    for (let i = 0; i < COLS; i++) {
+        const td = document.createElement("td");
+        const input = document.createElement("input");
+        input.type = "text";
+        td.appendChild(input);
+        tr.appendChild(td);
+    }
+
+    tbody.appendChild(tr);
+}
+</script>
+
+</body>
+</html>

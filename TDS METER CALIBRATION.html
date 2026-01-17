@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calibration – All Sheets</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --brand: #1f4f8b;
+      --brand-light: #e5f0ff;
+      --brand-dark: #15355e;
+      --border: #d6deec;
+      --bg: #f3f6fb;
+      --text: #1f2933;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top left, #ffffff 0, #f3f6fb 40%, #e6edf9 100%);
+      color: var(--text);
+    }
+
+    .app-shell {
+      max-width: 1500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      overflow: hidden;
+    }
+
+    .app-header {
+      padding: 14px 18px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .app-header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .app-header small {
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    .app-header-right {
+      text-align: right;
+      font-size: 11px;
+      opacity: 0.95;
+    }
+
+    .tab-header {
+      display: flex;
+      gap: 0;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+
+    .tab-header::-webkit-scrollbar {
+      height: 6px;
+    }
+    .tab-header::-webkit-scrollbar-thumb {
+      background: #cbd5f5;
+      border-radius: 999px;
+    }
+
+    .tab-link {
+      flex: 1 0 0;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4b5563;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .tab-link span.badge {
+      background: #e5edff;
+      color: var(--brand-dark);
+      border-radius: 999px;
+      padding: 1px 8px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .tab-link:last-child {
+      border-right: none;
+    }
+
+    .tab-link:hover {
+      background: #edf2ff;
+    }
+
+    .tab-link.active {
+      background: #ffffff;
+      color: var(--brand-dark);
+      box-shadow: inset 0 -2px 0 var(--brand);
+    }
+
+    .tab-content {
+      padding: 14px;
+      background: #f5f7fb;
+    }
+
+    .tab-pane {
+      display: none;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Avoid double page margins inside embedded forms */
+    .tab-pane body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    .tab-pane .page,
+    .tab-pane .wrap {
+      box-shadow: none;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 8px; }
+      .app-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .app-header-right { text-align: left; }
+      .tab-link {
+        padding: 9px 10px;
+        font-size: 12px;
+        flex: 0 0 auto;
+      }
+      .tab-content { padding: 10px; }
+      .tab-pane { padding: 10px; }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .app-shell {
+        box-shadow: none;
+        border-radius: 0;
+        border: none;
+      }
+      .app-header,
+      .tab-header {
+        display: none !important;
+      }
+      .tab-pane {
+        box-shadow: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="app-header">
+    <div>
+      <h1>HERITAGE FOODS LIMITED CALIBRATION DIGITAL LOG</h1>
+      <small>Single-page access to Calibrationn records</small>
+    </div>
+    <div class="app-header-right">
+      <div>Ref: HFL/QA/PS/R‑13</div>
+      <div>Rev No: 02 • Rev Date: 01/07/2017</div>
+    </div>
+  </div>
+
+  <div class="tab-header">
+    <button type="button" class="tab-link active" data-target="sheet1">
+      Sheet&nbsp;1 – pH &amp; TDS <span class="badge">Calibration</span>
+    </button>
+    <button type="button" class="tab-link" data-target="sheet2">
+      Sheet&nbsp;2 – WEIGHING MACHINE CALIBRATION <span class="badge"> Balences </span>
+    </button>
+    
+  </div>
+
+  <div class="tab-content">
+    <!-- SHEET 1: pH and TDS -->
+    <div id="sheet1" class="tab-pane active">
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HERITAGE FOODS – QA PS Calibration Register (pH & TDS)</title>
+
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; }
+  h1 { margin-bottom: 6px; }
+  h3 { margin-top: 0; font-weight: normal; color: #333; }
+  h2 { margin-top: 24px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+  th, td { border: 1px solid #000; padding: 6px; text-align: center; }
+  th { background: #f0f0f0; }
+  input, textarea { width: 100%; box-sizing: border-box; }
+  textarea { resize: vertical; }
+  .controls { margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; }
+  button { padding: 6px 12px; cursor: pointer; }
+  .screen { display: none; }
+  #mainScreen .controls { justify-content: center; }
+  .block { border: 2px solid #333; padding: 10px; background: #fafafa; margin-bottom: 16px; }
+  .report-block { border: 2px solid #333; padding: 10px; margin-bottom: 20px; background: #fafafa; }
+  .report-header { font-weight: bold; margin-bottom: 8px; }
+  .meta { margin-top: 4px; font-size: 12px; color: #444; }
+  .colgroup-tight col { width: auto; }
+  .colgroup-tight col.meta { width: 140px; }
+  .colgroup-tight col.action { width: 70px; }
+
+  @media print {
+    button, .controls, .fileInput, .multiFileInput, #mainScreen { display: none !important; }
+    body { margin: 0; }
+    .screen { display: block !important; }
+  }
+</style>
+</head>
+<body>
+
+
+</div>
+
+<!-- MAIN MENU -->
+<div id="mainScreen" class="screen" style="display:block;">
+  <div class="controls">
+    <button onclick="show('phEntry')">pH Entry</button>
+    <button onclick="show('phReport')">pH Report</button>
+    <button onclick="show('tdsEntry')">TDS Entry</button>
+    <button onclick="show('tdsReport')">TDS Report</button>
+  </div>
+</div>
+
+<!-- pH ENTRY -->
+<div id="phEntry" class="screen">
+  <h2>pH meter calibration – Entry view</h2>
+  <div class="meta">Buffers: 4.01, 7.01, 10.01; Errors auto-calc as After − Buffer</div>
+
+  <table id="phTable">
+    <colgroup class="colgroup-tight">
+      <col><col><col><col><col><col><col><col><col><col><col class="meta"><col class="meta"><col class="action">
+    </colgroup>
+    <thead>
+      <tr><th colspan="13">PH METER CALIBRATION</th></tr>
+      <tr>
+        <th rowspan="2">Date</th>
+        <th colspan="3">Calibration with pH 4.01</th>
+        <th colspan="3">Calibration with pH 7.01</th>
+        <th colspan="3">Calibration with pH 10.01</th>
+        <th rowspan="2">Verified by</th>
+        <th rowspan="2">Reviewed by</th>
+        <th rowspan="2">Delete</th>
+      </tr>
+      <tr>
+        <th>Before</th><th>After</th><th>Error</th>
+        <th>Before</th><th>After</th><th>Error</th>
+        <th>Before</th><th>After</th><th>Error</th>
+      </tr>
+    </thead>
+    <tbody id="phBody"></tbody>
+  </table>
+
+  <div class="controls">
+    <button onclick="phAddRow()">Add row</button>
+    <button onclick="phSaveJSON()">Save JSON</button>
+    <button onclick="phLoadJSON()">Load JSON</button>
+    <button onclick="window.print()">Print</button>
+    <button onclick="show('mainScreen')">Back to Main</button>
+    <input type="file" id="phFileInput" class="fileInput" accept="application/json" style="display:none;">
+  </div>
+
+  <div class="meta">Page footer: Executive‑QA | Quality Incharge Sign.</div>
+</div>
+
+<!-- pH REPORT -->
+<div id="phReport" class="screen">
+  <h2>pH meter calibration – Multi‑day report</h2>
+  <div class="controls">
+    <input id="phMultiFileInput" type="file" class="multiFileInput" accept="application/json" multiple>
+    <button onclick="phLoadReportFiles()">Load selected files</button>
+    <button onclick="window.print()">Print</button>
+    <button onclick="show('mainScreen')">Back to Main</button>
+  </div>
+  <div id="phReportContainer"></div>
+</div>
+
+<!-- TDS ENTRY -->
+<div id="tdsEntry" class="screen">
+  <h2>TDS meter calibration – Entry view</h2>
+  <div class="meta">Standard: 1413 µS/cm @ 25°C; Error auto-calc as After − Before</div>
+
+  <table id="tdsTable">
+    <thead>
+      <tr><th colspan="8">TDS METER CALIBRATION</th></tr>
+      <tr>
+        <th colspan="4">Calibration with 1413 µS/cm @ 25°C</th>
+        <th rowspan="2">Remarks</th>
+        <th rowspan="2">Verified by</th>
+        <th rowspan="2">Reviewed by</th>
+        <th rowspan="2">Delete</th>
+      </tr>
+      <tr>
+        <th>Date</th>
+        <th>Before calibration</th>
+        <th>After calibration</th>
+        <th>Error</th>
+      </tr>
+    </thead>
+    <tbody id="tdsBody"></tbody>
+  </table>
+
+  <div class="controls">
+    <button onclick="tdsAddRow()">Add row</button>
+    <button onclick="tdsSaveJSON()">Save JSON</button>
+    <button onclick="tdsLoadJSON()">Load JSON</button>
+    <button onclick="window.print()">Print</button>
+    <button onclick="show('mainScreen')">Back to Main</button>
+    <input type="file" id="tdsFileInput" class="fileInput" accept="application/json" style="display:none;">
+  </div>
+</div>
+
+<!-- TDS REPORT -->
+<div id="tdsReport" class="screen">
+  <h2>TDS meter calibration – Multi‑day report</h2>
+  <div class="controls">
+    <input id="tdsMultiFileInput" type="file" class="multiFileInput" accept="application/json" multiple>
+    <button onclick="tdsLoadReportFiles()">Load selected files</button>
+    <button onclick="window.print()">Print</button>
+    <button onclick="show('mainScreen')">Back to Main</button>
+  </div>
+  <div id="tdsReportContainer"></div>
+</div>
+
+<script>
+/* ---------- NAV ---------- */
+function show(id) {
+  ['mainScreen','phEntry','phReport','tdsEntry','tdsReport']
+    .forEach(s => document.getElementById(s).style.display = (s === id ? 'block' : 'none'));
+}
+
+/* ---------- Excel-like navigation ---------- */
+function excelNav(e) {
+  const cell = e.target;
+  const row = cell.closest('tr');
+  const tbody = row.parentElement;
+  const rowIndex = Array.from(tbody.rows).indexOf(row);
+  const cellIndex = cell.parentElement.cellIndex;
+
+  if (e.key === 'ArrowDown' && tbody.rows[rowIndex + 1]) {
+    const next = tbody.rows[rowIndex + 1].cells[cellIndex]?.querySelector('input,textarea');
+    if (next) next.focus();
+  }
+  if (e.key === 'ArrowUp' && tbody.rows[rowIndex - 1]) {
+    const prev = tbody.rows[rowIndex - 1].cells[cellIndex]?.querySelector('input,textarea');
+    if (prev) prev.focus();
+  }
+  if (e.key === 'ArrowRight') {
+    const next = row.cells[cellIndex + 1]?.querySelector('input,textarea');
+    if (next) next.focus();
+  }
+  if (e.key === 'ArrowLeft') {
+    const prev = row.cells[cellIndex - 1]?.querySelector('input,textarea');
+    if (prev) prev.focus();
+  }
+}
+
+/* ---------- pH ENTRY ---------- */
+function phAddRow(data = {}) {
+  const tbody = document.getElementById('phBody');
+  const tr = document.createElement('tr');
+
+  tr.innerHTML = `
+    <td><input type="date" value="${data.date || ''}" onkeydown="excelNav(event)"></td>
+
+    <td><input type="number" step="0.01" value="${data.b4 || ''}" oninput="phCalcError(this)" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.a4 || ''}" oninput="phCalcError(this)" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.e4 || ''}" readonly onkeydown="excelNav(event)"></td>
+
+    <td><input type="number" step="0.01" value="${data.b7 || ''}" oninput="phCalcError(this)" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.a7 || ''}" oninput="phCalcError(this)" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.e7 || ''}" readonly onkeydown="excelNav(event)"></td>
+
+    <td><input type="number" step="0.01" value="${data.b10 || ''}" oninput="phCalcError(this)" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.a10 || ''}" oninput="phCalcError(this)" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.e10 || ''}" readonly onkeydown="excelNav(event)"></td>
+
+    <td><input type="text" value="${data.verified || ''}" onkeydown="excelNav(event)"></td>
+    <td><input type="text" value="${data.reviewed || ''}" onkeydown="excelNav(event)"></td>
+    <td><button onclick="phDeleteRow(this)">X</button></td>
+  `;
+
+  tbody.appendChild(tr);
+  phCalcError(tr.querySelectorAll('input')[2]); // ensure initial errors update
+}
+
+function phDeleteRow(btn) { btn.closest('tr').remove(); }
+
+function phCalcError(input) {
+  const row = input.closest('tr');
+  const a4 = parseFloat(row.children[2].querySelector('input').value) || 0;
+  const a7 = parseFloat(row.children[5].querySelector('input').value) || 0;
+  const a10 = parseFloat(row.children[8].querySelector('input').value) || 0;
+
+  row.children[3].querySelector('input').value = (a4 - 4.01).toFixed(2);
+  row.children[6].querySelector('input').value = (a7 - 7.01).toFixed(2);
+  row.children[9].querySelector('input').value = (a10 - 10.01).toFixed(2);
+}
+
+function phSaveJSON() {
+  const rows = document.querySelectorAll('#phBody tr');
+  const data = [];
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input, textarea');
+    data.push({
+      date: inputs[0].value,
+      b4: inputs[1].value, a4: inputs[2].value, e4: inputs[3].value,
+      b7: inputs[4].value, a7: inputs[5].value, e7: inputs[6].value,
+      b10: inputs[7].value, a10: inputs[8].value, e10: inputs[9].value,
+      verified: inputs[10].value, reviewed: inputs[11].value
+    });
+  });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ph_calibration.json';
+  a.click();
+}
+
+function phLoadJSON() {
+  const fileInput = document.getElementById('phFileInput');
+  fileInput.click();
+  fileInput.onchange = () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const data = JSON.parse(e.target.result);
+      document.getElementById('phBody').innerHTML = '';
+      data.forEach(row => phAddRow(row));
+    };
+    reader.readAsText(file);
+  };
+}
+
+// Start pH with 5 rows
+for (let i = 0; i < 5; i++) phAddRow();
+
+/* ---------- pH REPORT ---------- */
+function removeDuplicatesByDate(records) {
+  const seen = new Set(), unique = [];
+  records.forEach(r => {
+    const d = r.date || '';
+    if (!seen.has(d)) { seen.add(d); unique.push(r); }
+  });
+  return unique;
+}
+
+function phLoadReportFiles() {
+  const input = document.getElementById('phMultiFileInput');
+  const files = Array.from(input.files || []);
+  if (!files.length) { alert('Please select JSON files first.'); return; }
+
+  const all = []; let loaded = 0;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try { const data = JSON.parse(e.target.result); if (Array.isArray(data)) all.push(...data); } catch {}
+      if (++loaded === files.length) phRenderReport(all);
+    };
+    reader.readAsText(file);
+  });
+}
+
+function phRenderReport(records) {
+  const container = document.getElementById('phReportContainer');
+  container.innerHTML = '';
+  if (!records.length) { container.innerHTML = '<p>No data found.</p>'; return; }
+
+  records = removeDuplicatesByDate(records);
+  records.sort((a,b) => (a.date||'').localeCompare(b.date||''));
+
+  records.forEach(rec => {
+    const block = document.createElement('div');
+    block.className = 'report-block';
+    const header = document.createElement('div');
+    header.className = 'report-header';
+    header.innerHTML = `
+      <strong>Date:</strong> ${rec.date || '-'} |
+      <strong>Verified:</strong> ${rec.verified || '-'} |
+      <strong>Reviewed:</strong> ${rec.reviewed || '-'}
+    `;
+    block.appendChild(header);
+
+    const table = document.createElement('table');
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Buffer</th><th>Before</th><th>After</th><th>Error (After − Buffer)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>4.01</td><td>${rec.b4 || ''}</td><td>${rec.a4 || ''}</td><td>${rec.e4 || ''}</td></tr>
+        <tr><td>7.01</td><td>${rec.b7 || ''}</td><td>${rec.a7 || ''}</td><td>${rec.e7 || ''}</td></tr>
+        <tr><td>10.01</td><td>${rec.b10 || ''}</td><td>${rec.a10 || ''}</td><td>${rec.e10 || ''}</td></tr>
+      </tbody>
+    `;
+    block.appendChild(table);
+    container.appendChild(block);
+  });
+}
+
+/* ---------- TDS ENTRY ---------- */
+function tdsAddRow(data = {}) {
+  const tbody = document.getElementById('tdsBody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="date" value="${data.date || ''}" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.before || ''}" oninput="tdsCalcError(this)" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.after || ''}" oninput="tdsCalcError(this)" onkeydown="excelNav(event)"></td>
+    <td><input type="number" step="0.01" value="${data.error || ''}" readonly onkeydown="excelNav(event)"></td>
+    <td><textarea rows="1" onkeydown="excelNav(event)">${data.remarks || ''}</textarea></td>
+    <td><input type="text" value="${data.verified || ''}" onkeydown="excelNav(event)"></td>
+    <td><input type="text" value="${data.reviewed || ''}" onkeydown="excelNav(event)"></td>
+    <td><button onclick="tdsDeleteRow(this)">X</button></td>
+  `;
+  tbody.appendChild(tr);
+  tdsCalcError(tr.querySelectorAll('input')[1]);
+}
+
+function tdsDeleteRow(btn) { btn.closest('tr').remove(); }
+
+function tdsCalcError(input) {
+  const row = input.closest('tr');
+  const before = parseFloat(row.children[1].querySelector('input').value) || 0;
+  const after = parseFloat(row.children[2].querySelector('input').value) || 0;
+  row.children[3].querySelector('input').value = (after - before).toFixed(2);
+}
+
+function tdsSaveJSON() {
+  const rows = document.querySelectorAll('#tdsBody tr');
+  const data = [];
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input, textarea');
+    data.push({
+      date: inputs[0].value,
+      before: inputs[1].value,
+      after: inputs[2].value,
+      error: inputs[3].value,
+      remarks: inputs[4].value,
+      verified: inputs[5].value,
+      reviewed: inputs[6].value
+    });
+  });
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tds_calibration.json';
+  a.click();
+}
+
+function tdsLoadJSON() {
+  const fileInput = document.getElementById('tdsFileInput');
+  fileInput.click();
+  fileInput.onchange = () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      const data = JSON.parse(e.target.result);
+      document.getElementById('tdsBody').innerHTML = '';
+      data.forEach(row => tdsAddRow(row));
+    };
+    reader.readAsText(file);
+  };
+}
+
+// Start TDS with 5 rows
+for (let i = 0; i < 5; i++) tdsAddRow();
+
+/* ---------- TDS REPORT ---------- */
+function tdsLoadReportFiles() {
+  const input = document.getElementById('tdsMultiFileInput');
+  const files = Array.from(input.files || []);
+  if (!files.length) { alert('Please select JSON files first.'); return; }
+
+  const all = []; let loaded = 0;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try { const data = JSON.parse(e.target.result); if (Array.isArray(data)) all.push(...data); } catch {}
+      if (++loaded === files.length) tdsRenderReport(all);
+    };
+    reader.readAsText(file);
+  });
+}
+
+function tdsRenderReport(records) {
+  const container = document.getElementById('tdsReportContainer');
+  container.innerHTML = '';
+  if (!records.length) { container.innerHTML = '<p>No data found.</p>'; return; }
+
+  records = removeDuplicatesByDate(records);
+  records.sort((a,b) => (a.date||'').localeCompare(b.date||''));
+
+  records.forEach(rec => {
+    const block = document.createElement('div');
+    block.className = 'report-block';
+    const header = document.createElement('div');
+    header.className = 'report-header';
+    header.innerHTML = `
+      <strong>Date:</strong> ${rec.date || '-'} |
+      <strong>Verified:</strong> ${rec.verified || '-'} |
+      <strong>Reviewed:</strong> ${rec.reviewed || '-'}
+    `;
+    block.appendChild(header);
+
+    const table = document.createElement('table');
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Before</th><th>After</th><th>Error</th><th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>${rec.before || ''}</td>
+          <td>${rec.after || ''}</td>
+          <td>${rec.error || ''}</td>
+          <td>${rec.remarks || ''}</td>
+        </tr>
+      </tbody>
+    `;
+    block.appendChild(table);
+    container.appendChild(block);
+  });
+}
+</script>
+
+</body>
+</html>
+
+    </div>
+
+    <!-- SHEET 2: WEIGHING MACHINE CALIBRATION -->
+    <div id="sheet2" class="tab-pane">
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HERITAGE FOODS LIMITED - QA PS Calibration Register</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    header { border-bottom: 2px solid #333; margin-bottom: 16px; padding-bottom: 8px; }
+    h1 { margin: 0 0 8px; font-size: 20px; }
+    .meta { display: grid; grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 8px; margin-top: 8px; }
+    .meta div { display: flex; gap: 6px; }
+    .meta span { font-weight: bold; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .controls button, .controls input[type="file"] { padding: 8px 12px; border: 1px solid #333; background: #fff; cursor: pointer; }
+    .machine-card { border: 1px solid #333; margin-bottom: 16px; border-radius: 6px; overflow: hidden; }
+    .machine-header { background: #f7f7f9; padding: 10px; display: grid; grid-template-columns: repeat(3, minmax(160px, 1fr)) auto; gap: 8px; align-items: center; }
+    .machine-header input { width: 70%; padding: 6px; box-sizing: border-box; }
+    .machine-actions { display: flex; gap: 8px; }
+    .approval-block { background:#f4f9f4; border-top:1px dashed #9ac89a; padding:8px; display:grid; grid-template-columns: repeat(3, minmax(140px, 1fr)) auto; gap:8px; align-items:center; }
+    .approval-stamp { padding:6px; background:#dff0d8; margin-top:6px; font-size:13px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #333; padding: 6px; vertical-align: top; }
+    th { background: #eee; }
+    td input { width: 100%; padding: 6px; box-sizing: border-box; }
+    .footer { margin-top: 16px; font-size: 12px; color: #666; }
+    .delete-row-btn { background:#fdd; border:1px solid #c00; cursor:pointer; padding:4px 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    
+
+  <div style="margin-bottom:16px;">
+    <label><strong>Calibration Date:</strong> <input id="calibrationDate" type="date" /></label>
+  </div>
+
+  <div class="controls">
+    <button id="addMachineBtn">Add machine</button>
+    <button id="saveBtn">Save JSON</button>
+    <label>Load JSON: <input id="loadInput" type="file" accept="application/json" /></label>
+  </div>
+
+  <div id="machines"></div>
+
+  
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const machinesContainer = document.getElementById("machines");
+      const addMachineBtn = document.getElementById("addMachineBtn");
+      const saveBtn = document.getElementById("saveBtn");
+      const loadInput = document.getElementById("loadInput");
+
+      function uid(prefix="m"){ return prefix+"_"+Math.random().toString(36).slice(2,9); }
+
+      function createRow(r={}) {
+        const tr=document.createElement("tr");
+
+        const std=document.createElement("input"); std.type="text"; std.placeholder=""; std.value=r.stdWt||"";
+        const disp=document.createElement("input"); disp.type="text"; disp.placeholder=""; disp.value=r.displayWt||"";
+        const err=document.createElement("input"); err.type="text"; err.placeholder=""; err.readOnly=true; err.value=r.error||"";
+        const maint=document.createElement("input"); maint.type="text"; maint.placeholder=""; maint.value=r.maintIC||"";
+        const remarks=document.createElement("input"); remarks.type="text"; remarks.placeholder=""; remarks.value=r.remarks||"";
+
+        const delBtn=document.createElement("button");
+        delBtn.textContent="Delete";
+        delBtn.className="delete-row-btn";
+        delBtn.addEventListener("click",()=>tr.remove());
+
+        function calc(){
+          const s=parseFloat(std.value), d=parseFloat(disp.value);
+          err.value=(!isNaN(s)&&!isNaN(d))?(s-d).toFixed(3):"";
+        }
+        std.addEventListener("input",calc);
+        disp.addEventListener("input",calc);
+        calc();
+
+        [std,disp,err,maint,remarks].forEach(inp=>{
+          const td=document.createElement("td");
+          td.appendChild(inp);
+          tr.appendChild(td);
+        });
+
+        const tdDel=document.createElement("td");
+        tdDel.appendChild(delBtn);
+        tr.appendChild(tdDel);
+
+        return tr;
+      }
+
+      function createMachine(data={}) {
+        const card=document.createElement("div");
+        card.className="machine-card";
+        card.dataset.id=data.id||uid("machine");
+
+        const name=document.createElement("input"); name.type="text"; name.placeholder="Equipment name"; name.value=data.name||"";
+        const cap=document.createElement("input"); cap.type="text"; cap.placeholder="Capacity"; cap.value=data.capacity||"";
+        const sec=document.createElement("input"); sec.type="text"; sec.placeholder="Section"; sec.value=data.section||"";
+
+        const addRow=document.createElement("button"); addRow.textContent="Add row";
+        const remove=document.createElement("button"); remove.textContent="Remove machine";
+        const lockBtn=document.createElement("button"); lockBtn.textContent=data.locked?"Unlock":"Lock";
+
+        const header=document.createElement("div");
+        header.className="machine-header";
+
+        const actions=document.createElement("div");
+        actions.className="machine-actions";
+        actions.append(addRow,remove,lockBtn);
+
+        header.append(name,cap,sec,actions);
+
+        const table=document.createElement("table");
+        const thead=document.createElement("thead");
+        const hr=document.createElement("tr");
+
+        ["STD Wt","DISPLY Wt","ERROR","MAINT I/C","Remarks","Delete"].forEach(h=>{
+          const th=document.createElement("th");
+          th.textContent=h;
+          hr.appendChild(th);
+        });
+
+        thead.appendChild(hr);
+        const tbody=document.createElement("tbody");
+        table.append(thead,tbody);
+
+        // Approval block
+        const approval=document.createElement("div");
+        approval.className="approval-block";
+        const apprBy=document.createElement("input"); apprBy.type="text"; apprBy.placeholder="Approved by"; apprBy.value=data.approvedBy||"";
+        const apprDate=document.createElement("input"); apprDate.type="date"; apprDate.placeholder="Approval date"; apprDate.value=data.approvalDate||"";
+        const apprRemarks=document.createElement("input"); apprRemarks.type="text"; apprRemarks.placeholder="Remarks"; apprRemarks.value=data.approvalRemarks||"";
+        const approveBtn=document.createElement("button"); approveBtn.textContent="Approve";
+
+        approval.append(apprBy,apprDate,apprRemarks,approveBtn);
+
+        card.append(header,table,approval);
+
+        (data.rows||[{}]).forEach(r=>tbody.appendChild(createRow(r)));
+
+        addRow.addEventListener("click",()=>tbody.appendChild(createRow({})));
+        remove.addEventListener("click",()=>card.remove());
+
+        // Lock/Unlock behavior
+        function setLocked(state){
+          card.dataset.locked = state ? "true" : "false";
+          lockBtn.textContent = state ? "Unlock" : "Lock";
+          // Disable machine header inputs, table inputs, add/remove row
+          card.querySelectorAll("table input, .machine-header input").forEach(inp=>inp.disabled=state);
+          addRow.disabled = state;
+          remove.disabled = state;
+          // Allow approve while locked? Choose policy:
+          // If locking should still permit approval, leave approveBtn enabled.
+          // If not, disable it:
+          // approveBtn.disabled = state;
+        }
+
+        lockBtn.addEventListener("click",()=>{
+          const locked = card.dataset.locked === "true";
+          setLocked(!locked);
+        });
+
+        if(data.locked) setLocked(true);
+
+        // Approval behavior
+        function setApproved(state){
+          card.dataset.approved = state ? "true" : "false";
+          // Freeze everything when approved
+          const freeze = state;
+          card.querySelectorAll("input,button").forEach(el=>el.disabled = freeze);
+          // But keep the Unlock button disabled to preserve approval finality
+          // and show approval stamp
+          let stamp = card.querySelector(".approval-stamp");
+          if(!stamp){
+            stamp=document.createElement("div");
+            stamp.className="approval-stamp";
+            card.appendChild(stamp);
+          }
+          if(state){
+            const by = (apprBy.value || "").trim();
+            const dt = apprDate.value || new Date().toISOString().slice(0,10);
+            stamp.textContent = `Approved by ${by || "—"} on ${dt}`;
+          } else {
+            stamp.remove();
+          }
+        }
+
+        approveBtn.addEventListener("click",()=>{
+          const by = (apprBy.value || "").trim();
+          if(!by){ alert("Please enter 'Approved by' name before approving."); return; }
+          if(!apprDate.value){ apprDate.value = new Date().toISOString().slice(0,10); }
+          setApproved(true);
+        });
+
+        if(data.approved){
+          // restore approval block values and freeze
+          setApproved(true);
+          // ensure stamp shows persisted values
+          const stamp = card.querySelector(".approval-stamp");
+          const by = data.approvedBy || "—";
+          const dt = data.approvalDate || new Date().toISOString().slice(0,10);
+          if(stamp) stamp.textContent = `Approved by ${by} on ${dt}`;
+        }
+
+        return card;
+      }
+
+      function collectData(){
+        const machines=Array.from(document.querySelectorAll(".machine-card")).map(card=>{
+          const headerInputs = Array.from(card.querySelectorAll(".machine-header input"));
+          const [name,cap,sec] = headerInputs.map(i=>i.value.trim());
+
+          const rows=Array.from(card.querySelectorAll("tbody tr")).map(tr=>{
+            const inputs=tr.querySelectorAll("input");
+            return {
+              stdWt:inputs[0].value.trim(),
+              displayWt:inputs[1].value.trim(),
+              error:inputs[2].value.trim(),
+              maintIC:inputs[3].value.trim(),
+              remarks:inputs[4].value.trim()
+            };
+          });
+
+          const apprBy = card.querySelector(".approval-block input[placeholder='Approved by']")?.value.trim() || "";
+          const apprDate = card.querySelector(".approval-block input[type='date']")?.value || "";
+          const apprRemarks = card.querySelector(".approval-block input[placeholder='Remarks']")?.value.trim() || "";
+
+          return {
+            id:card.dataset.id,
+            name,
+            capacity:cap,
+            section:sec,
+            locked:card.dataset.locked==="true",
+            approved:card.dataset.approved==="true",
+            approvedBy:apprBy,
+            approvalDate:apprDate,
+            approvalRemarks:apprRemarks,
+            rows
+          };
+        });
+
+        return {
+          meta:{revNo:"02",revDate:"01.07.2017",refNo:"HFL/QA/PS/R-13"},
+          calibrationDate:document.getElementById("calibrationDate").value,
+          machines
+        };
+      }
+
+      function populateFromData(data){
+        document.getElementById("calibrationDate").value=data?.calibrationDate||"";
+        machinesContainer.innerHTML="";
+        (data?.machines||[]).forEach(m=>{
+          const card = createMachine(m);
+          machinesContainer.appendChild(card);
+          // Restore lock explicitly
+          if(m.locked){
+            const lockBtn = card.querySelector(".machine-actions button:nth-child(3)");
+            // setLocked(true) is internal; simulate by toggling if needed
+            card.dataset.locked="true";
+            // Disable as per setLocked
+            card.querySelectorAll("table input, .machine-header input").forEach(inp=>inp.disabled=true);
+            card.querySelector(".machine-actions button:nth-child(1)").disabled=true; // addRow
+            card.querySelector(".machine-actions button:nth-child(2)").disabled=true; // remove
+          }
+          // Approval is handled inside createMachine via data.approved
+        });
+
+        if(!data?.machines?.length){
+          machinesContainer.appendChild(createMachine({
+            name:"ESSAE-TERAOKA",
+            capacity:"600 Kg",
+            section:"RMRD"
+          }));
+        }
+      }
+
+      function saveJSON(){
+        const data=collectData();
+        const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement("a");
+        a.href=url;
+        a.download="calibration_register.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      async function loadJSONFile(file){
+        const text=await file.text();
+        const data=JSON.parse(text);
+        populateFromData(data);
+      }
+
+      addMachineBtn.addEventListener("click",()=>machinesContainer.appendChild(createMachine({})));
+      saveBtn.addEventListener("click",saveJSON);
+      loadInput.addEventListener("change",e=>{
+        const file=e.target.files?.[0];
+        if(file) loadJSONFile(file);
+      });
+
+      populateFromData({});
+    });
+  </script>
+</body>
+</html>
+
+    <!-- SHEET 3: Curd CCP & OPRP -->
+    <div id="sheet3" class="tab-pane">
+    
+
+<script>
+  document.querySelectorAll('.tab-link').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = this.getAttribute('data-target');
+
+      document.querySelectorAll('.tab-link').forEach(function (b) {
+        b.classList.remove('active');
+      });
+      this.classList.add('active');
+
+      document.querySelectorAll('.tab-pane').forEach(function (pane) {
+        pane.classList.remove('active');
+      });
+      var pane = document.getElementById(targetId);
+      if (pane) { pane.classList.add('active'); }
+    });
+  });
+</script>
+
+</body>
+</html>

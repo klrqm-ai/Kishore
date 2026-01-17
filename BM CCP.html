@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CCP & OPRP Verification Report — Heritage Foods</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --brand: #1f4f8b;
+      --ink: #222;
+      --muted: #666;
+      --bg: #f7f9fc;
+      --line: #d9e1ee;
+      --accent: #0b7;
+      --warn: #c30;
+    }
+    html, body { margin: 0; padding: 0; font-family: Segoe UI, Roboto, Arial, sans-serif; color: var(--ink); background: var(--bg); }
+    .wrap { max-width: 1100px; margin: 24px auto; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    header { padding: 20px 24px; border-bottom: 1px solid var(--line); }
+    header h1 { margin: 0 0 4px 0; font-size: 20px; color: var(--brand); }
+    header .meta { color: var(--muted); font-size: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; padding: 16px 24px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; color: var(--muted); }
+    .field input, .field select, .field textarea {
+      border: 1px solid var(--line); border-radius: 6px; padding: 10px; font-size: 14px; background: #fff;
+    }
+    .field input[readonly] { background: #f5f7fb; color: #444; }
+    .section-title { padding: 12px 24px; margin: 8px 0 0; font-weight: 600; color: var(--brand); border-top: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 24px; }
+    thead th { background: #f2f6fc; color: var(--brand); font-weight: 600; border-bottom: 2px solid var(--line); padding: 10px; font-size: 13px; text-align: left; }
+    tbody td { border-bottom: 1px solid var(--line); padding: 8px; vertical-align: middle; }
+    .row-label { font-weight: 600; color: var(--ink); }
+    .req { font-size: 13px; color: var(--ink); }
+    .muted { color: var(--muted); font-size: 12px; }
+    .small { font-size: 12px; }
+    .actions { display: flex; gap: 10px; padding: 12px 24px 24px; border-top: 1px solid var(--line); }
+    button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 6px; background: #fff; cursor: pointer; font-size: 14px; }
+    button.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+    button.secondary { background: #fff; color: var(--brand); border-color: var(--brand); }
+    .notice { padding: 12px 24px; color: var(--muted); font-size: 12px; }
+    .footer { padding: 18px 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    .sig-block { display: flex; align-items: center; gap: 12px; }
+    .sig-block input { width: 220px; }
+    @media print {
+      body { background: #fff; }
+      .wrap { box-shadow: none; border: none; }
+      .actions, .notice { display: none !important; }
+      input, select, textarea { border: 1px solid #ccc; }
+      header { border-bottom: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <form id="ccpForm" class="wrap">
+    <header>
+      <h1>HERITAGE FOODS LIMITED — CCP & OPRP Verification Report</h1>
+      <div class="meta">Ref: HFL/PR/COM/R-17 | Rev No: 01 | Rev Date: 01/08/2022 | Page: 7 of 16</div>
+    </header>
+
+    <div class="grid">
+      <div class="field" style="grid-column: span 3;">
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" required />
+      </div>
+      <div class="field" style="grid-column: span 5;">
+        <label for="variant">Variant</label>
+        <input type="text" id="variant" name="variant" placeholder="e.g., Masala Buttermilk 200 ml" required />
+      </div>
+      <div class="field" style="grid-column: span 4;">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" placeholder="Plant / Line / Room" required />
+      </div>
+    </div>
+
+    <div class="section-title">CCP & OPRP entries — Buttermilk</div>
+    <div class="notice">Enter Parameter readings and record time/sign at up to four checkpoints per row (e.g., start, mid, end, random). All times use 24-hour format.</div>
+
+    <table aria-label="CCP & OPRP Verification">
+      <thead>
+        <tr>
+          <th class="small">S No</th>
+          <th class="small">Product</th>
+          <th class="small">CCP / OPRP</th>
+          <th>Requirement</th>
+          <th class="small">Shift A</th>
+          <th class="small">Time A</th>
+          <th class="small">Sign A</th>
+          <th class="small">Shift B</th>
+          <th class="small">Time B</th>
+          <th class="small">Sign B</th>
+          <th class="small">Shift C</th>
+          <th class="small">Time C</th>
+          <th class="small">Sign C</th>
+          <th class="small">Shift D</th>
+          <th class="small">Time D</th>
+          <th class="small">Sign D</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Row 1 -->
+        <tr>
+          <td>1</td>
+          <td><input type="text" name="r1_product" value="Butter Milk" readonly /></td>
+          <td><input type="text" name="r1_code" value="CCP 01" readonly /></td>
+          <td class="req">Pasteurization of water @ 80±3 °C / 15 seconds holding</td>
+
+          <td><input type="text" name="r1_pa" placeholder="Temp °C" /></td>
+          <td><input type="time" name="r1_ta" /></td>
+          <td><input type="text" name="r1_sa" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r1_pb" placeholder="Temp °C" /></td>
+          <td><input type="time" name="r1_tb" /></td>
+          <td><input type="text" name="r1_sb" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r1_pc" placeholder="Temp °C" /></td>
+          <td><input type="time" name="r1_tc" /></td>
+          <td><input type="text" name="r1_sc" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r1_pd" placeholder="Temp °C" /></td>
+          <td><input type="time" name="r1_td" /></td>
+          <td><input type="text" name="r1_sd" placeholder="Initials" /></td>
+        </tr>
+
+        <!-- Row 2 -->
+        <tr>
+          <td>2</td>
+          <td><input type="text" name="r2_product" value="Butter Milk" readonly /></td>
+          <td><input type="text" name="r2_code" value="OPRP 01" readonly /></td>
+          <td class="req">Product thermization at 70±1 °C and cooled to &lt; 5 °C</td>
+
+          <td><input type="text" name="r2_pa" placeholder="Therm °C / Cool °C" /></td>
+          <td><input type="time" name="r2_ta" /></td>
+          <td><input type="text" name="r2_sa" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r2_pb" placeholder="Therm °C / Cool °C" /></td>
+          <td><input type="time" name="r2_tb" /></td>
+          <td><input type="text" name="r2_sb" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r2_pc" placeholder="Therm °C / Cool °C" /></td>
+          <td><input type="time" name="r2_tc" /></td>
+          <td><input type="text" name="r2_sc" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r2_pd" placeholder="Therm °C / Cool °C" /></td>
+          <td><input type="time" name="r2_td" /></td>
+          <td><input type="text" name="r2_sd" placeholder="Initials" /></td>
+        </tr>
+
+        <!-- Row 3 -->
+        <tr>
+          <td>3</td>
+          <td><input type="text" name="r3_product" value="Butter Milk" readonly /></td>
+          <td><input type="text" name="r3_code" value="OPRP 02" readonly /></td>
+          <td class="req">Cleaning of pouch packing machines and filling machines</td>
+
+          <td><input type="text" name="r3_pa" placeholder="Verified by / SOP ref" /></td>
+          <td><input type="time" name="r3_ta" /></td>
+          <td><input type="text" name="r3_sa" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r3_pb" placeholder="Verified by / SOP ref" /></td>
+          <td><input type="time" name="r3_tb" /></td>
+          <td><input type="text" name="r3_sb" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r3_pc" placeholder="Verified by / SOP ref" /></td>
+          <td><input type="time" name="r3_tc" /></td>
+          <td><input type="text" name="r3_sc" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r3_pd" placeholder="Verified by / SOP ref" /></td>
+          <td><input type="time" name="r3_td" /></td>
+          <td><input type="text" name="r3_sd" placeholder="Initials" /></td>
+        </tr>
+
+        <!-- Row 4 -->
+        <tr>
+          <td>4</td>
+          <td><input type="text" name="r4_product" value="Butter Milk" readonly /></td>
+          <td><input type="text" name="r4_code" value="OPRP 03" readonly /></td>
+          <td class="req">Integrity check of filters (disc/nozzle/bag) in packing/filling machines</td>
+
+          <td><input type="text" name="r4_pa" placeholder="Filter OK / Replaced" /></td>
+          <td><input type="time" name="r4_ta" /></td>
+          <td><input type="text" name="r4_sa" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r4_pb" placeholder="Filter OK / Replaced" /></td>
+          <td><input type="time" name="r4_tb" /></td>
+          <td><input type="text" name="r4_sb" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r4_pc" placeholder="Filter OK / Replaced" /></td>
+          <td><input type="time" name="r4_tc" /></td>
+          <td><input type="text" name="r4_sc" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r4_pd" placeholder="Filter OK / Replaced" /></td>
+          <td><input type="time" name="r4_td" /></td>
+          <td><input type="text" name="r4_sd" placeholder="Initials" /></td>
+        </tr>
+
+        <!-- Row 5 -->
+        <tr>
+          <td>5</td>
+          <td><input type="text" name="r5_product" value="Butter Milk" readonly /></td>
+          <td><input type="text" name="r5_code" value="OPRP 04" readonly /></td>
+          <td class="req">Cold room temperature maintained ≤ 5 °C</td>
+
+          <td><input type="text" name="r5_pa" placeholder="Room °C" /></td>
+          <td><input type="time" name="r5_ta" /></td>
+          <td><input type="text" name="r5_sa" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r5_pb" placeholder="Room °C" /></td>
+          <td><input type="time" name="r5_tb" /></td>
+          <td><input type="text" name="r5_sb" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r5_pc" placeholder="Room °C" /></td>
+          <td><input type="time" name="r5_tc" /></td>
+          <td><input type="text" name="r5_sc" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r5_pd" placeholder="Room °C" /></td>
+          <td><input type="time" name="r5_td" /></td>
+          <td><input type="text" name="r5_sd" placeholder="Initials" /></td>
+        </tr>
+
+        <!-- Row 6 -->
+        <tr>
+          <td>6</td>
+          <td><input type="text" name="r6_product" value="Butter Milk" readonly /></td>
+          <td><input type="text" name="r6_code" value="OPRP 05" readonly /></td>
+          <td class="req">Heating of cut-open & flush-out curd to 60–65 °C</td>
+
+          <td><input type="text" name="r6_pa" placeholder="Temp °C" /></td>
+          <td><input type="time" name="r6_ta" /></td>
+          <td><input type="text" name="r6_sa" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r6_pb" placeholder="Temp °C" /></td>
+          <td><input type="time" name="r6_tb" /></td>
+          <td><input type="text" name="r6_sb" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r6_pc" placeholder="Temp °C" /></td>
+          <td><input type="time" name="r6_tc" /></td>
+          <td><input type="text" name="r6_sc" placeholder="Initials" /></td>
+
+          <td><input type="text" name="r6_pd" placeholder="Temp °C" /></td>
+          <td><input type="time" name="r6_td" /></td>
+          <td><input type="text" name="r6_sd" placeholder="Initials" /></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="grid">
+      <div class="field" style="grid-column: span 12;">
+        <label for="remarks">Remarks</label>
+        <textarea id="remarks" name="remarks" rows="3" placeholder="Observations, deviations, corrective actions"></textarea>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="muted">QA In-charge</div>
+      <div class="sig-block">
+        <label class="small" for="qa_sign">Signature</label>
+        <input type="text" id="qa_sign" name="qa_sign" placeholder="Name / Signature Ref" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="secondary" onclick="window.print()">Print</button>
+      <button type="submit" class="primary">Validate & Export JSON</button>
+      <button type="button" onclick="clearForm()">Clear</button>
+    </div>
+
+    <div class="notice" id="status"></div>
+  </form>
+
+  <script>
+    // Autofill today’s date
+    (function init() {
+      const date = document.getElementById('date');
+      if (!date.value) {
+        const today = new Date().toISOString().slice(0,10);
+        date.value = today;
+      }
+    })();
+
+    // Basic validation + JSON export
+    document.getElementById('ccpForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const status = document.getElementById('status');
+
+      // Required header fields
+      const requiredIds = ['date', 'variant', 'location'];
+      for (const id of requiredIds) {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) {
+          status.textContent = `Missing required field: ${id}`;
+          status.style.color = 'var(--warn)';
+          el.focus();
+          return;
+        }
+      }
+
+      // Construct data
+      const data = {
+        header: {
+          ref: 'HFL/PR/COM/R-17',
+          revNo: '01',
+          revDate: '01/08/2022',
+          page: '7 of 16',
+          date: document.getElementById('date').value,
+          variant: document.getElementById('variant').value.trim(),
+          location: document.getElementById('location').value.trim()
+        },
+        rows: []
+      };
+
+      const rowDefs = [
+        { n:1, code:'CCP 01', req:'Pasteurization of water @ 80±3 °C / 15 seconds holding' },
+        { n:2, code:'OPRP 01', req:'Product thermization at 70±1 °C and cooled to < 5 °C' },
+        { n:3, code:'OPRP 02', req:'Cleaning of pouch packing machines and filling machines' },
+        { n:4, code:'OPRP 03', req:'Integrity check of filters (disc/nozzle/bag) in packing/filling machines' },
+        { n:5, code:'OPRP 04', req:'Cold room temperature maintained ≤ 5 °C' },
+        { n:6, code:'OPRP 05', req:'Heating of cut-open & flush-out curd to 60–65 °C' }
+      ];
+
+      // Collect rows
+      for (const r of rowDefs) {
+        const row = {
+          sNo: r.n,
+          product: 'Butter Milk',
+          code: r.code,
+          requirement: r.req,
+          checkpoints: [
+            { Shift: get(`r${r.n}_pa`), time: get(`r${r.n}_ta`), sign: get(`r${r.n}_sa`) },
+            { Shift: get(`r${r.n}_pb`), time: get(`r${r.n}_tb`), sign: get(`r${r.n}_sb`) },
+            { Shift: get(`r${r.n}_pc`), time: get(`r${r.n}_tc`), sign: get(`r${r.n}_sc`) },
+            { Shift: get(`r${r.n}_pd`), time: get(`r${r.n}_td`), sign: get(`r${r.n}_sd`) }
+          ]
+        };
+        data.rows.push(row);
+      }
+
+      data.remarks = document.getElementById('remarks').value.trim();
+      data.qaInCharge = document.getElementById('qa_sign').value.trim();
+
+      // File download as JSON
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dt = data.header.date.replace(/-/g, '');
+      a.href = url;
+      a.download = `CCP_OPRP_Buttermilk_${dt}.json`;
+      document.body.appendChild(a);
+      a.click();
+      URL.revokeObjectURL(url);
+      a.remove();
+
+      status.textContent = 'Exported JSON successfully.';
+      status.style.color = 'var(--accent)';
+
+      function get(name) {
+        const el = document.getElementsByName(name)[0];
+        return el ? el.value.trim() : '';
+      }
+    });
+
+    function clearForm() {
+      const form = document.getElementById('ccpForm');
+      form.reset();
+      document.getElementById('status').textContent = '';
+      // Reset date to today after clear
+      const today = new Date().toISOString().slice(0,10);
+      document.getElementById('date').value = today;
+    }
+  </script>
+</body>
+</html>

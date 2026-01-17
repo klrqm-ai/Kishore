@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Room Temperature Log Unified System</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #f4f6f9;
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Header box */
+  .header-box {
+    background: #0b5fa4;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+  }
+  .header-box h1 {
+    margin: 0;
+    font-size: 22px;
+  }
+  .header-box p {
+    margin: 2px 0 0;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  /* Tabs as pill bar */
+  .nav {
+    background: #e5ecf7;
+    padding: 6px;
+    border-radius: 999px;
+    display: inline-flex;
+    margin-bottom: 15px;
+  }
+  .nav button {
+    padding: 8px 18px;
+    margin-right: 4px;
+    border: none;
+    background: transparent;
+    color: #0b3d6b;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+  }
+  .nav button.active-tab {
+    background: #0b5fa4;
+    color: white;
+  }
+  .nav button:hover:not(.active-tab) {
+    background: #c5d5f1;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .section {
+    background: white;
+    padding: 18px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-top: 5px;
+  }
+
+  .section h2 {
+    margin-top: 0;
+    margin-bottom: 4px;
+    color: #0b3d6b;
+  }
+  .section small {
+    color: #777;
+  }
+
+  .controls {
+    margin-bottom: 8px;
+  }
+  .controls button {
+    padding: 8px 14px;
+    margin-right: 8px;
+    border: none;
+    background: #4a90e2;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .controls button:hover {
+    background: #3a78c0;
+  }
+
+  label {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 13px;
+  }
+  input[type="date"] {
+    width: auto;
+    min-width: 140px;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 10px;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  th {
+    background: #dce6f5;
+    padding: 8px;
+    font-weight: bold;
+    border-bottom: 2px solid #b5c7dd;
+    color: #0b3d6b;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    font-size: 12px;
+  }
+  td {
+    padding: 5px 6px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #222;
+    font-size: 12px;
+  }
+  tr:nth-child(even) {
+    background: #f7faff;
+  }
+
+  input[type="text"] {
+    width: 95%;
+    padding: 4px 5px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  input[type="text"]:focus {
+    outline: 2px solid #0b5fa4;
+    background: #eef6ff;
+  }
+
+  #reportView h2 {
+    border-bottom: 2px solid #b5c7dd;
+    padding-bottom: 6px;
+  }
+
+  @media print {
+    body {
+      background: white;
+    }
+    .nav,
+    .controls,
+    #loadReportBtn {
+      display: none;
+    }
+    tr:nth-child(even) {
+      background: #f2f2f2 !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="header-box">
+    <h1>HERITAGE FOODS LIMITED</h1>
+    <p>Cold Room &amp; Incubation Room Temperature Log</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="nav">
+    <button id="tabCR" class="active-tab" onclick="showCREntry()">Cold Room Entry</button>
+    <button id="tabIR" onclick="showIREntry()">Incubation Room Entry</button>
+    <button id="tabReport" onclick="showReport()">Report View</button>
+  </div>
+
+  <!-- COLD ROOM ENTRY VIEW -->
+  <div id="crEntryView" class="section">
+    <h2>Cold Room Temperature Log</h2>
+    <small>REV. No. 02 &nbsp;&nbsp; REV. DATE 01.07.2017 &nbsp;&nbsp; REF. NO. HFLQAPSR-23</small>
+
+    <div class="controls">
+      <button id="saveBtnCR">Save JSON</button>
+      <button id="loadBtnCR">Load JSON</button>
+      <input type="file" id="loadFileCR" accept="application/json" style="display:none">
+      <button onclick="window.print()">Print</button>
+      <button id="clearBtnCR">Clear</button>
+    </div>
+
+    <label><strong>Date</strong>
+      <input type="date" id="logDateCR">
+    </label>
+
+    <table id="logTableCR">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Milk Store 1</th>
+          <th>Curd Store 1</th>
+          <th>Curd Store 2</th>
+          <th>Curd Store 3</th>
+          <th>Curd Store 4</th>
+          <th>Curd Store 5</th>
+          <th>Lab Asst. Signature</th>
+          <th>Operator Signature</th>
+        </tr>
+      </thead>
+      <tbody id="logBodyCR"></tbody>
+    </table>
+  </div>
+
+  <!-- INCUBATION ROOM ENTRY VIEW -->
+  <div id="irEntryView" class="section hidden">
+    <h2>Incubation Room Temperature Log Sheet</h2>
+    <small>ISSUE No. 04 &nbsp;&nbsp; DATE 10.09.2013 &nbsp;&nbsp; REV. No. 02 &nbsp;&nbsp; REV. DATE 01.07.2017 &nbsp;&nbsp; REF. NO. HFLQAPSR-24</small>
+
+    <div class="controls">
+      <button id="saveBtnIR">Save JSON</button>
+      <button id="loadBtnIR">Load JSON</button>
+      <input type="file" id="loadFileIR" accept="application/json" style="display:none">
+      <button onclick="window.print()">Print</button>
+      <button id="clearBtnIR">Clear</button>
+    </div>
+
+    <label><strong>Date</strong>
+      <input type="date" id="logDateIR">
+    </label>
+
+    <table id="logTableIR">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Inc Room-1</th>
+          <th>Inc Room-2</th>
+          <th>Lab Asst. Signature</th>
+          <th>Operator Signature</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody id="logBodyIR"></tbody>
+    </table>
+  </div>
+
+  <!-- REPORT VIEW -->
+  <div id="reportView" class="section hidden">
+    <h2>MultiDay Report Viewer</h2>
+    <p>Select multiple JSON log files for Cold Room or Incubation Room.</p>
+
+    <div class="controls">
+      <button id="loadReportBtn">Load JSON Files</button>
+      <input type="file" id="reportFiles" accept="application/json" multiple style="display:none">
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Time / Date</th>
+          <th>Col 1</th>
+          <th>Col 2</th>
+          <th>Col 3</th>
+          <th>Col 4</th>
+          <th>Col 5</th>
+          <th>Col 6</th>
+          <th>Lab Sign</th>
+          <th>Operator</th>
+        </tr>
+      </thead>
+      <tbody id="reportBody"></tbody>
+    </table>
+  </div>
+
+</div> <!-- /page-wrap -->
+
+<script>
+/* ------------------------- TAB NAVIGATION -------------------------- */
+function setActiveTab(tabId) {
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active-tab'));
+  document.getElementById(tabId).classList.add('active-tab');
+}
+
+function showCREntry() {
+  setActiveTab('tabCR');
+  document.getElementById('crEntryView').classList.remove('hidden');
+  document.getElementById('irEntryView').classList.add('hidden');
+  document.getElementById('reportView').classList.add('hidden');
+}
+
+function showIREntry() {
+  setActiveTab('tabIR');
+  document.getElementById('crEntryView').classList.add('hidden');
+  document.getElementById('irEntryView').classList.remove('hidden');
+  document.getElementById('reportView').classList.add('hidden');
+}
+
+function showReport() {
+  setActiveTab('tabReport');
+  document.getElementById('crEntryView').classList.add('hidden');
+  document.getElementById('irEntryView').classList.add('hidden');
+  document.getElementById('reportView').classList.remove('hidden');
+}
+
+/* ------------------------- COMMON HELPERS -------------------------- */
+// 24-hour format HH:00
+function formatTime(h) {
+  const hour24 = h % 24;        // 0–23
+  const hh = hour24 < 10 ? '0' + hour24 : '' + hour24;
+  return hh + ':00';
+}
+
+function downloadJSON(data, filename) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* -------------------- COLD ROOM ENTRY FUNCTIONS -------------------- */
+function buildRowsCR() {
+  const body = document.getElementById('logBodyCR');
+  body.innerHTML = '';
+  for (let h = 6; h <= 30; h++) {
+    const hour = h % 24;
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = '<td>' + formatTime(hour) + '</td>';
+
+    for (let s = 1; s <= 6; s++) {
+      const td = document.createElement('td');
+      td.innerHTML = '<input type="text">';
+      tr.appendChild(td);
+    }
+
+    const tdLab = document.createElement('td');
+    tdLab.innerHTML = '<input type="text">';
+    tr.appendChild(tdLab);
+
+    const tdOp = document.createElement('td');
+    tdOp.innerHTML = '<input type="text">';
+    tr.appendChild(tdOp);
+
+    body.appendChild(tr);
+  }
+}
+
+function collectDataCR() {
+  const rowsData = [];
+  const rows = document.querySelectorAll('#logBodyCR tr');
+  rows.forEach(tr => {
+    const time = tr.cells[0].textContent;
+    const inputs = tr.querySelectorAll('input');
+    rowsData.push({
+      time,
+      store1: inputs[0].value,
+      store2: inputs[1].value,
+      store3: inputs[2].value,
+      store4: inputs[3].value,
+      store5: inputs[4].value,
+      store6: inputs[5].value,
+      labSign: inputs[6].value,
+      opSign: inputs[7].value
+    });
+  });
+  return {
+    type: 'CR',
+    date: document.getElementById('logDateCR').value,
+    records: rowsData
+  };
+}
+
+function populateFromDataCR(data) {
+  if (!data || !data.records) return;
+  document.getElementById('logDateCR').value = data.date || '';
+  const trs = document.querySelectorAll('#logBodyCR tr');
+  for (let i = 0; i < trs.length && i < data.records.length; i++) {
+    const rec = data.records[i];
+    const inputs = trs[i].querySelectorAll('input');
+    inputs[0].value = rec.store1 ?? '';
+    inputs[1].value = rec.store2 ?? '';
+    inputs[2].value = rec.store3 ?? '';
+    inputs[3].value = rec.store4 ?? '';
+    inputs[4].value = rec.store5 ?? '';
+    inputs[5].value = rec.store6 ?? '';
+    inputs[6].value = rec.labSign ?? '';
+    inputs[7].value = rec.opSign ?? '';
+  }
+}
+
+function handleSaveCR() {
+  const data = collectDataCR();
+  const date = data.date || new Date().toISOString().slice(0,10);
+  downloadJSON(data, 'ColdRoomLog-' + date + '.json');
+}
+
+/* ----------------- INCUBATION ROOM ENTRY FUNCTIONS ----------------- */
+function buildRowsIR() {
+  const body = document.getElementById('logBodyIR');
+  body.innerHTML = '';
+  for (let h = 6; h <= 30; h++) {
+    const hour = h % 24;
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = '<td>' + formatTime(hour) + '</td>';
+
+    let td = document.createElement('td');
+    td.innerHTML = '<input type="text">';
+    tr.appendChild(td);
+
+    td = document.createElement('td');
+    td.innerHTML = '<input type="text">';
+    tr.appendChild(td);
+
+    td = document.createElement('td');
+    td.innerHTML = '<input type="text">';
+    tr.appendChild(td);
+
+    td = document.createElement('td');
+    td.innerHTML = '<input type="text">';
+    tr.appendChild(td);
+
+    td = document.createElement('td');
+    td.innerHTML = '<input type="text">';
+    tr.appendChild(td);
+
+    body.appendChild(tr);
+  }
+}
+
+function collectDataIR() {
+  const rowsData = [];
+  const rows = document.querySelectorAll('#logBodyIR tr');
+  rows.forEach(tr => {
+    const time = tr.cells[0].textContent;
+    const inputs = tr.querySelectorAll('input');
+    rowsData.push({
+      time,
+      inc1: inputs[0].value,
+      inc2: inputs[1].value,
+      labSign: inputs[2].value,
+      opSign: inputs[3].value,
+      remarks: inputs[4].value
+    });
+  });
+  return {
+    type: 'IR',
+    date: document.getElementById('logDateIR').value,
+    records: rowsData
+  };
+}
+
+function populateFromDataIR(data) {
+  if (!data || !data.records) return;
+  document.getElementById('logDateIR').value = data.date || '';
+  const trs = document.querySelectorAll('#logBodyIR tr');
+  for (let i = 0; i < trs.length && i < data.records.length; i++) {
+    const rec = data.records[i];
+    const inputs = trs[i].querySelectorAll('input');
+    inputs[0].value = rec.inc1 ?? '';
+    inputs[1].value = rec.inc2 ?? '';
+    inputs[2].value = rec.labSign ?? '';
+    inputs[3].value = rec.opSign ?? '';
+    inputs[4].value = rec.remarks ?? '';
+  }
+}
+
+function handleSaveIR() {
+  const data = collectDataIR();
+  const date = data.date || new Date().toISOString().slice(0,10);
+  downloadJSON(data, 'IncubationRoomLog-' + date + '.json');
+}
+
+/* ------------------------ CLEAR BUTTONS ---------------------------- */
+document.getElementById('clearBtnCR').addEventListener('click', () => {
+  document.querySelectorAll('#crEntryView input').forEach(inp => {
+    if (inp.type !== 'file') inp.value = '';
+  });
+});
+
+document.getElementById('clearBtnIR').addEventListener('click', () => {
+  document.querySelectorAll('#irEntryView input').forEach(inp => {
+    if (inp.type !== 'file') inp.value = '';
+  });
+});
+
+/* --------------------------- SAVE/LOAD ----------------------------- */
+document.getElementById('saveBtnCR').addEventListener('click', handleSaveCR);
+document.getElementById('loadBtnCR').addEventListener('click', () => {
+  document.getElementById('loadFileCR').click();
+});
+document.getElementById('loadFileCR').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  try {
+    const json = JSON.parse(text);
+    populateFromDataCR(json);
+  } catch {
+    alert('Invalid JSON file (CR).');
+  }
+});
+
+document.getElementById('saveBtnIR').addEventListener('click', handleSaveIR);
+document.getElementById('loadBtnIR').addEventListener('click', () => {
+  document.getElementById('loadFileIR').click();
+});
+document.getElementById('loadFileIR').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  try {
+    const json = JSON.parse(text);
+    populateFromDataIR(json);
+  } catch {
+    alert('Invalid JSON file (IR).');
+  }
+});
+
+/* -------------------- EXCEL-STYLE UP/DOWN NAV --------------------- */
+document.addEventListener('keydown', function (e) {
+  const active = document.activeElement;
+  if (!active || active.tagName !== 'INPUT') return;
+
+  const td = active.parentElement;
+  const tr = td.parentElement;
+  const cellIndex = td.cellIndex;
+
+  if (e.key === 'ArrowDown') {
+    const nextRow = tr.nextElementSibling;
+    if (nextRow) {
+      const nextInput = nextRow.cells[cellIndex]?.querySelector('input');
+      if (nextInput) {
+        nextInput.focus();
+        e.preventDefault();
+      }
+    }
+  }
+
+  if (e.key === 'ArrowUp') {
+    const prevRow = tr.previousElementSibling;
+    if (prevRow) {
+      const prevInput = prevRow.cells[cellIndex]?.querySelector('input');
+      if (prevInput) {
+        prevInput.focus();
+        e.preventDefault();
+      }
+    }
+  }
+});
+
+/* ------------- EXCEL STYLE MULTI-CELL PASTE SUPPORT ------------- */
+document.addEventListener('paste', function (e) {
+  const active = document.activeElement;
+  if (!active || active.tagName !== 'INPUT') return;
+
+  const text = (e.clipboardData || window.clipboardData).getData('text');
+  if (!text.includes('\n') && !text.includes('\t')) {
+    return; // normal paste
+  }
+
+  e.preventDefault();
+
+  const td = active.parentElement;
+  const tr = td.parentElement;
+  const startRow = tr.rowIndex - 1;  // skip header row
+  const startCol = td.cellIndex;
+
+  const table = tr.closest('table');
+  const rows = table.tBodies[0].rows;
+
+  const lines = text.trim().split(/\r?\n/);
+
+  for (let i = 0; i < lines.length; i++) {
+    const cols = lines[i].split('\t');
+    const row = rows[startRow + i];
+    if (!row) break;
+
+    for (let j = 0; j < cols.length; j++) {
+      const cell = row.cells[startCol + j];
+      if (!cell) break;
+      const input = cell.querySelector('input');
+      if (input) {
+        input.value = cols[j];
+      }
+    }
+  }
+});
+
+/* ------------------------ REPORT VIEW ----------------------------- */
+document.getElementById('loadReportBtn').addEventListener('click', () => {
+  document.getElementById('reportFiles').click();
+});
+
+document.getElementById('reportFiles').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files);
+  if (files.length === 0) return;
+
+  const allData = [];
+  for (const file of files) {
+    try {
+      const json = JSON.parse(await file.text());
+      allData.push(json);
+    } catch {
+      alert('Invalid JSON: ' + file.name);
+    }
+  }
+  showMultiDayReport(allData);
+});
+
+function showMultiDayReport(days) {
+  const body = document.getElementById('reportBody');
+  body.innerHTML = '';
+
+  days.sort((a, b) => (a.date > b.date ? 1 : -1));
+
+  days.forEach(day => {
+    const header = document.createElement('tr');
+    header.innerHTML =
+      '<td colspan="9" style="background:#bcd0f0;font-weight:bold;text-align:left;">' +
+      (day.type === 'CR' ? 'Cold Room' : 'Incubation Room') +
+      ' &nbsp;&nbsp; Date: ' +
+      (day.date || 'Unknown') +
+      '</td>';
+    body.appendChild(header);
+
+    day.records.forEach(rec => {
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + (rec.time || '') + '</td>' +
+        '<td>' + (rec.store1 ?? rec.inc1 ?? '') + '</td>' +
+        '<td>' + (rec.store2 ?? rec.inc2 ?? '') + '</td>' +
+        '<td>' + (rec.store3 ?? '') + '</td>' +
+        '<td>' + (rec.store4 ?? '') + '</td>' +
+        '<td>' + (rec.store5 ?? '') + '</td>' +
+        '<td>' + (rec.store6 ?? rec.remarks ?? '') + '</td>' +
+        '<td>' + (rec.labSign ?? '') + '</td>' +
+        '<td>' + (rec.opSign ?? '') + '</td>';
+      body.appendChild(tr);
+    });
+  });
+}
+
+/* -------------------------- INITIALIZE ----------------------------- */
+buildRowsCR();
+buildRowsIR();
+document.getElementById('logDateCR').value = new Date().toISOString().slice(0,10);
+document.getElementById('logDateIR').value = new Date().toISOString().slice(0,10);
+</script>
+</body>
+</html>

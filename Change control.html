@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Heritage Foods Limited — Change Control Format (R 19A)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --brand: #00639b;
+      --dark: #1a1a1a;
+      --muted: #666;
+      --border: #dcdcdc;
+      --bg: #ffffff;
+      --tick: #0b7a2a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 24px;
+      font: 14px/1.5 "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--dark); background: var(--bg);
+    }
+    header { display: grid; gap: 4px; margin-bottom: 16px; }
+    .brand {
+      display: flex; align-items: center; gap: 12px; color: var(--brand);
+      font-weight: 700; letter-spacing: 0.3px;
+    }
+    .brand .tagline { font-weight: 600; color: var(--muted); }
+    h1 {
+      font-size: 18px; margin: 4px 0 0; text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .card {
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px; background: #fff;
+    }
+    label { font-weight: 600; display: block; margin-bottom: 4px; }
+    input[type="text"], input[type="date"], textarea, select {
+      width: 100%; padding: 8px; border: 1px solid var(--border);
+      border-radius: 6px; background: #fff; color: var(--dark);
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    .checkbox-group, .radio-group {
+      display: grid; gap: 6px; grid-template-columns: repeat(4, minmax(160px, 1fr));
+    }
+    .checkbox-item {
+      display: flex; align-items: center; gap: 8px; border: 1px dashed var(--border);
+      border-radius: 6px; padding: 8px;
+    }
+    .checkbox-item input { accent-color: var(--tick); }
+    .rowspan {
+      grid-row: span 2; align-self: start;
+    }
+    .muted { color: var(--muted); font-size: 12px; }
+    .signature {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: end;
+    }
+    .sig-box {
+      border-top: 1px solid var(--border); padding-top: 8px;
+      min-height: 40px;
+    }
+    .approval-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    .approval-item {
+      display: flex; align-items: center; gap: 8px; border: 1px solid var(--border);
+      border-radius: 6px; padding: 8px;
+    }
+    footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 16px; font-size: 12px; color: var(--muted);
+    }
+    .actions { display: flex; gap: 8px; margin-top: 12px; }
+    button {
+      padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);
+      background: #f7f7f7; cursor: pointer;
+    }
+    button.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+    @media print {
+      .actions { display: none !important; }
+      body { padding: 0; }
+      .card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <form id="change-control-form" autocomplete="off">
+    <header>
+      <div class="brand">
+        <div>Heritage</div>
+        <div class="tagline">HEALTH AND HAPPINESS</div>
+      </div>
+      <h1>Heritage Foods Limited — Change Control Format</h1>
+      <div class="card meta">
+        <div class="grid-2">
+          <div>
+            <label for="revNo">Rev No.</label>
+            <input type="text" id="revNo" name="revNo" value="02" />
+          </div>
+          <div>
+            <label for="revDate">Rev Date</label>
+            <input type="text" id="revDate" name="revDate" value="01/08/2025" />
+          </div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <label for="refNo">Ref. No</label>
+            <input type="text" id="refNo" name="refNo" value="HFL/PR/CCF/R 19A" />
+          </div>
+          <div>
+            <label for="pageNo">Page No.</label>
+            <input type="text" id="pageNo" name="pageNo" value="1 of 1" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="grid-2">
+        <div>
+          <label for="plantName">Plant Name</label>
+          <input type="text" id="plantName" name="plantName" />
+        </div>
+        <div>
+          <label for="changeControlNo">Change control No</label>
+          <input type="text" id="changeControlNo" name="changeControlNo" />
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:8px">
+        <div>
+          <label for="proposedBy">Change Proposed By</label>
+          <input type="text" id="proposedBy" name="proposedBy" />
+        </div>
+        <div>
+          <label for="proposedDate">Change Proposed Date</label>
+          <input type="date" id="proposedDate" name="proposedDate" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <label>1. Change required — select applicable categories</label>
+      <div class="checkbox-group" style="grid-template-columns: repeat(4, minmax(180px, 1fr));">
+        <div class="checkbox-item rowspan">
+          <input type="checkbox" id="system" name="changeCategory" value="System" />
+          <label for="system">System</label>
+        </div>
+        <div class="checkbox-item rowspan">
+          <input type="checkbox" id="equipment" name="changeCategory" value="Equipment" />
+          <label for="equipment">Equipment</label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="manufacturingProcess" name="changeCategory" value="Manufacturing Process" />
+          <label for="manufacturingProcess">Manufacturing Process</label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="product" name="changeCategory" value="Product" />
+          <label for="product">Product</label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="document" name="changeCategory" value="Document" />
+          <label for="document">Document</label>
+        </div>
+        <div class="checkbox-item">
+          <input type="checkbox" id="facility" name="changeCategory" value="Facility" />
+          <label for="facility">Facility</label>
+        </div>
+        <div class="checkbox-item" style="grid-column: span 2;">
+          <input type="checkbox" id="others" name="changeCategory" value="Others" />
+          <label for="others">Others (Specify)</label>
+          <input type="text" id="othersSpecify" name="othersSpecify" placeholder="Specify other category" />
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <label>2. Description of proposed change (What will change)</label>
+      <div class="grid-2">
+        <div>
+          <label for="existing">Existing</label>
+          <textarea id="existing" name="existing"></textarea>
+        </div>
+        <div>
+          <label for="proposed">Proposed</label>
+          <textarea id="proposed" name="proposed"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="grid-1">
+        <div>
+          <label for="reason">3. Reason for change (Why should this change happen)</label>
+          <textarea id="reason" name="reason"></textarea>
+        </div>
+        <div style="margin-top:8px">
+          <label for="outcome">4. Intended outcome (Specific outcome of a successful change)</label>
+          <textarea id="outcome" name="outcome"></textarea>
+        </div>
+        <div style="margin-top:8px">
+          <label for="duration">5. Estimated duration (Start, length, responsible person/party — Internal/External)</label>
+          <textarea id="duration" name="duration" placeholder="e.g., Start: 2025-08-15; Duration: 2 weeks; By: Maintenance (Internal)"></textarea>
+        </div>
+      </div>
+      <div class="signature" style="margin-top:12px">
+        <div>
+          <label for="initiatorName">Initiator name</label>
+          <input type="text" id="initiatorName" name="initiatorName" />
+        </div>
+        <div>
+          <label for="initiatorsignature">Initiator signature</label>
+          <input type="text" id="initiatorsignature" name="initiatorsignature" />
+      </div>
+    </section>
+
+    <section class="card">
+      <label>Approval criteria</label>
+      <div class="approval-grid">
+        <div class="approval-item">
+          <input type="checkbox" id="riskManageable" name="approvalCriteria" value="Risk is Manageable" />
+          <label for="riskManageable">Risk is manageable</label>
+        </div>
+        <div class="approval-item">
+          <input type="checkbox" id="changeBeneficial" name="approvalCriteria" value="Change is Beneficial" />
+          <label for="changeBeneficial">Change is beneficial</label>
+        </div>
+        <div class="approval-item">
+          <input type="checkbox" id="resourcesAvailable" name="approvalCriteria" value="Required Resources are available" />
+          <label for="resourcesAvailable">Required resources are available</label>
+        </div>
+        <div class="approval-item">
+          <input type="checkbox" id="complianceMaintained" name="approvalCriteria" value="Compliance is Maintained" />
+          <label for="complianceMaintained">Compliance is maintained</label>
+        </div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button type="button" class="primary" onclick="window.print()">Print</button>
+      <button type="button" onclick="downloadJSON()">Export JSON</button>
+    </div>
+
+    <footer>
+      <div>Ref: HFL/PR/CCF/R 19A</div>
+      <div>Rev 02 — 01/08/2025</div>
+      <div>Page 1 of 1</div>
+    </footer>
+  </form>
+
+  <script>
+    function downloadJSON() {
+      const form = document.getElementById('change-control-form');
+      const data = {};
+      const formData = new FormData(form);
+      for (const [key, value] of formData.entries()) {
+        if (key === 'changeCategory' || key === 'approvalCriteria') {
+          if (!Array.isArray(data[key])) data[key] = [];
+          data[key].push(value);
+        } else {
+          data[key] = value;
+        }
+      }
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'change-control-R19A.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>

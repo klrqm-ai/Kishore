@@ -1,0 +1,1375 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Heritage Foods QA Packing Station Log Book</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --brand:#1572A1; --accent:#12c2e9; --ink:#1a1a1a; --muted:#6b7280; --bg:#f7fafc; --card:#ffffff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,Segoe UI,Roboto,Arial;
+      background:var(--bg);
+      color:var(--ink);
+    }
+    header{
+      background:linear-gradient(90deg,var(--brand),var(--accent));
+      color:white;
+      padding:16px 20px;
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+    header h1{
+      margin:0;
+      font-size:20px;
+    }
+    header small{
+      color:#e6f7ff;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:18px auto;
+      padding:0 16px;
+    }
+    .card{
+      background:white;
+      border:1px solid #e5e7eb;
+      border-radius:10px;
+      margin-bottom:16px;
+      box-shadow:0 2px 12px rgba(0,0,0,.06);
+    }
+    .card h2{
+      margin:0;
+      padding:12px 16px;
+      border-bottom:1px solid #eef2f7;
+      font-size:16px;
+    }
+    .content{
+      padding:12px 16px;
+    }
+    .grid{
+      display:grid;
+      gap:10px;
+    }
+    .grid.cols-2{
+      grid-template-columns:1fr 1fr;
+    }
+    .grid.cols-3{
+      grid-template-columns:repeat(3,1fr);
+    }
+    label{
+      font-size:12px;
+      color:var(--muted);
+      display:block;
+      margin-bottom:4px;
+    }
+    input, select, textarea{
+      width:100%;
+      padding:8px 10px;
+      border:1px solid #d1d5db;
+      border-radius:8px;
+      font-size:14px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+    }
+    th, td{
+      border:1px solid #e5e7eb;
+      padding:6px;
+      font-size:13px;
+      vertical-align:top;
+    }
+    th{
+      background:#f3f4f6;
+    }
+    td.invalid{
+      background:#fee2e2;
+    }
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .tab{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid #d1d5db;
+      cursor:pointer;
+      background:white;
+      font-size:13px;
+      user-select:none;
+    }
+    .tab.active{
+      background:var(--brand);
+      color:white;
+      border-color:var(--brand);
+    }
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    button{
+      padding:8px 12px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+    }
+    .primary{
+      background:var(--brand);
+      color:white;
+    }
+    .secondary{
+      background:#e5e7eb;
+    }
+    .sticky-actions{
+      position:sticky;
+      bottom:0;
+      background:#ffffffee;
+      backdrop-filter:blur(4px);
+      padding:10px;
+      border-top:1px solid #e5e7eb;
+      margin-top:18px;
+    }
+    .lock-pill{
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid #d1d5db;
+      display:inline-block;
+    }
+    .locked{
+      background:#fee2e2;
+      color:#b91c1c;
+    }
+    .unlocked{
+      background:#dcfce7;
+      color:#166534;
+    }
+    .note{
+      font-size:11px;
+      color:var(--muted);
+    }
+    @media print{
+      header,.tabs,.sticky-actions{
+        display:none !important;
+      }
+      body{
+        background:white;
+      }
+      .card{
+        box-shadow:none;
+        border-color:#000;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Heritage Foods — QA Packing Station Log Book</h1>
+  <small>Health and Happiness • Digital Day Book</small>
+</header>
+
+<div class="wrap">
+
+  <!-- Record details -->
+  <div class="card">
+    <h2>Record details</h2>
+    <div class="content grid cols-3">
+      <div>
+        <label>Date</label>
+        <input type="date" id="date">
+      </div>
+      <div>
+        <label>Shift</label>
+        <select id="shift">
+          <option value=""></option>
+          <option>A</option>
+          <option>B</option>
+          <option>C</option>
+          <option>G</option>
+        </select>
+      </div>
+      <div>
+        <label>Issue / Ref No</label>
+        <input id="issue">
+      </div>
+    </div>
+
+    <div class="content">
+      <span id="lockStatus" class="lock-pill unlocked">
+        Status: Unlocked (Entry in progress)
+      </span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-target="utilities">Utilities</div>
+    <div class="tab" data-target="temps">Temperatures</div>
+    <div class="tab" data-target="reception">Reception</div>
+    <div class="tab" data-target="raw">Raw Milk</div>
+    <div class="tab" data-target="processed">Processed Milk</div>
+    <div class="tab" data-target="skim">Skim Milk</div>
+    <div class="tab" data-target="dispatch">Dispatch</div>
+    <div class="tab" data-target="tanker">Tanker</div>
+    <div class="tab" data-target="returns">Returns</div>
+    <div class="tab" data-target="separation">Separation</div>
+    <div class="tab" data-target="packing">Packing</div>
+    <div class="tab" data-target="residue">Residue</div>
+    <div class="tab" data-target="closing">Closing</div>
+  </div>
+
+  <!-- 1. Utilities analysis -->
+  <div class="card section" id="utilities">
+    <h2>Utilities analysis report</h2>
+    <div class="content">
+      <div class="actions" style="margin:8px 0">
+        <button class="primary" onclick="addRow('utilitiesTable')">Add row</button>
+        <button onclick="deleteRow('utilitiesTable')">Delete last row</button>
+      </div>
+      <table id="utilitiesTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Location</th>
+            <th>HNO₃ (%)</th>
+            <th>NaOH (%)</th>
+            <th>Na₂CO₃</th>
+            <th>Raw water hardness pH/TDS</th>
+            <th>Soft water hardness pH/TDS</th>
+            <th>Feed water hardness pH/TDS</th>
+            <th>RO hardness pH/TDS</th>
+            <th>Blowdown pH</th>
+            <th>Blowdown TDS (ppm)</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2. Temperatures -->
+  <div class="card section" id="temps" style="display:none">
+    <h2>Temperatures — time intervals</h2>
+    <div class="content">
+      <div class="actions" style="margin:8px 0">
+        <button class="primary" onclick="addRow('tempsTable')">Add row</button>
+        <button onclick="deleteRow('tempsTable')">Delete last row</button>
+      </div>
+      <table id="tempsTable">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>07:00</th>
+            <th>11:00</th>
+            <th>15:00</th>
+            <th>19:00</th>
+            <th>23:00</th>
+            <th>03:00</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>FFC</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>Milk Sachet</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>Milk Cold Room</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>Curd Cold Room-1</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>Curd Cold Room-2</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>Curd Cold Room-3</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-01</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-02</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-03</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-04</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-05</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-06</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-07</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-08</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-09</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+          <tr>
+            <td>MS-10</td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td>
+            <td contenteditable></td><td contenteditable></td><td contenteditable></td><td contenteditable></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3. Direct reception -->
+  <div class="card section" id="reception" style="display:none">
+    <h2>Direct reception</h2>
+    <div class="content grid cols-2">
+      <div>
+        <h3>Morning reception</h3>
+        <table id="recMorning">
+          <thead>
+            <tr>
+              <th>Route name</th>
+              <th>MBRT (hrs)</th>
+              <th>Fat (%)</th>
+              <th>SNF (%)</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="actions" style="margin:8px 0">
+          <button class="primary" onclick="addRow('recMorning')">Add route</button>
+          <button onclick="deleteRow('recMorning')">Delete last</button>
+        </div>
+      </div>
+
+      <div>
+        <h3>Evening reception</h3>
+        <table id="recEvening">
+          <thead>
+            <tr>
+              <th>Route name</th>
+              <th>MBRT (hrs)</th>
+              <th>Fat (%)</th>
+              <th>SNF (%)</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="actions" style="margin:8px 0">
+          <button class="primary" onclick="addRow('recEvening')">Add route</button>
+          <button onclick="deleteRow('recEvening')">Delete last</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid cols-2 content">
+      <div>
+        <label>Graded by</label>
+        <input id="gradedBy">
+        <label>Dumping completed at</label>
+        <input type="time" id="dumpTime">
+      </div>
+      <div>
+        <label>Tested by</label>
+        <input id="testedBy">
+        <label>Testing completed at</label>
+        <input type="time" id="testTime">
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Raw chilled milk quality -->
+  <div class="card section" id="raw" style="display:none">
+    <h2>Raw chilled milk quality</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('rawTable')">Add row</button>
+        <button onclick="deleteRow('rawTable')">Delete last row</button>
+      </div>
+      <table id="rawTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Location</th>
+            <th>Item</th>
+            <th>O.T</th>
+            <th>Temp (°C)</th>
+            <th>Fat (%)</th>
+            <th>CLR</th>
+            <th>SNF (%)</th>
+            <th>Acidity (% LA)</th>
+            <th>MBRT (hrs)</th>
+            <th>Alcohol no</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5. Processed/market milk quality -->
+  <div class="card section" id="processed" style="display:none">
+    <h2>Processed / market milk quality</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('procTable')">Add row</button>
+        <button onclick="deleteRow('procTable')">Delete last row</button>
+      </div>
+      <table id="procTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Location</th>
+            <th>Item</th>
+            <th>O.T</th>
+            <th>Temp (°C)</th>
+            <th>Fat (%)</th>
+            <th>CLR</th>
+            <th>SNF (%)</th>
+            <th>Titratable acidity (% LA)</th>
+            <th>Alcohol no</th>
+            <th>H.S</th>
+            <th>1. MBRT (hrs)</th>
+            <th>Phosphatase</th>
+            <th>2. MBRT (hrs)</th>
+            <th>H.E (%)</th>
+            <th>Extraneous matter</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 6. Skim milk quality -->
+  <div class="card section" id="skim" style="display:none">
+    <h2>Skim milk quality</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('skimTable')">Add row</button>
+        <button onclick="deleteRow('skimTable')">Delete last row</button>
+      </div>
+      <table id="skimTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Location</th>
+            <th>O.T</th>
+            <th>Temp (°C)</th>
+            <th>Fat (%)</th>
+            <th>CLR</th>
+            <th>SNF (%)</th>
+            <th>Acidity (%)</th>
+            <th>MBRT (hrs)</th>
+            <th>H.S</th>
+            <th>Phosphatase</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 7. Dispatch (market milk) -->
+  <div class="card section" id="dispatch" style="display:none">
+    <h2>Dispatch quality — market milk</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('dispatchTable')">Add row</button>
+        <button onclick="deleteRow('dispatchTable')">Delete last row</button>
+      </div>
+      <table id="dispatchTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Location</th>
+            <th>Item</th>
+            <th>Lot no</th>
+            <th>Temp (°C)</th>
+            <th>MBRT (hrs)</th>
+            <th>Keeping quality</th>
+            <th>Dispatch to</th>
+            <th>Vehicle hygienic condition</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 8. Dispatch tanker -->
+  <div class="card section" id="tanker" style="display:none">
+    <h2>Dispatch tanker</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('tankerTable')">Add row</button>
+        <button onclick="deleteRow('tankerTable')">Delete last row</button>
+      </div>
+      <table id="tankerTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Location</th>
+            <th>Item</th>
+            <th>O.T</th>
+            <th>Temp (°C)</th>
+            <th>Acidity (% LA)</th>
+            <th>Fat (%)</th>
+            <th>CLR</th>
+            <th>SNF (%)</th>
+            <th>Phosphatase</th>
+            <th>MBRT (hrs)</th>
+            <th>Dispatch to</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 9. Market returns -->
+  <div class="card section" id="returns" style="display:none">
+    <h2>Market returns quality</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('returnsTable')">Add row</button>
+        <button onclick="deleteRow('returnsTable')">Delete last row</button>
+      </div>
+      <table id="returnsTable">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Pack size</th>
+            <th>Lot no</th>
+            <th>Appearance</th>
+            <th>O.T</th>
+            <th>Fat (%)</th>
+            <th>SNF (%)</th>
+            <th>Temp (°C)</th>
+            <th>Acidity (%)</th>
+            <th>COB</th>
+            <th>Quantity (kg)</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 10. Milk separation -->
+  <div class="card section" id="separation" style="display:none">
+    <h2>Milk separation</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('sepTable')">Add row</button>
+        <button onclick="deleteRow('sepTable')">Delete last row</button>
+      </div>
+      <table id="sepTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Source</th>
+            <th>Skim milk fat (%)</th>
+            <th>Cream fat (%)</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 11. Market milk packing -->
+  <div class="card section" id="packing" style="display:none">
+    <h2>Market milk packing quality</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('packTable')">Add row</button>
+        <button onclick="deleteRow('packTable')">Delete last row</button>
+      </div>
+      <table id="packTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Item</th>
+            <th>MBRT — flush out</th>
+            <th>MBRT — 1st sachet</th>
+            <th>MBRT — middle</th>
+            <th>MBRT — last</th>
+            <th>Sachet fat/SNF — first</th>
+            <th>Sachet fat/SNF — middle</th>
+            <th>Sachet fat/SNF — last</th>
+            <th>Packing code</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 12. Residue monitoring -->
+  <div class="card section" id="residue" style="display:none">
+    <h2>Residue monitoring</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('resTable')">Add row</button>
+        <button onclick="deleteRow('resTable')">Delete last row</button>
+      </div>
+      <table id="resTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Source</th>
+            <th>No. drops 0.25N H₂SO₄</th>
+            <th>Result</th>
+            <th>Sign</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 13. Closing balance -->
+  <div class="card section" id="closing" style="display:none">
+    <h2>Closing balance</h2>
+    <div class="content">
+      <div class="actions">
+        <button class="primary" onclick="addRow('closeTable')">Add row</button>
+        <button onclick="deleteRow('closeTable')">Delete last row</button>
+      </div>
+      <table id="closeTable">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Location</th>
+            <th>Item</th>
+            <th>O.T</th>
+            <th>Temp (°C)</th>
+            <th>Fat (%)</th>
+            <th>CLR</th>
+            <th>SNF (%)</th>
+            <th>Acidity (% LA)</th>
+            <th>MBRT (hrs)</th>
+            <th>Alcohol no</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="content grid cols-2">
+      <div>
+        <label>QA shift in-charge</label>
+        <input id="qaIncharge">
+      </div>
+      <div>
+        <label>QA in-charge / Plant manager</label>
+        <input id="plantMgr">
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky bottom actions (no quick save/load) -->
+  <div class="card sticky-actions">
+    <div class="actions">
+      <button onclick="window.print()">Print</button>
+
+      <button class="secondary" onclick="exportJSON()">Save JSON File (this record)</button>
+      <button onclick="importJSON()">Load JSON File (into screen & multi‑day)</button>
+      <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="handleJSONUpload(event)">
+
+      <button class="secondary" onclick="approveRecord()">Approve & Lock</button>
+      <button onclick="unlockRecord()">Unlock</button>
+
+      <button onclick="openReportView()">Report View (this record)</button>
+      <button onclick="openMultiDayReportPrompt()">Multi‑day Report (from loaded records)</button>
+
+      <span class="note">
+        For multi‑day reports: load each day's JSON at least once; they are stored in this browser.
+      </span>
+    </div>
+  </div>
+
+</div> <!-- end .wrap -->
+
+<script>
+/* ---------------------------------------------------------
+   CONSTANTS & HELPERS
+--------------------------------------------------------- */
+const STORAGE_PREFIX = "heritageQA";  // base key prefix
+const GLOBAL_LOCK_KEY = STORAGE_PREFIX + "_globalLock";
+const INDEX_KEY = STORAGE_PREFIX + "-index"; // list of keys for multi-day
+
+function getCurrentMetaKey(meta) {
+  const date = meta.date || "";
+  const shift = meta.shift || "no-shift";
+  if (!date) return null;
+
+  const parts = date.split("-");
+  if (parts.length !== 3) return null;
+  const yyyy = parts[0];
+  const mm = parts[1];
+  const dd = parts[2];
+
+  return `${STORAGE_PREFIX}-${yyyy}-${mm}-${dd}-${shift}`;
+}
+
+function simplePrompt(message, defaultValue = "") {
+  return window.prompt(message, defaultValue);
+}
+
+/* ---------------------------------------------------------
+   TAB SWITCHING
+--------------------------------------------------------- */
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    const target = tab.dataset.target;
+    document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
+    const sec = document.getElementById(target);
+    if (sec) sec.style.display = 'block';
+  });
+});
+
+/* ---------------------------------------------------------
+   ADD / DELETE ROWS
+--------------------------------------------------------- */
+function addRow(tableId){
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const tb = table.querySelector('tbody');
+  const cols = table.querySelectorAll('thead th').length;
+  const tr = document.createElement('tr');
+
+  for(let i = 0; i < cols; i++){
+    const td = document.createElement('td');
+    td.contentEditable = true;
+    tr.appendChild(td);
+  }
+
+  tb.appendChild(tr);
+
+  if (isLocked()) applyLockToRow(tr);
+  attachTimeValidationToRow(tableId, tr);
+}
+
+function deleteRow(tableId){
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const tb = table.querySelector('tbody');
+  if (tb.lastElementChild) tb.removeChild(tb.lastElementChild);
+}
+
+/* ---------------------------------------------------------
+   TABLE → ARRAY
+--------------------------------------------------------- */
+function tableToData(tableId){
+  const table = document.getElementById(tableId);
+  if (!table) return [];
+  const rows = Array.from(table.querySelectorAll('tbody tr'));
+  return rows.map(r =>
+    Array.from(r.children).map(td => td.innerText.trim())
+  );
+}
+
+/* ---------------------------------------------------------
+   ARRAY → TABLE
+--------------------------------------------------------- */
+function dataToTable(tableId, data){
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const tb = table.querySelector('tbody');
+  tb.innerHTML = '';
+
+  (data || []).forEach(row => {
+    const tr = document.createElement('tr');
+    const cols = table.querySelectorAll('thead th').length;
+
+    for(let i = 0; i < cols; i++){
+      const td = document.createElement('td');
+      td.contentEditable = true;
+      td.innerText = row[i] || '';
+      tr.appendChild(td);
+    }
+    tb.appendChild(tr);
+    attachTimeValidationToRow(tableId, tr);
+    if (isLocked()) applyLockToRow(tr);
+  });
+}
+
+/* ---------------------------------------------------------
+   BUILD / APPLY PAYLOAD
+--------------------------------------------------------- */
+function buildPayload() {
+  return {
+    meta: {
+      date: document.getElementById('date').value || '',
+      shift: document.getElementById('shift').value || '',
+      issue: document.getElementById('issue').value || '',
+      gradedBy: document.getElementById('gradedBy')?.value || '',
+      testedBy: document.getElementById('testedBy')?.value || '',
+      dumpTime: document.getElementById('dumpTime')?.value || '',
+      testTime: document.getElementById('testTime')?.value || '',
+      qaIncharge: document.getElementById('qaIncharge')?.value || '',
+      plantMgr: document.getElementById('plantMgr')?.value || '',
+      locked: isLocked() ? 1 : 0
+    },
+    tables: {
+      utilities: tableToData('utilitiesTable'),
+      temps: tableToData('tempsTable'),
+      recMorning: tableToData('recMorning'),
+      recEvening: tableToData('recEvening'),
+      raw: tableToData('rawTable'),
+      processed: tableToData('procTable'),
+      skim: tableToData('skimTable'),
+      dispatch: tableToData('dispatchTable'),
+      tanker: tableToData('tankerTable'),
+      returns: tableToData('returnsTable'),
+      separation: tableToData('sepTable'),
+      packing: tableToData('packTable'),
+      residue: tableToData('resTable'),
+      closing: tableToData('closeTable')
+    }
+  };
+}
+
+function applyPayload(payload) {
+  if (!payload) return;
+  const m = payload.meta || {};
+  const setIf = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.value = val || '';
+  };
+
+  setIf('date', m.date);
+  setIf('shift', m.shift);
+  setIf('issue', m.issue);
+  setIf('gradedBy', m.gradedBy);
+  setIf('testedBy', m.testedBy);
+  setIf('dumpTime', m.dumpTime);
+  setIf('testTime', m.testTime);
+  setIf('qaIncharge', m.qaIncharge);
+  setIf('plantMgr', m.plantMgr);
+
+  const t = payload.tables || {};
+  dataToTable('utilitiesTable', t.utilities);
+  dataToTable('tempsTable', t.temps);
+  dataToTable('recMorning', t.recMorning);
+  dataToTable('recEvening', t.recEvening);
+  dataToTable('rawTable', t.raw);
+  dataToTable('procTable', t.processed);
+  dataToTable('skimTable', t.skim);
+  dataToTable('dispatchTable', t.dispatch);
+  dataToTable('tankerTable', t.tanker);
+  dataToTable('returnsTable', t.returns);
+  dataToTable('sepTable', t.separation);
+  dataToTable('packTable', t.packing);
+  dataToTable('resTable', t.residue);
+  dataToTable('closeTable', t.closing);
+
+  setLockedState(m.locked === 1);
+}
+
+/* ---------------------------------------------------------
+   INDEX UTIL
+--------------------------------------------------------- */
+function ensureIndexIncludes(key) {
+  const rawIndex = localStorage.getItem(INDEX_KEY);
+  let index = rawIndex ? JSON.parse(rawIndex) : [];
+  if (!index.includes(key)) {
+    index.push(key);
+    localStorage.setItem(INDEX_KEY, JSON.stringify(index));
+  }
+}
+
+/* ---------------------------------------------------------
+   LOCK / UNLOCK
+--------------------------------------------------------- */
+function isLocked() {
+  return localStorage.getItem(GLOBAL_LOCK_KEY) === "1";
+}
+
+function applyLockToRow(tr){
+  tr.querySelectorAll('td').forEach(td => {
+    td.contentEditable = false;
+    td.style.background = "#f3f4f6";
+  });
+}
+
+function setLockedState(isLockedFlag) {
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    el.disabled = isLockedFlag;
+    el.style.background = isLockedFlag ? "#f3f4f6" : "white";
+  });
+
+  document.querySelectorAll('tbody td').forEach(td => {
+    td.contentEditable = !isLockedFlag;
+    td.style.background = isLockedFlag ? "#f3f4f6" : "white";
+  });
+
+  const pill = document.getElementById('lockStatus');
+  if (pill) {
+    if (isLockedFlag) {
+      pill.textContent = "Status: Locked (Approved)";
+      pill.classList.remove('unlocked');
+      pill.classList.add('locked');
+    } else {
+      pill.textContent = "Status: Unlocked (Entry in progress)";
+      pill.classList.remove('locked');
+      pill.classList.add('unlocked');
+    }
+  }
+
+  localStorage.setItem(GLOBAL_LOCK_KEY, isLockedFlag ? "1" : "0");
+}
+
+function approveRecord() {
+  if (isLocked()) {
+    alert("Record is already locked and approved.");
+    return;
+  }
+  if (!confirm("Approve this record and lock all entries?")) return;
+  setLockedState(true);
+  alert("Record approved and locked.");
+}
+
+function unlockRecord() {
+  if (!isLocked()) {
+    alert("Record is already unlocked.");
+    return;
+  }
+  const reason = prompt("Enter reason for unlocking (required for audit):");
+  if (!reason) {
+    alert("Unlock cancelled — reason is required.");
+    return;
+  }
+  setLockedState(false);
+  alert("Record unlocked.\nReason: " + reason);
+}
+
+/* ---------------------------------------------------------
+   JSON EXPORT / IMPORT
+--------------------------------------------------------- */
+function exportJSON() {
+  const payload = buildPayload();
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `QA-Daybook-${payload.meta.date || "record"}-${payload.meta.shift || "shift"}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importJSON() {
+  document.getElementById("jsonFileInput").value = "";
+  document.getElementById("jsonFileInput").click();
+}
+
+function handleJSONUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const payload = JSON.parse(e.target.result);
+
+      // Apply to current screen
+      applyPayload(payload);
+
+      // Store in localStorage under correct multi-day key
+      const meta = payload.meta || {};
+      const key = getCurrentMetaKey(meta);
+      if (!key) {
+        alert("JSON loaded on screen, but date/shift missing for multi‑day storage.");
+        return;
+      }
+      localStorage.setItem(key, JSON.stringify(payload));
+      ensureIndexIncludes(key);
+
+      alert("JSON file loaded into screen and stored for multi‑day reporting.");
+    } catch (err) {
+      alert("Invalid JSON file.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------------------------------------------------------
+   TIME VALIDATION (HH:MM)
+--------------------------------------------------------- */
+function validateTimeCell(td) {
+  const value = td.innerText.trim();
+  const pattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+
+  if (value === "") return;
+
+  if (!pattern.test(value)) {
+    td.classList.add("invalid");
+    alert("Invalid time format. Use HH:MM (24-hour).");
+    td.innerText = "";
+  } else {
+    td.classList.remove("invalid");
+  }
+}
+
+function attachTimeValidationToRow(tableId, tr){
+  const timeTables = [
+    "utilitiesTable",
+    "rawTable","procTable","skimTable","dispatchTable",
+    "tankerTable","returnsTable","sepTable","packTable",
+    "closeTable","resTable"
+  ];
+  if (!timeTables.includes(tableId)) return;
+  const td = tr.children[0];
+  if (!td) return;
+  td.addEventListener("blur", () => validateTimeCell(td));
+}
+
+/* ---------------------------------------------------------
+   SINGLE-DAY AUDIT REPORT
+--------------------------------------------------------- */
+function openReportView() {
+  const payload = buildPayload();
+  const html = generateReportHTML(payload);
+  const win = window.open("", "_blank");
+  if (!win) {
+    alert("Popup blocked. Please allow popups for this site.");
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+
+function generateReportHTML(payload) {
+  const m = payload.meta || {};
+  const t = payload.tables || {};
+
+  const date = m.date || "";
+  const shift = m.shift || "";
+  const issue = m.issue || "";
+  const locked = m.locked === 1 ? "Approved & Locked" : "Not Approved";
+
+  const qa = m.qaIncharge || "";
+  const mgr = m.plantMgr || "";
+
+  const sections = [
+    { id: "utilitiesTable", title: "Utilities Analysis", data: t.utilities },
+    { id: "tempsTable", title: "Temperature Log", data: t.temps },
+    { id: "recMorning", title: "Reception – Morning", data: t.recMorning },
+    { id: "recEvening", title: "Reception – Evening", data: t.recEvening },
+    { id: "rawTable", title: "Raw Chilled Milk", data: t.raw },
+    { id: "procTable", title: "Processed / Market Milk", data: t.processed },
+    { id: "skimTable", title: "Skim Milk", data: t.skim },
+    { id: "dispatchTable", title: "Dispatch – Market Milk", data: t.dispatch },
+    { id: "tankerTable", title: "Dispatch – Tanker", data: t.tanker },
+    { id: "returnsTable", title: "Market Returns", data: t.returns },
+    { id: "sepTable", title: "Milk Separation", data: t.separation },
+    { id: "packTable", title: "Packing Quality", data: t.packing },
+    { id: "resTable", title: "Residue Monitoring", data: t.residue },
+    { id: "closeTable", title: "Closing Balance", data: t.closing }
+  ];
+
+  let body = `
+    <h1 style="text-align:center;">Heritage Foods – QA Audit Report</h1>
+    <h3 style="text-align:center;">Packing Station Log Book</h3>
+
+    <div style="margin-top:20px; font-size:15px;">
+      <strong>Date:</strong> ${date}<br>
+      <strong>Shift:</strong> ${shift}<br>
+      <strong>Issue/Ref No:</strong> ${issue}<br>
+      <strong>Status:</strong> ${locked}<br>
+    </div>
+
+    <hr style="margin:20px 0;">
+  `;
+
+  sections.forEach(sec => {
+    body += `
+      <h2 style="margin-top:30px;">${sec.title}</h2>
+      ${buildSimpleTableHTML(sec.id, sec.data)}
+    `;
+  });
+
+  body += `
+    <hr style="margin:30px 0;">
+    <h3>Approvals</h3>
+    <p><strong>QA Shift In‑Charge:</strong> ${qa}</p>
+    <p><strong>QA In‑Charge / Plant Manager:</strong> ${mgr}</p>
+
+    <p style="margin-top:40px; font-size:12px; color:#555;">
+      Generated from Digital QA Day‑Book • Heritage Foods<br>
+      This report reflects the current record state on screen.
+    </p>
+  `;
+
+  return `
+    <html>
+    <head>
+      <title>Audit Report</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        th, td { border: 1px solid #444; padding: 6px; font-size: 13px; }
+        th { background: #f0f0f0; }
+        h2 { margin-bottom: 10px; }
+      </style>
+    </head>
+    <body>${body}</body>
+    </html>
+  `;
+}
+
+function buildSimpleTableHTML(tableId, data) {
+  const original = document.getElementById(tableId);
+  if (!original) return "<p>No table.</p>";
+
+  const headers = Array.from(original.querySelectorAll("thead th"))
+    .map(th => th.innerText.trim());
+  const rows = data || [];
+
+  if (!headers.length) return "<p>No columns.</p>";
+
+  let thead = "<thead><tr>";
+  headers.forEach(h => {
+    thead += `<th>${h}</th>`;
+  });
+  thead += "</tr></thead>";
+
+  let tbody = "<tbody>";
+  rows.forEach(row => {
+    tbody += "<tr>";
+    headers.forEach((_, idx) => {
+      const cell = (row[idx] || "").toString()
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;");
+      tbody += `<td>${cell}</td>`;
+    });
+    tbody += "</tr>";
+  });
+  tbody += "</tbody>";
+
+  return `<table>${thead}${tbody}</table>`;
+}
+
+/* ---------------------------------------------------------
+   MULTI‑DAY REPORT
+--------------------------------------------------------- */
+function openMultiDayReportPrompt() {
+  const from = simplePrompt("Enter FROM date (YYYY-MM-DD) for multi‑day report:", "");
+  if (!from) return;
+  const to = simplePrompt("Enter TO date (YYYY-MM-DD) for multi‑day report:", from);
+  if (!to) return;
+  openMultiDayReport(from, to);
+}
+
+function parseKeyDate(key) {
+  // key format: heritageQA-YYYY-MM-DD-Shift
+  const parts = key.split("-");
+  if (parts.length < 5) return null;
+  const d = `${parts[1]}-${parts[2]}-${parts[3]}`;
+  const time = new Date(d).getTime();
+  if (isNaN(time)) return null;
+  return time;
+}
+
+function openMultiDayReport(fromDate, toDate) {
+  const rawIndex = localStorage.getItem(INDEX_KEY);
+  if (!rawIndex) {
+    alert("No stored records found for multi‑day report. Load JSON files first.");
+    return;
+  }
+  const index = JSON.parse(rawIndex); // list of keys
+
+  const fromTime = new Date(fromDate).getTime();
+  const toTime = new Date(toDate).getTime();
+  if (isNaN(fromTime) || isNaN(toTime)) {
+    alert("Invalid date range. Use YYYY-MM-DD.");
+    return;
+  }
+
+  const selectedKeys = index.filter(k => {
+    const time = parseKeyDate(k);
+    return time !== null && time >= fromTime && time <= toTime;
+  }).sort();
+
+  if (!selectedKeys.length) {
+    alert("No records found in this date range.");
+    return;
+  }
+
+  let combinedBody = `
+    <h1 style="text-align:center;">Heritage Foods – QA Multi‑Day Report</h1>
+    <h3 style="text-align:center;">Packing Station Log Book</h3>
+    <p style="text-align:center; font-size:14px;">
+      From <strong>${fromDate}</strong> to <strong>${toDate}</strong>
+    </p>
+    <hr style="margin:20px 0;">
+  `;
+
+  selectedKeys.forEach(k => {
+    const raw = localStorage.getItem(k);
+    if (!raw) return;
+    const payload = JSON.parse(raw);
+    const htmlForOne = generateReportHTML(payload);
+    const match = htmlForOne.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+    const innerBody = match ? match[1] : htmlForOne;
+
+    combinedBody += `
+      <div style="page-break-after:always; margin-bottom:40px;">
+        ${innerBody}
+      </div>
+    `;
+  });
+
+  const finalHTML = `
+    <html>
+    <head>
+      <title>Multi‑Day QA Report</title>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+        th, td { border: 1px solid #444; padding: 6px; font-size: 13px; }
+        th { background: #f0f0f0; }
+        h2 { margin-bottom: 10px; }
+      </style>
+    </head>
+    <body>${combinedBody}</body>
+    </html>
+  `;
+
+  const win = window.open("", "_blank");
+  if (!win) {
+    alert("Popup blocked. Please allow popups for this site.");
+    return;
+  }
+  win.document.open();
+  win.document.write(finalHTML);
+  win.document.close();
+}
+
+/* ---------------------------------------------------------
+   INITIALIZE
+--------------------------------------------------------- */
+(function init(){
+  // Minimal default rows in main data tables
+  [
+    "utilitiesTable","rawTable","procTable","skimTable","dispatchTable",
+    "tankerTable","returnsTable","sepTable","packTable","resTable","closeTable"
+  ].forEach(id => addRow(id));
+
+  // Pre‑fill standard reception routes
+  const routes = ["Yarragunta-1","Yarragunta-2","Direct","Rollapudi","Kalluru","Y.B.Palli","Vamakuntla"];
+  routes.forEach(name => {
+    const makeRow = () => {
+      const tr = document.createElement('tr');
+      ["Route name","MBRT","Fat","SNF","Remarks"].forEach(() => {
+        const td = document.createElement('td');
+        td.contentEditable = true;
+        tr.appendChild(td);
+      });
+      tr.children[0].innerText = name;
+      return tr;
+    };
+    const morningBody = document.querySelector('#recMorning tbody');
+    const eveningBody = document.querySelector('#recEvening tbody');
+    if (morningBody) morningBody.appendChild(makeRow());
+    if (eveningBody) eveningBody.appendChild(makeRow());
+  });
+
+  // Attach time validation for default rows
+  [
+    "utilitiesTable","rawTable","procTable","skimTable","dispatchTable",
+    "tankerTable","returnsTable","sepTable","packTable","resTable","closeTable"
+  ].forEach(id => {
+    const table = document.getElementById(id);
+    if (!table) return;
+    table.querySelectorAll('tbody tr').forEach(tr => attachTimeValidationToRow(id, tr));
+  });
+
+  // Set today’s date
+  const today = new Date();
+  const tzOffset = today.getTimezoneOffset() * 60000;
+  const local = new Date(today - tzOffset).toISOString().slice(0,10);
+  const dateInput = document.getElementById('date');
+  if (dateInput && !dateInput.value) {
+    dateInput.value = local;
+  }
+
+  // Default issue text
+  const issueInput = document.getElementById('issue');
+  if (issueInput && !issueInput.value) {
+    issueInput.value = 'Issue: 04 • Ref: HFL/QA/PS/R-01';
+  }
+
+  // Apply global lock state (if any)
+  setLockedState(isLocked());
+})();
+</script>
+
+</body>
+</html>
