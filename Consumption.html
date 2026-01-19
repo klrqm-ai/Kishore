@@ -216,10 +216,15 @@ saveJson.onclick=()=>{
     receipt:tr.r.value,
     closing:tr.cl.value
   }));
+
+  // find the latest date in the table
+  const dates=data.map(r=>r.date).filter(d=>d).sort();
+  const lastDate=dates.length ? dates[dates.length-1] : new Date().toISOString().slice(0,10);
+
   const blob=new Blob([JSON.stringify({rows:data},null,2)],{type:"application/json"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download="MediaConsumption.json";
+  a.download=`MediaConsumption_${lastDate}.json`; // filename includes last update date
   a.click();
 };
 
@@ -304,3 +309,4 @@ ${Object.entries(map).map(([k,v])=>{
 
 </body>
 </html>
+
