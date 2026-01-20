@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <title>HFL QA — Adulterants Record & Report Viewer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-
 <style>
   :root {
     --brand: #145da0;
@@ -12,129 +11,56 @@
     --border: #d0d7de;
     --bg: #f6f8fa;
     --lock: #b23b3b;
+    --approve: #2e7d32;
   }
-  body {
-    font-family: Segoe UI, Arial, sans-serif;
-    margin: 16px;
-    background: var(--bg);
-  }
-  h1 {
-    color: var(--brand);
-    margin-bottom: 12px;
-  }
-  .hidden { display: none; }
+  body { font-family: Segoe UI, Arial, sans-serif; margin:16px; background:var(--bg);}
+  h1 { color:var(--brand); margin-bottom:12px;}
+  .hidden { display:none;}
+  #homeScreen { text-align:center; margin-top:80px;}
+  #homeScreen button { background:var(--accent); color:#fff; padding:16px 28px; font-size:18px; border-radius:8px; margin:12px; cursor:pointer; border:none; font-weight:700;}
+  button,label { background:var(--accent); color:#fff; padding:8px 12px; border-radius:6px; cursor:pointer; font-weight:600; border:none;}
+  button.secondary { background:#475569;}
+  button.lock { background:var(--lock);}
+  button.approve { background:var(--approve);}
+  input[type="file"] { display:none;}
+  header { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:start; margin-bottom:12px;}
+  .title { font-size:18px; font-weight:700; color:var(--brand);}
+  .subtitle { font-weight:700; margin-top:4px;}
+  .meta { display:grid; grid-template-columns:repeat(6,max-content); gap:8px 16px; align-items:center;}
+  .meta label { font-weight:600;}
+  input[type="text"],input[type="date"] { border:1px solid var(--border); padding:6px 8px; border-radius:6px; background:#fff;}
+  table { width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--border);}
+  th,td { border:1px solid var(--border); padding:8px; font-size:13px;}
+  th { background:#eef3f8; font-weight:700;}
+  .input-cell input,.input-cell select { width:100%; border:none; padding:6px;}
+  /* Narrower S.No, Milk source, Source */
+th:nth-child(1), td:nth-child(1) { width: 4%; }   /* S.No */
+th:nth-child(2), td:nth-child(2) { width: 8%; }   /* Milk source */
+th:nth-child(3), td:nth-child(3) { width: 8%; }   /* Source */
 
-  /* HOME SCREEN */
-  #homeScreen {
-    text-align: center;
-    margin-top: 80px;
-  }
-  #homeScreen button {
-    background: var(--accent);
-    color: #fff;
-    padding: 16px 28px;
-    font-size: 18px;
-    border-radius: 8px;
-    margin: 12px;
-    cursor: pointer;
-    border: none;
-    font-weight: 700;
-  }
+/* Signature column */
+th:nth-child(18), td:nth-child(18) { width: 8%; } /* Sign */
 
-  /* COMMON BUTTONS */
-  button, label {
-    background: var(--accent);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    border: none;
-  }
-  button.secondary { background: #475569; }
-  button.lock { background: var(--lock); }
-  input[type="file"] { display: none; }
-
-  /* RECORD ENTRY SECTION */
-  header {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 8px;
-    align-items: start;
-    margin-bottom: 12px;
-  }
-  .title { font-size: 18px; font-weight: 700; color: var(--brand); }
-  .subtitle { font-weight: 700; margin-top: 4px; }
-  .meta {
-    display: grid;
-    grid-template-columns: repeat(6, max-content);
-    gap: 8px 16px;
-    align-items: center;
-  }
-  .meta label { font-weight: 600; }
-  input[type="text"], input[type="date"] {
-    border: 1px solid var(--border);
-    padding: 6px 8px;
-    border-radius: 6px;
-    background: #fff;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border: 1px solid var(--border);
-  }
-  th, td {
-    border: 1px solid var(--border);
-    padding: 8px;
-    font-size: 13px;
-  }
-  th { background: #eef3f8; font-weight: 700; }
-  .input-cell input, .input-cell select {
-    width: 100%;
-    border: none;
-    padding: 6px;
-  }
-
-  /* REPORT VIEWER */
-  .record-block {
-    background: #fff;
-    border: 1px solid var(--border);
-    padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-  }
-  .meta-view {
-    font-size: 14px;
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: #0b3c73;
-  }
-
-  @media print {
-    #homeScreen, #entryControls, #viewerControls { display: none; }
-  }
+/* Test columns (Urea → Carbonates) share remaining space */
+th:nth-child(n+4):nth-child(-n+17),
+td:nth-child(n+4):nth-child(-n+17) { width: auto; }
 </style>
 </head>
 <body>
 
-<!-- ✅ HOME SCREEN -->
 <div id="homeScreen">
   <h1>HFL QA — Adulterants System</h1>
   <button onclick="showEntry()">Enter Adulterants Record</button>
   <button onclick="showViewer()">View Multi‑Day Reports</button>
 </div>
 
-<!-- ✅ RECORD ENTRY MODULE -->
 <div id="entrySection" class="hidden">
   <button onclick="goHome()">← Back</button>
-
   <header>
     <div>
       <div class="title">HERITAGE FOODS LIMITED — QUALITY ASSURANCE</div>
       <div class="subtitle">ADULTERANTS, NEUTRALIZERS & PRESERVATIVES TEST REPORT</div>
     </div>
-
     <div class="meta">
       <label>Rev. No.</label><input id="revNo" value="03">
       <label>Rev. Date</label><input id="revDate" value="14/09/2020">
@@ -146,197 +72,161 @@
 
   <div id="entryControls">
     <button id="addRow">Add row</button>
-    <button id="saveLocal">Save to browser</button>
-    <button id="downloadJson" class="secondary">Download JSON</button>
-    <button id="loadLocal">Load from browser</button>
+    <button onclick="deleteLastRow()" class="secondary">Delete Last Row</button>
+    <button id="downloadJson">Download JSON</button>
     <label for="fileInput" class="secondary">Upload JSON</label>
     <input id="fileInput" type="file" accept="application/json">
-    <button id="lockBtn" class="lock">Lock record</button>
+    <button id="lockBtn" class="lock">Lock</button>
+    <button id="unlockBtn" class="secondary">Unlock</button>
+    <button id="approveBtn" class="approve">Approve</button>
     <button onclick="window.print()">Print</button>
   </div>
 
   <table id="qaTable">
     <tr>
-      <th>S.No</th><th>Milk source</th>
+      <th>S.No</th><th>Milk source</th><th>Source</th>
       <th>Urea</th><th>Starch</th><th>Cellulose</th><th>Maltodextrin</th>
       <th>Glucose</th><th>Sucrose</th><th>Salt</th><th>Detergents</th>
       <th>Nitrates</th><th>Veg oil/fat</th><th>Formalin</th>
       <th>H₂O₂</th><th>Boric acid</th><th>Carbonates</th><th>Sign</th>
     </tr>
-
-    <!-- ✅ Corrected initial row (NO template literals) -->
-    <tr>
-      <td class="input-cell"><input value="1"></td>
-      <td class="input-cell"><input></td>
-
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-      <td class="input-cell"><select><option>Negative</option><option>Positive</option></select></td>
-
-      <td class="input-cell"><input placeholder="Signature"></td>
-    </tr>
   </table>
 </div>
 
-<!-- ✅ REPORT VIEWER MODULE -->
 <div id="viewerSection" class="hidden">
   <button onclick="goHome()">← Back</button>
-
   <h1>HFL QA — Multi‑Day Adulterants Report Viewer</h1>
-
   <div id="viewerControls">
     <label for="viewerFiles">Upload JSON files</label>
     <input id="viewerFiles" type="file" accept="application/json" multiple>
     <button onclick="window.print()">Print</button>
   </div>
-
   <div id="reportContainer"></div>
 </div>
-
 <script>
-/* ✅ HOME SCREEN NAVIGATION */
-function goHome() {
-  entrySection.classList.add("hidden");
-  viewerSection.classList.add("hidden");
-  homeScreen.classList.remove("hidden");
-}
-function showEntry() {
-  homeScreen.classList.add("hidden");
-  viewerSection.classList.add("hidden");
-  entrySection.classList.remove("hidden");
-}
-function showViewer() {
-  homeScreen.classList.add("hidden");
-  entrySection.classList.add("hidden");
-  viewerSection.classList.remove("hidden");
+const homeScreen=document.getElementById("homeScreen");
+const entrySection=document.getElementById("entrySection");
+const viewerSection=document.getElementById("viewerSection");
+const qaTable=document.getElementById("qaTable");
+const addRow=document.getElementById("addRow");
+const downloadJson=document.getElementById("downloadJson");
+const fileInput=document.getElementById("fileInput");
+const lockBtn=document.getElementById("lockBtn");
+const unlockBtn=document.getElementById("unlockBtn");
+const approveBtn=document.getElementById("approveBtn");
+const viewerFiles=document.getElementById("viewerFiles");
+const reportContainer=document.getElementById("reportContainer");
+
+// Navigation
+function goHome(){entrySection.classList.add("hidden");viewerSection.classList.add("hidden");homeScreen.classList.remove("hidden");}
+function showEntry(){homeScreen.classList.add("hidden");viewerSection.classList.add("hidden");entrySection.classList.remove("hidden");if(qaTable.rows.length===1){ addRow.click();}}
+function showViewer(){homeScreen.classList.add("hidden");entrySection.classList.add("hidden");viewerSection.classList.remove("hidden");}
+
+// Helpers
+function createDropdown(v='Neg'){const s=document.createElement('select');['Neg','Pos'].forEach(x=>{const o=document.createElement('option');o.textContent=x;s.appendChild(o);});s.value=v;attachCellEvents(s);return s;}
+function renumber(){[...qaTable.rows].slice(1).forEach((r,i)=>{r.cells[0].querySelector('input').value=i+1;});}
+
+// Cell events (arrow navigation + paste)
+function attachCellEvents(el){
+  el.addEventListener("keydown", e=>{
+    const cell=el.closest("td");const row=cell.parentElement;const rowIndex=row.rowIndex;const colIndex=cell.cellIndex;
+    if(e.key==="ArrowDown"){e.preventDefault();const nextRow=qaTable.rows[rowIndex+1];nextRow?.cells[colIndex]?.querySelector("input,select")?.focus();}
+    if(e.key==="ArrowUp"){e.preventDefault();const prevRow=qaTable.rows[rowIndex-1];if(prevRow&&prevRow.rowIndex>0){prevRow.cells[colIndex]?.querySelector("input,select")?.focus();}}
+  });
+  el.addEventListener("paste", e=>{
+    e.preventDefault();const cell=el.closest("td");const startRow=cell.parentElement.rowIndex;const startCol=cell.cellIndex;
+    const text=e.clipboardData.getData("text/plain");const rows=text.split(/\r?\n/).filter(r=>r.trim()!=="");
+    rows.forEach((rowText,i)=>{const values=rowText.split(/\t/);while(qaTable.rows.length<=startRow+i){addRow.click();}const targetRow=qaTable.rows[startRow+i];values.forEach((val,j)=>{const targetCell=targetRow.cells[startCol+j];const targetInput=targetCell?.querySelector("input,select");if(targetInput)targetInput.value=val;});});
+  });
 }
 
-/* ✅ RECORD ENTRY LOGIC */
-function createDropdown(v='Negative'){
-  const s=document.createElement('select');
-  ['Negative','Positive'].forEach(x=>{
-    const o=document.createElement('option');o.textContent=x;s.appendChild(o);
-  });
-  s.value=v; return s;
-}
-function renumber(){
-  [...qaTable.rows].slice(1).forEach((r,i)=>{
-    r.cells[0].querySelector('input').value=i+1;
-  });
-}
+// Add Row
 addRow.onclick=()=>{
   if(document.body.dataset.locked==='true'){alert("Unlock first");return;}
   const r=qaTable.insertRow(-1);
-  r.insertCell().innerHTML=`<input>`;
-  r.insertCell().innerHTML=`<input>`;
-  for(let i=0;i<14;i++){
-    const c=r.insertCell();c.appendChild(createDropdown());
-  }
-  r.insertCell().innerHTML=`<input placeholder="Signature">`;
+  // S.No
+  let c0=r.insertCell();c0.className="input-cell";let sNo=document.createElement("input");c0.appendChild(sNo);attachCellEvents(sNo);
+  // Milk source
+  let c1=r.insertCell();c1.className="input-cell";let milk=document.createElement("input");c1.appendChild(milk);attachCellEvents(milk);
+  // Source
+  let c2=r.insertCell();c2.className="input-cell";let source=document.createElement("input");c2.appendChild(source);attachCellEvents(source);
+  // 14 dropdowns
+  for(let i=0;i<14;i++){let c=r.insertCell();c.className="input-cell";let dd=createDropdown();c.appendChild(dd);}
+  // Signature
+  let cLast=r.insertCell();cLast.className="input-cell";let sig=document.createElement("input");sig.placeholder="Signature";cLast.appendChild(sig);attachCellEvents(sig);
   renumber();
 };
-function getTable(){
-  return [...qaTable.rows].slice(1).map(r=>{
-    const vals=[...r.querySelectorAll("input,select")].map(e=>e.value);
-    while(vals.length<17) vals.push("");
-    return vals;
-  });
+
+// Delete Last Row
+function deleteLastRow(){
+  if(document.body.dataset.locked==='true'){alert("Unlock first");return;}
+  if(qaTable.rows.length<=1){alert("No data rows to delete");return;}
+  qaTable.deleteRow(qaTable.rows.length-1);
+  renumber();
 }
-function setTable(data){
-  while(qaTable.rows.length>1) qaTable.deleteRow(1);
-  data.forEach((row,i)=>{
-    const r=qaTable.insertRow(-1);
-    r.insertCell().innerHTML=`<input value="${i+1}">`;
-    r.insertCell().innerHTML=`<input value="${row[1]||""}">`;
-    for(let j=0;j<14;j++){
-      const c=r.insertCell();c.appendChild(createDropdown(row[2+j]||"Negative"));
-    }
-    r.insertCell().innerHTML=`<input value="${row[16]||""}">`;
-  });
-}
+
+// Build record object
 function buildRecord(){
-  const meta={
-    revNo:revNo.value,revDate:revDate.value,refNo:refNo.value,
-    recordId:recordId.value.trim(),recordDate:recordDate.value
-  };
+  const meta={revNo:revNo.value,revDate:revDate.value,refNo:refNo.value,recordId:recordId.value.trim(),recordDate:recordDate.value};
   if(!meta.recordId||!meta.recordDate){alert("Record ID & Date required");return null;}
-  return {meta,table:getTable(),audit:{locked:document.body.dataset.locked==='true',lastAction:new Date().toISOString()}};
+  return {meta,table:[...qaTable.rows].slice(1).map(r=>[...r.querySelectorAll("input,select")].map(e=>e.value)),
+    audit:{locked:document.body.dataset.locked==='true',approved:document.body.dataset.approved==='true',lastAction:new Date().toISOString()}};
 }
-saveLocal.onclick=()=>{
-  const r=buildRecord(); if(!r) return;
-  localStorage.setItem(`HFL_QA_${r.meta.recordId}_${r.meta.recordDate}`,JSON.stringify(r));
-  alert("Saved");
-};
+
+// Download JSON
 downloadJson.onclick=()=>{
-  const r=buildRecord(); if(!r) return;
-  const b=new Blob([JSON.stringify(r,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(b);
-  a.download=`HFL_QA_${r.meta.recordId}_${r.meta.recordDate}.json`;
-  a.click();
-};
-loadLocal.onclick=()=>{
-  const key=`HFL_QA_${recordId.value}_${recordDate.value}`;
-  const raw=localStorage.getItem(key);
-  if(!raw){alert("Not found");return;}
-  const r=JSON.parse(raw);
-  revNo.value=r.meta.revNo;revDate.value=r.meta.revDate;refNo.value=r.meta.refNo;
-  setTable(r.table);
-};
-fileInput.onchange=async e=>{
-  const f=e.target.files[0]; if(!f) return;
-  const r=JSON.parse(await f.text());
-  revNo.value=r.meta.revNo;revDate.value=r.meta.revDate;refNo.value=r.meta.refNo;
-  recordId.value=r.meta.recordId;recordDate.value=r.meta.recordDate;
-  setTable(r.table);
-};
-lockBtn.onclick=()=>{
-  const locked=document.body.dataset.locked==='true';
-  if(locked){document.body.dataset.locked='false';alert("Unlocked");}
-  else{document.body.dataset.locked='true';alert("Locked");}
+  const r=buildRecord();if(!r)return;
+  const blob=new Blob([JSON.stringify(r,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=`HFL_QA_${r.meta.recordId}_${r.meta.recordDate}.json`;a.click();
 };
 
-/* ✅ REPORT VIEWER LOGIC */
+// Upload JSON
+fileInput.onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=JSON.parse(await f.text());
+  revNo.value=r.meta.revNo;revDate.value=r.meta.revDate;refNo.value=r.meta.refNo;recordId.value=r.meta.recordId;recordDate.value=r.meta.recordDate;
+  while(qaTable.rows.length>1)qaTable.deleteRow(1);
+  r.table.forEach((row,i)=>{
+    const tr=qaTable.insertRow(-1);
+    let c0=tr.insertCell();c0.className="input-cell";let sNo=document.createElement("input");sNo.value=i+1;c0.appendChild(sNo);attachCellEvents(sNo);
+    let c1=tr.insertCell();c1.className="input-cell";let milk=document.createElement("input");milk.value=row[1]||"";c1.appendChild(milk);attachCellEvents(milk);
+    let c2=tr.insertCell();c2.className="input-cell";let source=document.createElement("input");source.value=row[2]||"";c2.appendChild(source);attachCellEvents(source);
+    for(let j=0;j<14;j++){let c=tr.insertCell();c.className="input-cell";let dd=createDropdown(row[3+j]||"Neg");c.appendChild(dd);}
+    let cLast=tr.insertCell();cLast.className="input-cell";let sig=document.createElement("input");sig.value=row[17]||"";cLast.appendChild(sig);attachCellEvents(sig);
+  });
+};
+
+// Lock/Unlock/Approve
+lockBtn.onclick=()=>{document.body.dataset.locked='true';[...qaTable.querySelectorAll("input,select")].forEach(el=>el.disabled=true);alert("Locked");};
+unlockBtn.onclick=()=>{document.body.dataset.locked='false';[...qaTable.querySelectorAll("input,select")].forEach(el=>el.disabled=false);alert("Unlocked");};
+approveBtn.onclick=()=>{document.body.dataset.approved='true';alert("Approved");};
+
+// Viewer multi‑day reports
 viewerFiles.onchange=async e=>{
-  reportContainer.innerHTML="";
-  const files=[...e.target.files];
-  const records=[];
-  for(const f of files){
-    try{records.push(JSON.parse(await f.text()));}
-    catch{alert("Invalid: "+f.name);}
-  }
+  reportContainer.innerHTML="";const files=[...e.target.files];const records=[];
+  for(const f of files){try{records.push(JSON.parse(await f.text()));}catch{alert("Invalid: "+f.name);}}
   records.sort((a,b)=>new Date(a.meta.recordDate)-new Date(b.meta.recordDate));
   records.forEach(r=>{
-    const d=document.createElement("div");
-    d.className="record-block";
-    d.innerHTML=`
-      <div class="meta-view">
-        Record ID: ${r.meta.recordId} | Date: ${r.meta.recordDate} | Rev: ${r.meta.revNo}
-      </div>
-      <table>
-        <tr>
-          <th>S.No</th><th>Milk source</th><th>Urea</th><th>Starch</th><th>Cellulose</th>
-          <th>Maltodextrin</th><th>Glucose</th><th>Sucrose</th><th>Salt</th><th>Detergents</th>
-          <th>Nitrates</th><th>Veg oil/fat</th><th>Formalin</th><th>H₂O₂</th>
-          <th>Boric acid</th><th>Carbonates</th><th>Sign</th>
-        </tr>
-        ${r.table.map(row=>`<tr>${row.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}
-      </table>`;
+    const d=document.createElement("div");d.className="record-block";
+    d.innerHTML=`<div class="meta-view">Record ID: ${r.meta.recordId} | Date: ${r.meta.recordDate} | Rev: ${r.meta.revNo} | Locked: ${r.audit.locked} | Approved: ${r.audit.approved}</div>
+    <table><tr><th>S.No</th><th>Milk source</th><th>Source</th><th>Urea</th><th>Starch</th><th>Cellulose</th><th>Maltodextrin</th><th>Glucose</th><th>Sucrose</th><th>Salt</th><th>Detergents</th><th>Nitrates</th><th>Veg oil/fat</th><th>Formalin</th><th>H₂O₂</th><th>Boric acid</th><th>Carbonates</th><th>Sign</th></tr>
+    ${r.table.map(row=>`<tr>${row.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</table>`;
     reportContainer.appendChild(d);
   });
 };
-</script>
+// Delete Last Row
+function deleteLastRow(){
+  if(document.body.dataset.locked==='true'){alert("Unlock first");return;}
+  if(qaTable.rows.length<=1){alert("No data rows to delete");return;}
+  qaTable.deleteRow(qaTable.rows.length-1);
+  renumber();
+}
 
+// Lock / Unlock / Approve
+lockBtn.onclick=()=>{document.body.dataset.locked='true';[...qaTable.querySelectorAll("input,select")].forEach(el=>el.disabled=true);alert("Locked");};
+unlockBtn.onclick=()=>{document.body.dataset.locked='false';[...qaTable.querySelectorAll("input,select")].forEach(el=>el.disabled=false);alert("Unlocked");};
+approveBtn.onclick=()=>{document.body.dataset.approved='true';alert("Approved");};
+</script>
 </body>
 </html>
