@@ -83,6 +83,18 @@
         padding: 4px 6px;
     }
 
+    .locked-row {
+    background-color: #f0f0f0;
+    opacity: 0.8;
+}
+    .locked-row {
+    background-color: #f0f0f0;
+    opacity: 0.7;
+}
+.locked {
+    background-color: #ddd;
+    color: #555;
+}
     @media print {
         .controls, .view-toggle, #loadFile {
             display: none !important;
@@ -117,6 +129,8 @@
 <div class="view-toggle">
     <button type="button" onclick="showEntryView()">Entry view</button>
     <button type="button" onclick="showReportView()">Report view</button>
+    <button type="button" onclick="requestlock()">Lock Date Group</button>
+    <button type="button" onclick="requestUnlock()">Unlock Date Group</button>
     <button type="button" onclick="window.print()">Print</button>
 </div>
 
@@ -297,12 +311,22 @@ function saveData() {
         rows: getTableData()
     };
 
+    // Get first sample date from entry table
+    let sampleDate = "";
+    const tbody = document.getElementById('entryBody');
+    if (tbody.rows.length > 0) {
+        const firstCell = tbody.rows[0].cells[0].querySelector('input');
+        if (firstCell) sampleDate = firstCell.value.trim();
+    }
+
+    // Fallback if no sample date entered
+    if (!sampleDate) sampleDate = new Date().toISOString().slice(0,10);
+
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const dateTag = new Date().toISOString().slice(0,10);
-    a.download = `ShelfLife_MarketMilk_${dateTag}.json`;
+    a.download = `ShelfLife_MarketMilk_${sampleDate}.json`;  // use sample date
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -475,6 +499,108 @@ function addSampleRow() {
     }
 
     tbody.appendChild(tr);
+}
+
+// -------------------------
+// APPROVAL LOCK WORKFLOW
+// -------------------------
+
+// Track locked groups by sample date
+const lockedDates = new Set();
+
+// Helper: lock all rows for a given sample date
+function lockDateGroup(sampleDate) {
+    const tbody = document.getElementById('entryBody');
+    for (let r = 0; r < tbody.rows.length; r++) {
+        const row = tbody.rows[r];
+        const dateCell = row.cells[0].querySelector('input');
+        if (dateCell && dateCell.value === sampleDate) {
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(inp => inp.disabled = true);
+            row.classList.add("locked-row");
+        }
+    }
+    lockedDates.add(sampleDate);
+}
+
+// Helper: unlock all rows for a given sample date
+function unlockDateGroup(sampleDate) {
+    const tbody = document.getElementById('entryBody');
+    for (let r = 0; r < tbody.rows.length; r++) {
+        const row = tbody.rows[r];
+        const dateCell = row.cells[0].querySelector('input');
+        if (dateCell && dateCell.value === sampleDate) {
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(inp => inp.disabled = false);
+            row.classList.remove("locked-row");
+        }
+    }
+    lockedDates.delete(sampleDate);
+}
+
+// Detect approval: when PS QAI/C cell is filled, lock group
+document.getElementById("entryBody").addEventListener("input", function(e) {
+    const target = e.target;
+    if (!target || target.tagName !== "INPUT") return;
+
+    const td = target.parentElement;
+    const tr = td.parentElement;
+    const colIndex = td.cellIndex;
+
+    // Column 11 = "Sign. Of PS QAI/C"
+    if (colIndex === 11 && target.value.trim() !== "") {
+        const sampleDate = tr.cells[0].querySelector("input").value;
+        if (sampleDate && !lockedDates.has(sampleDate)) {
+            lockDateGroup(sampleDate);
+            alert("Rows for sample date " + sampleDate + " have been approved and locked.");
+        }
+    }
+});
+
+// -------------------------
+// UNLOCK CONTROL (for authorized users)
+// -------------------------
+function requestUnlock() {
+    const sampleDate = prompt("Enter sample date (DD-MM-YYYY) to unlock:");
+    if (!sampleDate) return;
+    if (lockedDates.has(sampleDate)) {
+        // Add your authorization check here (e.g., password, role)
+        const auth = prompt("Enter unlock password:");
+        if (auth === "QA_MANAGER") { // replace with real check
+            unlockDateGroup(sampleDate);
+            alert("Rows for " + sampleDate + " unlocked.");
+        } else {
+            alert("Unauthorized unlock attempt.");
+        }
+    } else {
+        alert("No locked rows found for that date.");
+    }
+}
+function lockDateGroup(sampleDate) {
+    const tbody = document.getElementById('entryBody');
+    for (let r = 0; r < tbody.rows.length; r++) {
+        const row = tbody.rows[r];
+        const dateCell = row.cells[0].querySelector('input');
+        if (dateCell && dateCell.value.trim() === sampleDate.trim()) {
+            const inputs = row.querySelectorAll('input');
+            inputs.forEach(inp => {
+                inp.disabled = true;
+                inp.classList.add("locked");
+            });
+            row.classList.add("locked-row");
+        }
+    }
+    lockedDates.add(sampleDate.trim());
+}
+function requestlock() {
+    const sampleDate = prompt("Enter sample date (DD-MM-YYYY) to lock:");
+    if (!sampleDate) return;
+    if (!lockedDates.has(sampleDate.trim())) {
+        lockDateGroup(sampleDate);
+        alert("Rows for " + sampleDate + " locked.");
+    } else {
+        alert("Already locked.");
+    }
 }
 </script>
 
