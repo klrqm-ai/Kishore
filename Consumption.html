@@ -305,8 +305,32 @@ ${Object.entries(map).map(([k,v])=>{
 }).join("")}
 </table>`;
 };
-</script>
+  // Attach navigation logic to all inputs inside tbody
+tbody.addEventListener("keydown", e => {
+  const key = e.key;
+  if (key !== "ArrowDown" && key !== "ArrowUp") return;
 
+  const inputs = [...tbody.querySelectorAll("input")];
+  const index = inputs.indexOf(e.target);
+  if (index === -1) return;
+
+  // Find row and column
+  const colsPerRow = 8; // number of <td> inputs per row
+  const rowIndex = Math.floor(index / colsPerRow);
+  const colIndex = index % colsPerRow;
+
+  let targetRowIndex = key === "ArrowDown" ? rowIndex + 1 : rowIndex - 1;
+  if (targetRowIndex < 0 || targetRowIndex >= tbody.children.length) return;
+
+  const targetRow = tbody.children[targetRowIndex];
+  const targetInput = targetRow.querySelectorAll("input")[colIndex];
+  if (targetInput) {
+    targetInput.focus();
+    e.preventDefault(); // stop cursor moving inside current input
+  }
+});
+</script>
 </body>
 </html>
+
 
