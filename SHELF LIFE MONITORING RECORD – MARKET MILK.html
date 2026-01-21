@@ -103,6 +103,14 @@
             margin: 5mm;
         }
     }
+.data-table thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+.data-table th {
+    background-color: #027eb5; /* keep header color */
+}
 </style>
 </head>
 <body>
@@ -143,7 +151,9 @@
         <input type="file" id="loadFile" accept=".json" onchange="loadData(event)">
     </label>
 </div>
-
+<div style="max-height: 400px; overflow-y: auto;">
+    <table class="data-table" id="entryTable"> ... </table>
+</div>
 <!-- ENTRY VIEW TABLE -->
 <table class="data-table" id="entryTable">
     <thead>
