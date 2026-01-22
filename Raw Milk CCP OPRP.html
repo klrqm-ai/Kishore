@@ -376,7 +376,7 @@ function collectData(){
       date: document.getElementById("date").value,
       typeOfMilk: document.getElementById("typeOfMilk").value,
       location: document.getElementById("location").value,
-      operator: document.getElementById("operator").value
+      operator/labassistant: document.getElementById("operator/labassistant").value
     },
     table: [
       { sNo:1, times:[
@@ -459,7 +459,7 @@ document.getElementById("loadFile").onchange = function(e){
       document.getElementById("date").value = safe(data.meta.date,"");
       document.getElementById("typeOfMilk").value = safe(data.meta.typeOfMilk,"");
       document.getElementById("location").value = safe(data.meta.location,"");
-      document.getElementById("operator").value = safe(data.meta.operator,"");
+      document.getElementById("operator/labassistant").value = safe(data.meta.operator/labassistant,"");
 
       if (!Array.isArray(data.table)) data.table = [];
       while (data.table.length < 3) {
@@ -509,7 +509,7 @@ document.getElementById("multiLoad").onchange = async function(e){
       if (!json.audit.recordId) json.audit.recordId = generateRecordId();
       if (!json.audit.createdAtISO) json.audit.createdAtISO = new Date().toISOString();
 
-      if (!json.meta) json.meta = { date:"", typeOfMilk:"", location:"", operator:"" };
+      if (!json.meta) json.meta = { date:"", typeOfMilk:"", location:"", operator/labassistant:"" };
 
       if (!Array.isArray(json.table)) json.table = [];
       while (json.table.length < 3) {
@@ -600,7 +600,7 @@ document.getElementById("viewBtn").onclick = function(){
     html += `
       <div class="record-summary">
         <strong>Record Date:</strong> ${safe(r.meta.date)} |
-        <strong>Operator:</strong> ${safe(r.meta.operator)} |
+        <strong>Operator/labassistant:</strong> ${safe(r.meta.operator/labassistant)} |
         <strong>Record ID:</strong> ${safe(r.audit.recordId)}
         <br>
         <span id="toggleBtn_${i}"
@@ -637,5 +637,6 @@ window.toggleDetails = toggleDetails;
 
 </body>
 </html>
+
 
 
