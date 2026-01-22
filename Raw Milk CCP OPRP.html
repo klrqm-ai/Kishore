@@ -585,18 +585,17 @@ function generateFullTable(r){
 
 /* View Report with toggle details */
 document.getElementById("viewBtn").onclick = function(){
-  last10 = filterLast10Days(loadedRecords);
+  const allRecords = loadedRecords;  // no filtering
 
   const recordsContainer = document.getElementById("recordsContainer");
 
-  if (last10.length === 0){
+  if (allRecords.length === 0){
     recordsContainer.innerHTML = "<p>No records found</p>";
     return;
   }
 
   let html = "";
-
-  last10.forEach((r,i)=>{
+  allRecords.forEach((r,i)=>{
     html += `
       <div class="record-summary">
         <strong>Record Date:</strong> ${safe(r.meta.date)} |
