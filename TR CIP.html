@@ -3,32 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <title>CIP Test Report Generator</title>
+
 <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    #uploader, #dateBox { margin-bottom: 20px; padding: 10px; border: 2px dashed #666; width: 350px; text-align: center; cursor: pointer; }
-    #dateSelect { padding: 6px; font-size: 14px; width: 200px; }
-    .page { width: 8.5in; height: 5.5in; padding: 20px; box-sizing: border-box; border: 1px solid #000; margin: 20px auto; page-break-after: always; }
-    h2, h3 { text-align: center; margin: 0; padding: 0; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-    td, th { border: 1px solid #000; padding: 5px; }
-    .no-border td { border: none; padding: 2px; }
-    .sign td { padding-top: 25px; text-align: center; }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+
+    #uploader, #dateBox {
+        margin-bottom: 20px;
+        padding: 10px;
+        border: 2px dashed #666;
+        width: 360px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    #dateSelect {
+        padding: 6px;
+        font-size: 14px;
+        width: 250px;
+    }
+
+    .page {
+        width: 8.5in;
+        height: 5.5in;
+        padding: 20px;
+        box-sizing: border-box;
+        border: 1px solid #000;
+        margin: 20px auto;
+        page-break-after: always;
+    }
+
+    h2, h3 {
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 13px;
+    }
+
+    td, th {
+        border: 1px solid #000;
+        padding: 5px;
+    }
+
+    .no-border td {
+        border: none;
+        padding: 2px;
+    }
+
+    .sign td {
+        padding-top: 25px;
+        text-align: center;
+    }
+
     @media print {
-    #uploader, #dateBox { display: none; }
-    .page { page-break-after: always; }
-}
+        #uploader, #dateBox {
+            display: none;
+        }
+        .page {
+            border: none;
+            margin: 0;
+        }
+    }
 </style>
 </head>
+
 <body>
 
 <h2>CIP TEST REPORT GENERATOR</h2>
 
 <div id="uploader"><b>Click to upload CIP JSON file</b></div>
 <input type="file" id="fileInput" accept=".json" style="display:none;">
+
 <div id="dateBox" style="display:none;">
-    <b>Select Date:</b><br><br>
-    <select id="dateSelect" multiple size="6"></select>
+    <b>Select Date(s):</b><br><br>
+    <select id="dateSelect" multiple size="6"></select><br><br>
+    <small>(Hold Ctrl / Shift to select multiple dates)</small>
 </div>
+
 <div id="output"></div>
 
 <script>
@@ -43,22 +102,25 @@ function detectShift(time) {
     if (!time) return "-";
     const [h, m] = time.split(":").map(Number);
     const minutes = h * 60 + m;
+
     if (minutes >= 360 && minutes < 840) return "A";   // 06–14
     if (minutes >= 840 && minutes < 1320) return "B";  // 14–22
     return "C";                                        // 22–06
 }
 
-document.getElementById("fileInput").addEventListener("change", function() {
+document.getElementById("fileInput").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         const parsed = JSON.parse(e.target.result);
+
         jsonData = parsed.records || [];
         headerStatus = parsed.headerStatus || {};
 
         const dates = [...new Set(jsonData.map(r => r.date))];
+
         const dateSelect = document.getElementById("dateSelect");
         dateSelect.innerHTML = "";
 
@@ -70,7 +132,6 @@ document.getElementById("fileInput").addEventListener("change", function() {
         });
 
         document.getElementById("dateBox").style.display = "block";
-        generateReports(dateSelect.value);
     };
     reader.readAsText(file);
 });
@@ -93,6 +154,7 @@ function generateReports(selectedDates) {
 
         output.innerHTML += `
         <div class="page">
+
             <table style="width:100%; border:none;">
                 <tr>
                     <td style="width:20%; text-align:left; border:none;">
@@ -114,15 +176,20 @@ function generateReports(selectedDates) {
                 </tr>
                 <tr>
                     <td colspan="3">
-                        <b>Status:</b> Approved=${headerStatus.approved},
-                        Locked=${headerStatus.locked}
+                        <b>Status:</b>
+                        Approved=${headerStatus.approved || "-"},
+                        Locked=${headerStatus.locked || "-"}
                     </td>
                 </tr>
             </table>
 
             <table>
                 <tr><th colspan="3">Date: ${r.date}</th></tr>
-                <tr><th>Shift</th><th>Time</th><th>Source</th></tr>
+                <tr>
+                    <th>Shift</th>
+                    <th>Time</th>
+                    <th>Source</th>
+                </tr>
                 <tr>
                     <td>${shift}</td>
                     <td>${r.start || ""} - ${r.end || ""}</td>
@@ -143,12 +210,11 @@ function generateReports(selectedDates) {
                     <td>Shift I/C QA</td>
                 </tr>
             </table>
+
         </div>`;
     });
 }
 </script>
+
 </body>
-
 </html>
-
-
