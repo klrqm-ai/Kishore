@@ -33,10 +33,10 @@
   th,td { border:1px solid var(--border); padding:8px; font-size:13px;}
   th { background:#eef3f8; font-weight:700;}
   .input-cell input,.input-cell select { width:100%; border:none; padding:6px;}
-  /* Narrower S.No, Milk source, Type of Milk */
+  /* Narrower S.No, Milk source, Type */
 th:nth-child(1), td:nth-child(1) { width: 4%; }   /* S.No */
 th:nth-child(2), td:nth-child(2) { width: 8%; }   /* Milk source */
-th:nth-child(3), td:nth-child(3) { width: 8%; }   /* Type of Milk */
+th:nth-child(3), td:nth-child(3) { width: 8%; }   /* Type */
 
 /* Signature column */
 th:nth-child(18), td:nth-child(18) { width: 8%; } /* Sign */
@@ -84,7 +84,7 @@ td:nth-child(n+4):nth-child(-n+17) { width: auto; }
 
   <table id="qaTable">
     <tr>
-      <th>S.No</th><th>Milk source</th><th>Type of Milk</th>
+      <th>S.No</th><th>Milk source</th><th>Type</th>
       <th>Urea</th><th>Starch</th><th>Cellulose</th><th>Maltodextrin</th>
       <th>Glucose</th><th>Sucrose</th><th>Salt</th><th>Detergents</th>
       <th>Nitrates</th><th>Veg oil/fat</th><th>Formalin</th>
@@ -148,8 +148,8 @@ addRow.onclick=()=>{
   let c0=r.insertCell();c0.className="input-cell";let sNo=document.createElement("input");c0.appendChild(sNo);attachCellEvents(sNo);
   // Milk source
   let c1=r.insertCell();c1.className="input-cell";let milk=document.createElement("input");c1.appendChild(milk);attachCellEvents(milk);
-  // Type of Milk
-  let c2=r.insertCell();c2.className="input-cell";let Type of Milk=document.createElement("input");c2.appendChild(Type of Milk);attachCellEvents(Type of Milk);
+  // Type
+  let c2=r.insertCell();c2.className="input-cell";let Type=document.createElement("input");c2.appendChild(Type);attachCellEvents(Type);
   // 14 dropdowns
   for(let i=0;i<14;i++){let c=r.insertCell();c.className="input-cell";let dd=createDropdown();c.appendChild(dd);}
   // Signature
@@ -191,7 +191,7 @@ fileInput.onchange=async e=>{
     const tr=qaTable.insertRow(-1);
     let c0=tr.insertCell();c0.className="input-cell";let sNo=document.createElement("input");sNo.value=i+1;c0.appendChild(sNo);attachCellEvents(sNo);
     let c1=tr.insertCell();c1.className="input-cell";let milk=document.createElement("input");milk.value=row[1]||"";c1.appendChild(milk);attachCellEvents(milk);
-    let c2=tr.insertCell();c2.className="input-cell";let Type of Milk=document.createElement("input");Type of Milk.value=row[2]||"";c2.appendChild(Type of Milk);attachCellEvents(Type of Milk);
+    let c2=tr.insertCell();c2.className="input-cell";let Type=document.createElement("input");Type.value=row[2]||"";c2.appendChild(Type);attachCellEvents(Type);
     for(let j=0;j<14;j++){let c=tr.insertCell();c.className="input-cell";let dd=createDropdown(row[3+j]||"Neg");c.appendChild(dd);}
     let cLast=tr.insertCell();cLast.className="input-cell";let sig=document.createElement("input");sig.value=row[17]||"";cLast.appendChild(sig);attachCellEvents(sig);
   });
@@ -210,7 +210,7 @@ viewerFiles.onchange=async e=>{
   records.forEach(r=>{
     const d=document.createElement("div");d.className="record-block";
     d.innerHTML=`<div class="meta-view">Record ID: ${r.meta.recordId} | Date: ${r.meta.recordDate} | Rev: ${r.meta.revNo} | Locked: ${r.audit.locked} | Approved: ${r.audit.approved}</div>
-    <table><tr><th>S.No</th><th>Milk source</th><th>Type of Milk</th><th>Urea</th><th>Starch</th><th>Cellulose</th><th>Maltodextrin</th><th>Glucose</th><th>Sucrose</th><th>Salt</th><th>Detergents</th><th>Nitrates</th><th>Veg oil/fat</th><th>Formalin</th><th>H₂O₂</th><th>Boric acid</th><th>Carbonates</th><th>Sign</th></tr>
+    <table><tr><th>S.No</th><th>Milk source</th><th>Type</th><th>Urea</th><th>Starch</th><th>Cellulose</th><th>Maltodextrin</th><th>Glucose</th><th>Sucrose</th><th>Salt</th><th>Detergents</th><th>Nitrates</th><th>Veg oil/fat</th><th>Formalin</th><th>H₂O₂</th><th>Boric acid</th><th>Carbonates</th><th>Sign</th></tr>
     ${r.table.map(row=>`<tr>${row.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</table>`;
     reportContainer.appendChild(d);
   });
@@ -231,3 +231,4 @@ approveBtn.onclick=()=>{document.body.dataset.approved='true';alert("Approved");
 </body>
 
 </html>
+
