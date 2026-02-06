@@ -114,6 +114,39 @@
       reader.readAsDataURL(file);
     }
   }
+function addRow() {
+      rowCount++;
+      const table = document.getElementById('milkTable');
+      const row = table.insertRow(-1);
+      row.innerHTML = `
+        <td>${rowCount}</td>
+        <td><textarea name="retailer${rowCount}"></textarea></td>
+        <td><input type="time" name="start${rowCount}"></td>
+        <td><input type="time" name="end${rowCount}"></td>
+        <td><input type="number" step="0.1" name="temp${rowCount}"></td>
+        <td><input type="number" name="crates${rowCount}"></td>
+        <td><input type="number" name="capacity${rowCount}"></td>
+        <td><input type="number" step="0.1" name="freezerTemp${rowCount}"></td>
+        <td><textarea name="oldMilk${rowCount}"></textarea></td>
+        <td><textarea name="remarks${rowCount}"></textarea></td>
+        <td>
+          <div class="photo-group">
+            <div>
+              <input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview${rowCount}a')">
+              <img id="preview${rowCount}a">
+            </div>
+            <div>
+              <input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview${rowCount}b')">
+              <img id="preview${rowCount}b">
+            </div>
+            <div>
+              <input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview${rowCount}c')">
+              <img id="preview${rowCount}c">
+            </div>
+          </div>
+        </td>
+      `;
+    }
 
   function downloadJSON() {
     const form = document.getElementById('visitForm');
@@ -163,3 +196,4 @@
 </body>
 
 </html>
+
