@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Market Route Visit Entry</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; border-bottom:2px solid #004080; padding-bottom:10px;}
+    header img { height:60px; }
+    header h1 { color:#004080; margin:0; font-size:24px; flex-grow:1; text-align:center; }
+    form { background:#fff; padding:20px; border-radius:8px; }
+    table { width:100%; border-collapse:collapse; margin-bottom:20px; }
+    th, td { border:1px solid #ccc; padding:8px; text-align:center; vertical-align:top; }
+    th { background:#e6f2ff; }
+    input, select, textarea { width:95%; padding:6px; }
+    textarea { resize:vertical; min-height:40px; }
+    .photo-group { display:flex; gap:10px; justify-content:center; }
+    .photo-group img { max-width:80px; max-height:80px; display:none; border:1px solid #ccc; }
+    .submit-btn { background:#004080; color:#fff; padding:10px 20px; border:none; cursor:pointer; margin-right:10px;}
+    .submit-btn:hover { background:#0066cc; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="E:\Digital Records\heritage_logo.png" alt="Company Logo"> <!-- replace with your logo file -->
+    <h1>Market Route Visit Entry</h1>
+  </header>
+
+  <form id="visitForm">
+    <h2>Vehicle Details</h2>
+    <table>
+      <tr>
+        <td>Date:<br><input type="date" name="visitDate"></td>
+        <td>Type of Vehicle:<br>
+          <select name="vehicleType">
+            <option>Non Insulated</option>
+            <option>Insulated</option>
+            <option>Refrigerated</option>
+          </select>
+        </td>
+        <td>Total Route Distance (KM):<br><input type="number" name="distance"></td>
+        <td>No of Points:<br><input type="number" name="points"></td>
+        <td>Total Transit Hrs:<br><input type="text" name="transit"></td>
+      </tr>
+      <tr>
+        <td>Dispatch Time:<br><input type="time" name="dispatchTime"></td>
+        <td>Dispatch Temp (℃):<br><input type="number" step="0.1" name="dispatchTemp"></td>
+        <td>Last Point Time:<br><input type="time" name="lastPointTime"></td>
+        <td>Last Point Temp (℃):<br><input type="number" step="0.1" name="lastPointTemp"></td>
+      </tr>
+    </table>
+
+    <h2>Milk Point Details</h2>
+    <table id="milkTable">
+      <tr>
+        <th>S.No</th><th>Retailer Name</th><th>Unload Start</th><th>Unload Complete</th>
+        <th>Milk Temp (℃)</th><th>No of Crates</th><th>Freezer Capacity</th>
+        <th>Freezer Temp</th><th>Old Milk Status</th><th>Remarks</th><th>Photos</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td><textarea name="retailer1"></textarea></td>
+        <td><input type="time" name="start1"></td>
+        <td><input type="time" name="end1"></td>
+        <td><input type="number" step="0.1" name="temp1"></td>
+        <td><input type="number" name="crates1"></td>
+        <td><input type="number" name="capacity1"></td>
+        <td><input type="number" step="0.1" name="freezerTemp1"></td>
+        <td><textarea name="oldMilk1"></textarea></td>
+        <td><textarea name="remarks1"></textarea></td>
+        <td>
+          <div class="photo-group">
+            <div>
+              <input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview1a')">
+              <img id="preview1a">
+            </div>
+            <div>
+              <input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview1b')">
+              <img id="preview1b">
+            </div>
+            <div>
+              <input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview1c')">
+              <img id="preview1c">
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <button type="button" class="submit-btn" onclick="addRow()">Add Retailer Row</button>
+    <button type="button" class="submit-btn" onclick="downloadJSON()">Save as JSON</button>
+    <input type="file" id="loadFile" style="display:none" accept=".json" onchange="loadJSON(event)">
+    <button type="button" class="submit-btn" onclick="document.getElementById('loadFile').click()">Load JSON</button>
+    <button type="button" class="submit-btn" onclick="window.print()">Print Report</button>
+  </form>
+
+<script>
+  let rowCount = 1;
+  const photoData = {}; // store base64 strings keyed by previewId
+
+  function previewPhoto(event, previewId) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById(previewId);
+        if (img) {
+          img.src = e.target.result;
+          img.style.display = 'block'; // show preview immediately
+        }
+        photoData[previewId] = e.target.result; // save base64 string under previewId
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function downloadJSON() {
+    const form = document.getElementById('visitForm');
+    const data = {};
+    Array.from(form.elements).forEach(el => {
+      if (el.name && el.type !== "file") {
+        data[el.name] = el.value;
+      }
+    });
+    data.photos = photoData; // photos keyed by previewId
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "visitReport.json";
+    link.click();
+  }
+
+  function loadJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const saved = JSON.parse(e.target.result);
+      const form = document.getElementById('visitForm');
+      Array.from(form.elements).forEach(el => {
+        if (el.name && saved[el.name]) {
+          el.value = saved[el.name];
+        }
+      });
+      // restore photos directly by previewId
+      if (saved.photos) {
+        Object.keys(saved.photos).forEach(previewId => {
+          const img = document.getElementById(previewId);
+          if (img) {
+            img.src = saved.photos[previewId];
+            img.style.display = 'block';
+            photoData[previewId] = saved.photos[previewId];
+          }
+        });
+      }
+      alert("Report loaded from JSON file!");
+    };
+    reader.readAsText(file);
+  }
+</script>
+
+</body>
+</html>
