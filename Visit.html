@@ -18,6 +18,21 @@
     .photo-group img { max-width:80px; max-height:80px; display:none; border:1px solid #ccc; }
     .submit-btn { background:#004080; color:#fff; padding:10px 20px; border:none; cursor:pointer; margin-right:10px;}
     .submit-btn:hover { background:#0066cc; }
+#milkTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  display: block;           /* allow scrolling */
+  max-height: 400px;        /* set scrollable height */
+  overflow-y: auto;         /* vertical scroll */
+}
+
+#milkTable th {
+  position: sticky;
+  top: 0;
+  background: #e6f2ff;      /* keep header background */
+  z-index: 2;               /* ensure header stays above cells */
+}
   </style>
 </head>
 <body>
@@ -31,7 +46,7 @@
     <h2>Vehicle Details</h2>
     <table>
       <tr>
-        <td>Date:<br><input type="date" name="visitDate"></td>
+        <td>Date:<br><input type="date" name="visitDate" id="visitDate"></td>
         <td>Type of Vehicle:<br>
           <select name="vehicleType">
             <option>Non Insulated</option>
@@ -148,49 +163,121 @@ function addRow() {
       `;
     }
 
-  function downloadJSON() {
+function downloadJSON() {
+  const form = document.getElementById('visitForm');
+  const data = {};
+
+  // Save all text inputs and textareas
+  Array.from(form.elements).forEach(el => {
+    if (el.name && el.type !== "file") {
+      data[el.name] = el.value;
+    }
+  });
+
+  // Save all photos that have been previewed
+  data.photos = {};
+  document.querySelectorAll('.photo-group img').forEach(img => {
+    if (img.src && img.src.startsWith("data:image")) {
+      data.photos[img.id] = img.src;
+    }
+  });
+
+  // Save row count
+  data.rowCount = rowCount;
+
+  // Generate filename with date (YYYY-MM-DD)
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0]; // e.g. "2026-02-06"
+  const filename = `visitReport_${dateStr}.json`;
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+function loadJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const saved = JSON.parse(e.target.result);
+
+    // rebuild rows if needed
+    while (rowCount < saved.rowCount) {
+      addRow();
+    }
+
+    // restore text fields
     const form = document.getElementById('visitForm');
-    const data = {};
     Array.from(form.elements).forEach(el => {
-      if (el.name && el.type !== "file") {
-        data[el.name] = el.value;
+      if (el.name && saved[el.name]) {
+        el.value = saved[el.name];
       }
     });
-    data.photos = photoData; // photos keyed by previewId
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "visitReport.json";
-    link.click();
-  }
 
-  function loadJSON(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const saved = JSON.parse(e.target.result);
-      const form = document.getElementById('visitForm');
-      Array.from(form.elements).forEach(el => {
-        if (el.name && saved[el.name]) {
-          el.value = saved[el.name];
+    // restore photos
+    if (saved.photos) {
+      Object.keys(saved.photos).forEach(previewId => {
+        const img = document.getElementById(previewId);
+        if (img) {
+          img.src = saved.photos[previewId];
+          img.style.display = 'block';
+          photoData[previewId] = saved.photos[previewId];
         }
       });
-      // restore photos directly by previewId
-      if (saved.photos) {
-        Object.keys(saved.photos).forEach(previewId => {
-          const img = document.getElementById(previewId);
-          if (img) {
-            img.src = saved.photos[previewId];
-            img.style.display = 'block';
-            photoData[previewId] = saved.photos[previewId];
-          }
-        });
-      }
-      alert("Report loaded from JSON file!");
-    };
-    reader.readAsText(file);
-  }
+    }
+    alert("Report loaded from JSON file!");
+  };
+  reader.readAsText(file);
+}
+// Auto-fill today's date in the vehicle details
+window.onload = function() {
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0]; // format YYYY-MM-DD
+  document.getElementById('visitDate').value = dateStr;
+};
+
+// Save JSON with filename including the chosen date
+function downloadJSON() {
+  const form = document.getElementById('visitForm');
+  const data = {};
+
+  // Save all text inputs and textareas
+  Array.from(form.elements).forEach(el => {
+    if (el.name && el.type !== "file") {
+      data[el.name] = el.value;
+    }
+  });
+
+  // Save all photos that have been previewed
+  data.photos = {};
+  document.querySelectorAll('.photo-group img').forEach(img => {
+    if (img.src && img.src.startsWith("data:image")) {
+      data.photos[img.id] = img.src;
+    }
+  });
+
+  // Save row count
+  data.rowCount = rowCount;
+
+  // Use the vehicle date field for filename
+  const dateStr = document.getElementById('visitDate').value || new Date().toISOString().split('T')[0];
+  const filename = `visitReport_${dateStr}.json`;
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+// Auto-fill today's date in the vehicle details
+window.onload = function() {
+  const today = new Date();
+  const dateStr = today.toISOString().split('T')[0]; // format YYYY-MM-DD
+  document.getElementById('visitDate').value = dateStr;
+};
 </script>
 
 </body>
