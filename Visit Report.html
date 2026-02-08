@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Market Route Visit Entry</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 10px; background: #f9f9f9; }
+    header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; border-bottom:2px solid #004080; padding-bottom:10px;}
+    header img { height:60px; }
+    header h1 { color:#004080; margin:0; font-size:24px; flex-grow:1; text-align:center; }
+    form { background:#fff; padding:20px; border-radius:8px; }
+    table { width:100%; border-collapse:collapse; margin-bottom:10px; }
+    th, td { border:1px solid #ccc; padding:8px; text-align:center; vertical-align:top; }
+    th { background:#e6f2ff; }
+    input, select, textarea { width:95%; padding:6px; }
+    textarea { resize:vertical; min-height:40px; }
+    .photo-group { display:flex; gap:10px; justify-content:center; }
+    .photo-group img { max-width:80px; max-height:80px; display:none; border:1px solid #ccc; }
+    .submit-btn { background:#004080; color:#fff; padding:10px 20px; border:none; cursor:pointer; margin-right:10px;}
+    .submit-btn:hover { background:#0066cc; }
+
+    /* Freeze Milk Point header */
+    #milkTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+      display: block;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    #milkTable th {
+      position: sticky;
+      top: 0;
+      background: #e6f2ff;
+      z-index: 2;
+    }
+
+    /* Print-friendly layout */
+    @media print {
+      body { background: #fff; margin: 0; }
+      .submit-btn, input[type="file"], button { display: none !important; }
+      #milkTable {
+        display: table !important;
+        max-height: none !important;
+        overflow: visible !important;
+      }
+      #milkTable th {
+        position: static !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="heritage_logo.png" alt="Heritage Foods Limited" />
+    <h1>Heritage Foods Limited - Market Route Visit Entry</h1>
+  </header>
+
+  <form id="visitForm">
+    <h2>Vehicle Details</h2>
+    <table>
+      <tr>
+        <th>Vehicle Type</th>
+        <th>Date</th>
+        <th>Total Distance (KM)</th>
+        <th>No of Points</th>
+        <th>Transit Hrs</th>
+        <th>Dispatch Time</th>
+        <th>Dispatch Temp (℃)</th>
+        <th>Last Point Time</th>
+        <th>Last Point Temp (℃)</th>
+      </tr>
+      <tr>
+        <td>Primary:<br>
+          <select name="vehicleType1">
+            <option>Non Insulated</option>
+            <option>Insulated</option>
+            <option>Refrigerated</option>
+          </select>
+        </td>
+        <td><input type="date" name="visitDate1" id="visitDate1"></td>
+        <td><input type="number" name="distance1"></td>
+        <td><input type="number" name="points1"></td>
+        <td><input type="text" name="transit1"></td>
+        <td><input type="time" name="dispatchTime1"></td>
+        <td><input type="number" step="0.1" name="dispatchTemp1"></td>
+        <td><input type="time" name="lastPointTime1"></td>
+        <td><input type="number" step="0.1" name="lastPointTemp1"></td>
+      </tr>
+      <tr>
+        <td>Secondary:<br>
+          <select name="vehicleType2">
+            <option>Non Insulated</option>
+            <option>Insulated</option>
+            <option>Refrigerated</option>
+          </select>
+        </td>
+        <td><input type="date" name="visitDate2" id="visitDate2"></td>
+        <td><input type="number" name="distance2"></td>
+        <td><input type="number" name="points2"></td>
+        <td><input type="text" name="transit2"></td>
+        <td><input type="time" name="dispatchTime2"></td>
+        <td><input type="number" step="0.1" name="dispatchTemp2"></td>
+        <td><input type="time" name="lastPointTime2"></td>
+        <td><input type="number" step="0.1" name="lastPointTemp2"></td>
+      </tr>
+    </table>
+
+    <h2>Milk Point Details</h2>
+    <table id="milkTable">
+      <tr>
+        <th>S.No</th><th>Retailer Name</th><th>Unload Start</th><th>Unload Complete</th>
+        <th>Milk Temp (℃)</th><th>No of Crates</th><th>Freezer Capacity</th>
+        <th>Freezer Temp</th><th>Old Milk Status</th><th>Remarks</th><th>Photos</th><th>Delete</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td><textarea name="retailer1"></textarea></td>
+        <td><input type="time" name="start1"></td>
+        <td><input type="time" name="end1"></td>
+        <td><input type="number" step="0.1" name="temp1"></td>
+        <td><input type="number" name="crates1"></td>
+        <td><input type="number" name="capacity1"></td>
+        <td><input type="number" step="0.1" name="freezerTemp1"></td>
+        <td><textarea name="oldMilk1"></textarea></td>
+        <td><textarea name="remarks1"></textarea></td>
+        <td>
+          <div class="photo-group">
+            <div><input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview1a')"><img id="preview1a"></div>
+            <div><input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview1b')"><img id="preview1b"></div>
+            <div><input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview1c')"><img id="preview1c"></div>
+          </div>
+        </td>
+        <td><button type="button" onclick="removeRow(this)">Remove</button></td>
+      </tr>
+    </table>
+
+    <button type="button" class="submit-btn" onclick="addRow()">Add Retailer Row</button>
+    <button type="button" class="submit-btn" onclick="downloadJSON()">Save as JSON</button>
+    <input type="file" id="loadFile" style="display:none" accept=".json" onchange="loadJSON(event)">
+    <button type="button" class="submit-btn" onclick="document.getElementById('loadFile').click()">Load JSON</button>
+    <button type="button" class="submit-btn" onclick="printReport()">Print Report</button>
+  </form>
+
+<script>
+  let rowCount = 1;
+  const photoData = {};
+
+  // Auto-fill today's date
+  window.onload = function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('visitDate1').value = today;
+    document.getElementById('visitDate2').value = today;
+  };
+
+  function previewPhoto(event, previewId) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById(previewId);
+        if (img) {
+          img.src = e.target.result;
+          img.style.display = 'block';
+        }
+        photoData[previewId] = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function addRow() {
+    rowCount++;
+    const table = document.getElementById('milkTable');
+    const row = table.insertRow(-1);
+    row.innerHTML = `
+      <td>${rowCount}</td>
+      <td><textarea name="retailer${rowCount}"></textarea></td>
+      <td><input type="time" name="start${rowCount}"></td>
+      <td><input type="time" name="end${rowCount}"></td>
+      <td><input type="number" step="0.1" name="temp${rowCount}"></td>
+      <td><input type="number" name="crates${rowCount}"></td>
+      <td><input type="number" name="capacity${rowCount}"></td>
+      <td><input type="number" step="0.1" name="freezerTemp${rowCount}"></td>
+      <td><textarea name="oldMilk${rowCount}"></textarea></td>
+      <td><textarea name="remarks${rowCount}"></textarea></td>
+      <td>
+        <div class="photo-group">
+          <div><input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview${rowCount}a')"><img id="preview${rowCount}a"></div>
+          <div><input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview${rowCount}b')"><img id="preview${rowCount}b"></div>
+          <div><input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview${rowCount}c')"><img id="preview${rowCount}c"></div>
+        </div>
+      </td>
+      <td><button type="button" onclick="removeRow(this)">Remove</button></td>
+    `;
+  }
+
+  function removeRow(button) {
+    const row = button.closest("tr");
+    row.remove();
+    updateSerialNumbers();
+  }
+
+  function updateSerialNumbers() {
+    const rows = document.querySelectorAll("#milkTable tr");
+    let count = 1;
+
+    rows.forEach((row, index) => {
+      if (index === 0) return; // skip header
+      row.cells[0].textContent = count;
+      count++;
+    });
+
+    rowCount = count - 1;
+  }
+
+  function downloadJSON() {
+    const form = document.getElementById('visitForm');
+    const data = {};
+    Array.from(form.elements).forEach(el => {
+      if (el.name && el.type !== "file") {
+        data[el.name] = el.value;
+      }
+    });
+    data.photos = photoData;
+    data.rowCount = rowCount;
+
+    const dateStr = document.getElementById('visitDate1').value || new Date().toISOString().split('T')[0];
+    const filename = `visitReport_${dateStr}.json`;
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+  }
+
+  function loadJSON(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const saved = JSON.parse(e.target.result);
+
+      while (rowCount < saved.rowCount) {
+        addRow();
+      }
+
+      const form = document.getElementById('visitForm');
+      Array.from(form.elements).forEach(el => {
+        if (el.name && saved[el.name]) {
+          el.value = saved[el.name];
+        }
+      });
+
+      if (saved.photos) {
+        Object.keys(saved.photos).forEach(previewId => {
+          const img = document.getElementById(previewId);
+          if (img) {
+            img.src = saved.photos[previewId];
+            img.style.display = 'block';
+            photoData[previewId] = saved.photos[previewId];
+          }
+        });
+      }
+      alert("Report loaded from JSON file!");
+    };
+    reader.readAsText(file);
+  }
+
+  function printReport() {
+    window.print();
+  }
+</script>
+
+</body>
+</html>
