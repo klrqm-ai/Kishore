@@ -10,53 +10,53 @@
     header h1 { color:#004080; margin:0; font-size:24px; flex-grow:1; text-align:center; }
     form { background:#fff; padding:20px; border-radius:8px; }
     table { width:100%; border-collapse:collapse; margin-bottom:10px; }
-    th, td { border:1px solid #ccc; padding:8px; text-align:center; vertical-align:top; }
+    th, td { border:1px solid #ccc; padding:6px; text-align:center; vertical-align:middle; }
     th { background:#e6f2ff; }
-    input, select, textarea { width:95%; padding:6px; }
+    input, select, textarea { width:95%; padding:4px; }
     textarea { resize:vertical; min-height:100px; }
     .photo-group { display:flex; gap:10px; justify-content:center; }
     .photo-group img { max-width:80px; max-height:80px; display:none; border:1px solid #ccc; }
     .submit-btn { background:#004080; color:#fff; padding:10px 20px; border:none; cursor:pointer; margin-right:10px;}
     .submit-btn:hover { background:#0066cc; }
 
-    /* Freeze Milk Point header */
-    #milkTable {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 10px;
-      display: block;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    #milkTable th {
-      position: sticky;
-      top: 0;
-      background: #e6f2ff;
-      z-index: 2;
-    }
-
-    /* Print-friendly layout */
-    @media print {
-      body { background: #fff; margin: 0; }
-      .submit-btn, input[type="file"] { display: none !important; }
-      #milkTable {
-        display: table !important;
-        max-height: none !important;
-        overflow: visible !important;
-      }
-      #milkTable th {
-        position: static !important;
-      }
-    }
-input {
-  width: 100%;
-  padding: 4px;
-  border: none;          /* removes inner box look */
-  background: transparent;
-  outline: none;
+   form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-  </style>
+h2 {
+  color: #004080;
+  margin-top: 20px;
+  font-size: 20px;
+  border-bottom: 2px solid #e6f2ff;
+  padding-bottom: 5px;
+}
+
+#milkTable tr:nth-child(even) {
+  background: #f2f9ff;
+}
+
+.photo-group img {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 2px;
+}
+/* Milk Point Details column widths */
+#milkTable th:nth-child(1), #milkTable td:nth-child(1) { width: 30px; }   /* S.No */
+#milkTable th:nth-child(2), #milkTable td:nth-child(2) { width: 150px; }  /* Retailer Name */
+#milkTable th:nth-child(3), #milkTable td:nth-child(3) { width: 50px; }  /* Unload Start */
+#milkTable th:nth-child(4), #milkTable td:nth-child(4) { width: 50px; }  /* Unload Complete */
+#milkTable th:nth-child(5), #milkTable td:nth-child(5) { width: 80px; }  /* Milk Temp */
+#milkTable th:nth-child(6), #milkTable td:nth-child(6) { width: 70px; }  /* No of Crates */
+#milkTable th:nth-child(7), #milkTable td:nth-child(7) { width: 70px; }  /* Freezer Capacity */
+#milkTable th:nth-child(8), #milkTable td:nth-child(8) { width: 70px; }  /* Freezer Temp */
+#milkTable th:nth-child(9), #milkTable td:nth-child(9) { width: 150px; }  /* Old Milk Status */
+#milkTable th:nth-child(10), #milkTable td:nth-child(10) { width: 150px; }/* Remarks */
+#milkTable th:nth-child(11), #milkTable td:nth-child(11) { width: 450px; }/* Photos */
+#milkTable th:nth-child(12), #milkTable td:nth-child(12) { width: 20px; } /* Action */  </style>
+
 </head>
 <body>
 
@@ -67,64 +67,64 @@ input {
 
   <form id="visitForm">
     <h2>Vehicle Details</h2>
-<table>
-  <tr>
-    <th>Vehicle Type</th>
-    <th>Date</th>
-    <th>Route Name</th>
-    <th>Total Distance (KM)</th>
-    <th>No of Points</th>
-    <th>Transit Hrs</th>
-    <th>Dispatch Time</th>
-    <th>Dispatch Temp (℃)</th>
-    <th>Last Point Time</th>
-    <th>Last Point Temp (℃)</th>
-  </tr>
-  <tr>
-    <td>Primary:<br>
-      <select name="vehicleType1">
-        <option>Non Insulated</option>
-        <option>Insulated</option>
-        <option>Refrigerated</option>
-      </select>
-    </td>
-    <td><input type="date" name="visitDate1" id="visitDate1"></td>
-    <td><input type="text" name="routeName1" placeholder="Enter route name"></td>
-    <td><input type="number" name="distance1"></td>
-    <td><input type="number" name="points1"></td>
-    <td><input type="text" name="transit1"></td>
-    <td><input type="time" name="dispatchTime1"></td>
-    <td><input type="number" step="0.1" name="dispatchTemp1"></td>
-    <td><input type="time" name="lastPointTime1"></td>
-    <td><input type="number" step="0.1" name="lastPointTemp1"></td>
-  </tr>
-  <tr id="secondaryRow" style="display:none">
-    <td>Secondary:<br>
-      <select name="vehicleType2">
-        <option>Non Insulated</option>
-        <option>Insulated</option>
-        <option>Refrigerated</option>
-      </select>
-    </td>
-    <td><input type="date" name="visitDate2" id="visitDate2"></td>
-    <td><input type="text" name="routeName2" placeholder="Enter route name"></td>
-    <td><input type="number" name="distance2"></td>
-    <td><input type="number" name="points2"></td>
-    <td><input type="text" name="transit2"></td>
-    <td><input type="time" name="dispatchTime2"></td>
-    <td><input type="number" step="0.1" name="dispatchTemp2"></td>
-    <td><input type="time" name="lastPointTime2"></td>
-    <td><input type="number" step="0.1" name="lastPointTemp2"></td>
-  </tr>
-</table>
-<button type="button" class="submit-btn" onclick="toggleSecondary()">Add Secondary Vehicle</button>
+    <table>
+      <tr>
+        <th>Vehicle Type</th>
+        <th>Date</th>
+        <th>Route Name</th>
+        <th>Total Distance (KM)</th>
+        <th>No of Points</th>
+        <th>Transit Hrs</th>
+        <th>Dispatch Time</th>
+        <th>Dispatch Temp (℃)</th>
+        <th>Last Point Time</th>
+        <th>Last Point Temp (℃)</th>
+      </tr>
+      <tr>
+        <td>
+          <select name="vehicleType1">
+            <option>Non Insulated</option>
+            <option>Insulated</option>
+            <option>Refrigerated</option>
+          </select>
+        </td>
+        <td><input type="date" name="visitDate1" id="visitDate1"></td>
+        <td><input type="text" name="routeName1"></td>
+        <td><input type="number" name="distance1"></td>
+        <td><input type="number" name="points1"></td>
+        <td><input type="text" name="transit1"></td>
+        <td><input type="time" name="dispatchTime1"></td>
+        <td><input type="number" step="0.1" name="dispatchTemp1"></td>
+        <td><input type="time" name="lastPointTime1"></td>
+        <td><input type="number" step="0.1" name="lastPointTemp1"></td>
+      </tr>
+      <tr id="secondaryRow" style="display:none">
+        <td>
+          <select name="vehicleType2">
+            <option>Non Insulated</option>
+            <option>Insulated</option>
+            <option>Refrigerated</option>
+          </select>
+        </td>
+        <td><input type="date" name="visitDate2" id="visitDate2"></td>
+        <td><input type="text" name="routeName2"></td>
+        <td><input type="number" name="distance2"></td>
+        <td><input type="number" name="points2"></td>
+        <td><input type="text" name="transit2"></td>
+        <td><input type="time" name="dispatchTime2"></td>
+        <td><input type="number" step="0.1" name="dispatchTemp2"></td>
+        <td><input type="time" name="lastPointTime2"></td>
+        <td><input type="number" step="0.1" name="lastPointTemp2"></td>
+      </tr>
+    </table>
+    <button type="button" class="submit-btn" onclick="toggleSecondary()">Add Secondary Vehicle</button>
 
     <h2>Milk Point Details</h2>
     <table id="milkTable">
       <tr>
         <th>S.No</th><th>Retailer Name</th><th>Unload Start</th><th>Unload Complete</th>
         <th>Milk Temp (℃)</th><th>No of Crates</th><th>Freezer Capacity</th>
-        <th>Freezer Temp</th><th>Old Milk Status</th><th>Remarks</th><th>Photos</th>
+        <th>Freezer Temp</th><th>Old Milk Status</th><th>Remarks</th><th>Photos</th><th style="width:30px;">Action</th>
       </tr>
       <tr>
         <td>1</td>
@@ -144,6 +144,7 @@ input {
             <div><input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview1c')"><img id="preview1c"></div>
           </div>
         </td>
+        <td style="width:30px;"><button type="button" onclick="deleteRow(this)">✖</button></td>
       </tr>
     </table>
 
@@ -158,7 +159,6 @@ input {
   let rowCount = 1;
   const photoData = {};
 
-  // Auto-fill today's date
   window.onload = function() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('visitDate1').value = today;
@@ -167,11 +167,7 @@ input {
 
   function toggleSecondary() {
     const row = document.getElementById('secondaryRow');
-    if (row.style.display === "none") {
-      row.style.display = "table-row";
-    } else {
-      row.style.display = "none";
-    }
+    row.style.display = (row.style.display === "none" || row.style.display === "") ? "table-row" : "none";
   }
 
   function previewPhoto(event, previewId) {
@@ -186,7 +182,6 @@ input {
         }
         photoData[previewId] = e.target.result;
       };
-      reader.readAs
       reader.readAsDataURL(file);
     }
   }
@@ -213,80 +208,141 @@ input {
           <div><input type="file" accept="image/*" capture="camera" onchange="previewPhoto(event,'preview${rowCount}c')"><img id="preview${rowCount}c"></div>
         </div>
       </td>
+      <td style="width:30px;"><button type="button" onclick="deleteRow(this)">✖</button></td>
     `;
   }
 
-  function downloadJSON() {
-    const form = document.getElementById('visitForm');
-    const data = {};
-    Array.from(form.elements).forEach(el => {
-      if (el.name && el.type !== "file") {
-        // Only include secondary vehicle fields if visible
-        if (el.closest('#secondaryRow') && document.getElementById('secondaryRow').style.display === "none") {
-          return;
-        }
-        data[el.name] = el.value;
-      }
-    });
-    data.photos = photoData;
-    data.rowCount = rowCount;
-
-    // Use primary vehicle date for filename
-    const dateStr = document.getElementById('visitDate1').value || new Date().toISOString().split('T')[0];
-    const filename = `visitReport_${dateStr}.json`;
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    link.click();
+  function deleteRow(button) {
+    if (confirm("Are you sure you want to delete this row?")) {
+      const row = button.closest("tr");
+      row.remove();
+      renumberRows();
+    }
   }
 
-  function loadJSON(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const saved = JSON.parse(e.target.result);
+  function renumberRows() {
+  const table = document.getElementById('milkTable');
+  const rows = table.querySelectorAll("tr");
+  let num = 1;
+  rows.forEach((r, i) => {
+    if (i > 0) { // skip header
+      r.cells[0].innerText = num;
 
-      // rebuild rows if needed
-      while (rowCount < saved.rowCount) {
-        addRow();
-      }
-
-      // restore text fields
-      const form = document.getElementById('visitForm');
-      Array.from(form.elements).forEach(el => {
-        if (el.name && saved[el.name]) {
-          el.value = saved[el.name];
+      // Update all input/textarea names to match new row number
+      Array.from(r.querySelectorAll("textarea,input")).forEach(el => {
+        if (el.name) {
+          const baseName = el.name.replace(/[0-9]+$/, ""); // remove old number
+          el.name = baseName + num;
         }
       });
 
-      // show secondary row if data exists
-      if (saved.vehicleType2 || saved.visitDate2) {
-        document.getElementById('secondaryRow').style.display = "table-row";
-      }
+      // Update photo preview IDs too
+      Array.from(r.querySelectorAll("img")).forEach((img, idx) => {
+        img.id = `preview${num}${String.fromCharCode(97+idx)}`; // a,b,c
+      });
+      Array.from(r.querySelectorAll("input[type='file']")).forEach((fileInput, idx) => {
+        fileInput.setAttribute("onchange", `previewPhoto(event,'preview${num}${String.fromCharCode(97+idx)}')`);
+      });
 
-      // restore photos
-      if (saved.photos) {
-        Object.keys(saved.photos).forEach(previewId => {
-          const img = document.getElementById(previewId);
-          if (img) {
-            img.src = saved.photos[previewId];
-            img.style.display = 'block';
-            photoData[previewId] = saved.photos[previewId];
+      num++;
+    }
+  });
+  rowCount = num - 1;
+}
+
+  function downloadJSON() {
+  const data = { photos: photoData, rows: [] };
+
+  // Save all vehicle details and other form fields
+  const form = document.getElementById('visitForm');
+  Array.from(form.elements).forEach(el => {
+    if (el.name && el.type !== "file") {
+      data[el.name] = el.value;
+    }
+  });
+
+  // Save milk point rows
+  const table = document.getElementById('milkTable');
+  const rows = table.querySelectorAll("tr");
+  rows.forEach((r, i) => {
+    if (i > 0) { // skip header
+      const rowData = {};
+      Array.from(r.querySelectorAll("textarea,input")).forEach(el => {
+        if (el.name && el.type !== "file") {
+          rowData[el.name] = el.value;
+        }
+      });
+      data.rows.push(rowData);
+    }
+  });
+
+  const dateStr = document.getElementById('visitDate1').value || new Date().toISOString().split('T')[0];
+  const filename = `visitReport_${dateStr}.json`;
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+}
+
+  function loadJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const saved = JSON.parse(e.target.result);
+
+    // Clear existing rows except header
+    const table = document.getElementById('milkTable');
+    while (table.rows.length > 1) {
+      table.deleteRow(1);
+    }
+    rowCount = 0;
+
+    // Restore vehicle details
+    const form = document.getElementById('visitForm');
+    Array.from(form.elements).forEach(el => {
+      if (el.name && saved[el.name] !== undefined) {
+        el.value = saved[el.name];
+      }
+    });
+
+    // Restore milk point rows
+    if (saved.rows) {
+      saved.rows.forEach(rowData => {
+        addRow();
+        Array.from(document.getElementById('visitForm').elements).forEach(el => {
+          if (el.name && rowData[el.name] !== undefined) {
+            el.value = rowData[el.name];
           }
         });
-      }
-      alert("Report loaded from JSON file!");
-    };
-    reader.readAsText(file);
-  }
+      });
+    }
+
+    if (saved.vehicleType2 || saved.visitDate2) {
+      document.getElementById('secondaryRow').style.display = "table-row";
+    }
+
+    if (saved.photos) {
+      Object.keys(saved.photos).forEach(previewId => {
+        const img = document.getElementById(previewId);
+        if (img) {
+          img.src = saved.photos[previewId];
+          img.style.display = 'block';
+          photoData[previewId] = saved.photos[previewId];
+        }
+      });
+    }
+    renumberRows();
+    alert("Report loaded from JSON file!");
+  };
+  reader.readAsText(file);
+}
 
   function printReport() {
     window.print();
   }
 </script>
-
 </body>
 </html>
