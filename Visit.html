@@ -7,7 +7,7 @@
     body { font-family: Arial, sans-serif; margin: 10px; background: #f9f9f9; }
     header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; border-bottom:2px solid #004080; padding-bottom:10px;}
     header img { height:60px; }
-    header h1 { color:#004080; margin:0; font-size:24px; flex-grow:1; text-align:center; }
+    header h1 { color:#004080; margin:0; font-size:20px; flex-grow:1; text-align:center; }
     form { background:#fff; padding:20px; border-radius:8px; }
     table { width:100%; border-collapse:collapse; margin-bottom:10px; }
     th, td { border:1px solid #ccc; padding:6px; text-align:center; vertical-align:middle; }
@@ -22,14 +22,14 @@
    form {
   background: #fff;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 h2 {
   color: #004080;
   margin-top: 20px;
-  font-size: 20px;
+  font-size: 15px;
   border-bottom: 2px solid #e6f2ff;
   padding-bottom: 5px;
 }
@@ -43,19 +43,73 @@ h2 {
   border: 1px solid #ccc;
   padding: 2px;
 }
+@media print {
+  /* Hide purely interactive controls */
+  input[type="file"],
+  input[type="button"],
+  button {
+    display: none !important;
+  }
+
+  /* Show entered values for text, number, date, time, textarea, select */
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    border: none !important;
+    background: transparent !important;
+    color: #000 !important;
+    width: auto !important;
+    display: inline-block !important;
+  }
+
+  /* Ensure photo previews print clearly */
+  .photo-group img {
+    display: inline-block !important;
+    max-width: 500px;
+    max-height: 100px;
+    border: 1px solid #000;
+    margin: 2px;
+  }
+
+  /* Hide delete/action buttons */
+  td button {
+    display: none !important;
+  }
+
+  /* Clean table borders for print */
+  table {
+    border: 1px solid #000;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #000;
+    padding: 6px;
+  }
+
+  /* Remove screen backgrounds for clarity */
+  body {
+    background: #fff !important;
+  }
+  th {
+    background: #f0f0f0 !important;
+  }
+}
 /* Milk Point Details column widths */
-#milkTable th:nth-child(1), #milkTable td:nth-child(1) { width: 30px; }   /* S.No */
+#milkTable th:nth-child(1), #milkTable td:nth-child(1) { width: 20px; }   /* S.No */
 #milkTable th:nth-child(2), #milkTable td:nth-child(2) { width: 150px; }  /* Retailer Name */
-#milkTable th:nth-child(3), #milkTable td:nth-child(3) { width: 50px; }  /* Unload Start */
-#milkTable th:nth-child(4), #milkTable td:nth-child(4) { width: 50px; }  /* Unload Complete */
-#milkTable th:nth-child(5), #milkTable td:nth-child(5) { width: 80px; }  /* Milk Temp */
-#milkTable th:nth-child(6), #milkTable td:nth-child(6) { width: 70px; }  /* No of Crates */
-#milkTable th:nth-child(7), #milkTable td:nth-child(7) { width: 70px; }  /* Freezer Capacity */
-#milkTable th:nth-child(8), #milkTable td:nth-child(8) { width: 70px; }  /* Freezer Temp */
+#milkTable th:nth-child(3), #milkTable td:nth-child(3) { width: 40px; }  /* Unload Start */
+#milkTable th:nth-child(4), #milkTable td:nth-child(4) { width: 40px; }  /* Unload Complete */
+#milkTable th:nth-child(5), #milkTable td:nth-child(5) { width: 50px; }  /* Milk Temp */
+#milkTable th:nth-child(6), #milkTable td:nth-child(6) { width: 50px; }  /* No of Crates */
+#milkTable th:nth-child(7), #milkTable td:nth-child(7) { width: 50px; }  /* Freezer Capacity */
+#milkTable th:nth-child(8), #milkTable td:nth-child(8) { width: 50px; }  /* Freezer Temp */
 #milkTable th:nth-child(9), #milkTable td:nth-child(9) { width: 150px; }  /* Old Milk Status */
-#milkTable th:nth-child(10), #milkTable td:nth-child(10) { width: 150px; }/* Remarks */
-#milkTable th:nth-child(11), #milkTable td:nth-child(11) { width: 450px; }/* Photos */
-#milkTable th:nth-child(12), #milkTable td:nth-child(12) { width: 20px; } /* Action */  </style>
+#milkTable th:nth-child(10), #milkTable td:nth-child(10) { width: 100px; }/* Remarks */
+#milkTable th:nth-child(11), #milkTable td:nth-child(11) { width: 550px; }/* Photos */
+#milkTable th:nth-child(12), #milkTable td:nth-child(12) { width: 15px; } /* Action */  </style>
 
 </head>
 <body>
@@ -170,21 +224,24 @@ h2 {
     row.style.display = (row.style.display === "none" || row.style.display === "") ? "table-row" : "none";
   }
 
-  function previewPhoto(event, previewId) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = document.getElementById(previewId);
-        if (img) {
-          img.src = e.target.result;
-          img.style.display = 'block';
-        }
-        photoData[previewId] = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
+function previewPhoto(event, previewId) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = document.getElementById(previewId);
+      if (img) {
+        img.src = e.target.result;
+        img.style.display = 'block';
+      }
+      photoData[previewId] = e.target.result;
+
+      // Hide the file input after image is loaded
+      event.target.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
   }
+}
 
   function addRow() {
     rowCount++;
