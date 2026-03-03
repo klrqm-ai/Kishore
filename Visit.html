@@ -37,18 +37,50 @@
 
     /* Print-friendly layout */
     @media print {
-      body { background: #fff; margin: 0; }
-      .submit-btn, input[type="file"], button { display: none !important; }
-      #milkTable {
-        display: table !important;
-        max-height: none !important;
-        overflow: visible !important;
-      }
-      #milkTable th {
-        position: static !important;
-      }
-    }
-  </style>
+  body { background: #fff !important; margin: 0.5in !important; }
+  .submit-btn, input[type="file"], button { display: none !important; }
+  
+  /* CRITICAL: All rows print fully */
+  #milkTable { 
+    display: table !important; 
+    max-height: none !important; 
+    overflow: visible !important; 
+    page-break-inside: auto !important;
+  }
+  
+  /* Excel borders */
+  #milkTable th, #milkTable td { 
+    border: 1px solid #43a047 !important; 
+    padding: 6px 4px !important; 
+  }
+  
+  /* Transparent inputs, show photos */
+  input:not([type="file"]), textarea { 
+    border: none !important; 
+    background: transparent !important; 
+  }
+  .photo-group img { display: block !important; max-width: 50px !important; }
+}
+textarea {
+  resize: vertical;
+  min-height: 400px;
+}
+textarea {
+  resize: none;       /* prevents uncontrolled stretching */
+  height: 240px;       /* fixed compact height */
+  line-height: 1.2;   /* keeps text readable */
+  padding: 4px;       /* smaller padding reduces row height */
+}
+textarea {
+  resize: vertical;
+  height: 100px;
+  min-height: 28px;
+}
+textarea {
+  max-height: 400px;
+  overflow-y: auto;
+}
+</style>
 </head>
 <body>
 
