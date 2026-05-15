@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Links</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      padding: 40px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      padding: 30px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+    .card a {
+      text-decoration: none;
+      color: #333;
+      font-size: 18px;
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+    .icon {
+      font-size: 40px;
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align:center; padding:20px; color:#333;">🌟 Dashboard</h1>
+  <div class="dashboard">
+    <div class="card">
+      <div class="icon">🏠</div>
+      <a href="#home">Home</a>
+    </div>
+    <div class="card">
+      <div class="icon">📊</div>
+      <a href="#reports">Reports</a>
+    </div>
+    <div class="card">
+      <div class="icon">⚙️</div>
+      <a href="#settings">Settings</a>
+    </div>
+    <div class="card">
+      <div class="icon">📧</div>
+      <a href="#messages">Messages</a>
+    </div>
+    <div class="card">
+      <div class="icon">👥</div>
+      <a href="#users">Users</a>
+    </div>
+    <div class="card">
+      <div class="icon">❓</div>
+      <a href="#help">Help</a>
+    </div>
+  </div>
+</body>
+</html>

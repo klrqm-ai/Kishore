@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Milk Plant Due Date Alerts</title>
+  <style>
+    table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    .safe { background-color: #d4edda; }
+    .warning { background-color: #fff3cd; }
+    .alert { background-color: #f8d7da; }
+    button { margin: 10px; padding: 8px 12px; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+  <h2 style="text-align:center;">Milk Plant Due Date Monitoring</h2>
+
+  <div style="text-align:center;">
+    <button onclick="addRow()">➕ Add Row</button>
+    <button onclick="saveTable()">💾 Save JSON</button>
+    <button onclick="saveExcel()">📊 Save Excel</button>
+    <button onclick="checkAllAlerts()">🚨 Check Alerts</button>
+    <input type="file" id="fileInput" onchange="loadFile(event)">
+  </div>
+
+  <table id="plantTable">
+    <tr>
+      <th>Plant</th>
+      <th>Study Date</th>
+      <th>Due Date</th>
+      <th>WhatsApp Number</th>
+      <th>Status</th>
+    </tr>
+    
+    </tr>
+  </table>
+
+  <script>
+    function updateDueDate(input) {
+      let studyDate = new Date(input.value);
+      if (isNaN(studyDate)) return;
+
+      let dueDate = new Date(studyDate);
+      dueDate.setDate(studyDate.getDate() + 30);
+
+      let row = input.parentElement.parentElement;
+      row.cells[2].innerText = dueDate.toISOString().split('T')[0];
+
+      let today = new Date();
+      let diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+      let statusCell = row.cells[4];
+
+      if (diffDays > 3) {
+        statusCell.innerText = "Safe";
+        statusCell.className = "safe";
+      } else if (diffDays > 0) {
+        statusCell.innerText = "Warning";
+        statusCell.className = "warning";
+      } else {
+        statusCell.innerText = "Alert";
+        statusCell.className = "alert";
+      }
+    }
+
+    function sendWhatsApp(number, plant, dueDate) {
+      let message = `🚨 Alert: Plant ${plant} Panner shelf life study due on ${dueDate.toISOString().split('T')[0]}`;
+      let url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+      window.open(url, '_blank');
+    }
+
+    // ✅ Sequential alerts for multiple overdue plants
+    function checkAllAlerts() {
+      let table = document.getElementById("plantTable");
+      let alerts = [];
+
+      for (let i = 1; i < table.rows.length; i++) {
+        let row = table.rows[i];
+        let input = row.cells[1].querySelector("input");
+        if (!input || !input.value) continue;
+
+        let studyDate = new Date(input.value);
+        let dueDate = new Date(studyDate);
+        dueDate.setDate(studyDate.getDate() + 30);
+
+        let today = new Date();
+        let diffDays = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+        let statusCell = row.cells[4];
+
+        if (diffDays <= 0) {
+          statusCell.innerText = "Alert";
+          statusCell.className = "alert";
+          alerts.push({
+            number: row.cells[3].innerText,
+            plant: row.cells[0].innerText,
+            dueDate: dueDate
+          });
+        } else if (diffDays > 3) {
+          statusCell.innerText = "Safe";
+          statusCell.className = "safe";
+        } else {
+          statusCell.innerText = "Warning";
+          statusCell.className = "warning";
+        }
+      }
+
+      // Send alerts one by one with delay
+      alerts.forEach((alert, index) => {
+        setTimeout(() => {
+          sendWhatsApp(alert.number, alert.plant, alert.dueDate);
+        }, index * 2000); // 2 seconds apart
+      });
+    }
+
+    function addRow() {
+      let table = document.getElementById("plantTable");
+      let row = table.insertRow(-1);
+
+      row.insertCell(0).innerHTML = prompt("Enter Plant Code:") || "";
+      row.insertCell(1).innerHTML = `<input type="date" onchange="updateDueDate(this)">`;
+      row.insertCell(2).innerText = "";
+      row.insertCell(3).innerText = prompt("Enter WhatsApp Number:") || "";
+      row.insertCell(4).innerText = "";
+    }
+
+    function saveTable() {
+      let rows = extractTableData();
+      let blob = new Blob([JSON.stringify(rows, null, 2)], { type: "application/json" });
+      let link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "milk_plants.json";
+      link.click();
+    }
+
+    function saveExcel() {
+      let rows = extractTableData();
+      let worksheet = XLSX.utils.json_to_sheet(rows);
+      let workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "MilkPlants");
+      XLSX.writeFile(workbook, "milk_plants.xlsx");
+    }
+
+    function loadFile(event) {
+      let file = event.target.files[0];
+      let reader = new FileReader();
+      if (!file) return;
+
+      if (file.name.endsWith(".json")) {
+        reader.onload = function(e) {
+          let data = JSON.parse(e.target.result);
+          populateTable(data);
+        };
+        reader.readAsText(file);
+
+      } else if (file.name.endsWith(".xlsx") || file.name.endsWith(".xls")) {
+        reader.onload = function(e) {
+          let data = new Uint8Array(e.target.result);
+          let workbook = XLSX.read(data, { type: "array" });
+          let sheetName = workbook.SheetNames[0];
+          let sheet = workbook.Sheets[sheetName];
+          let rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+          rows.forEach(r => {
+            if (typeof r["Study Date"] === "number") {
+              r["Study Date"] = XLSX.SSF.format("yyyy-mm-dd", r["Study Date"]);
+            }
+            if (typeof r["Due Date"] === "number") {
+              r["Due Date"] = XLSX.SSF.format("yyyy-mm-dd", r["Due Date"]);
+            }
+          });
+
+          populateTable(rows);
+        };
+        reader.readAsArrayBuffer(file);
+
+      } else {
+        alert("Unsupported file type. Please upload JSON or Excel.");
+      }
+    }
+
+    function extractTableData() {
+      let table = document.getElementById("plantTable");
+      let rows = [];
+      for (let i = 1; i < table.rows.length; i++) {
+        let cells = table.rows[i].cells;
+        rows.push({
+          Plant: cells[0].innerText,
+          "Study Date": cells[1].querySelector("input")?.value || "",
+          "Due Date": cells[2].innerText,
+          "WhatsApp Number": cells[3].innerText,
+          Status: cells[4].innerText
+        });
+      }
+      return rows;
+    }
+
+    function populateTable(data) {
+      let table = document.getElementById("plantTable");
+      while (table.rows.length > 1) {
+        table.deleteRow(1);
+      }
+
+      data.forEach(item => {
+        let row = table.insertRow(-1);
+        row.insertCell(0).innerText = item.Plant || "";
+        row.insertCell(1).innerHTML = `<input type="date" value="${item["Study Date"] || ""}" onchange="updateDueDate(this)">`;
+        row.insertCell(2).innerText = item["Due Date"] || "";
+        row.insertCell(3).innerText = item["WhatsApp Number"] || "";
+        row.insertCell(4).innerText = item.Status || "";
+
+                let input = row.cells[1].querySelector("input");
+        if (input.value) {
+          updateDueDate(input);
+        }
+      });
+
+      // ✅ After loading, check all alerts sequentially
+      checkAllAlerts();
+    }
+  </script>
+</body>
+</html>
+
